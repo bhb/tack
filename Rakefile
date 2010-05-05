@@ -5,12 +5,12 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "tack"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
-    gem.email = "ben@devver.net"
-    gem.homepage = "http://github.com/devver/tack"
+    gem.summary = %Q{A Rack-inspired interface for testing libraries}
+    gem.description = %Q{A Rack-inspired interface for testing libraries}
+    gem.email = "ben@bbrinck.com"
+    gem.homepage = "http://github.com/bhb/tack"
     gem.authors = ["Ben Brinckerhoff"]
-    gem.add_development_dependency "thoughtbot-shoulda"
+    gem.add_development_dependency "shoulda"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
