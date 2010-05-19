@@ -1,7 +1,9 @@
 require 'test_helper'
 
 class TackTest < Test::Unit::TestCase
-  should "probably rename this file and start testing for real" do
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+
+  should "do whatever" do
+    # nothing here for now
   end
+
 end
