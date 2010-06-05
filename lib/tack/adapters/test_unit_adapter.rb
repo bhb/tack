@@ -1,3 +1,8 @@
+require 'test/unit'
+require 'test/unit/testresult'
+
+Test::Unit.run = true
+
 class TestUnitAdapter
 
   def tests_for(file)

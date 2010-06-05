@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'lib/tack'
+require 'pp'
+require 'optparse'
+
+options = {}
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: tack [options] [file]"
+  opts.on("-I","--include PATH", "specify $LOAD_PATH (may be used more than once)") do |path|
+    options[:include] = path.split(":")
+  end
+  opts.on_tail("-h","--help", "Show this message") do
+    puts opts
+    exit
+  end
+end
+
+args = ARGV
+option_parser.parse! args
+options[:file] = args.last if args.last
+
+if includes = options[:include]
+  $LOAD_PATH.unshift *includes
+end
+
+set = Tack::TestSet.new(Dir.pwd)
+tests = set.tests_for(options[:file])
+
+results = Tack::Runner.new(Dir.pwd).run(tests)
+
+pp results
+
+
+
