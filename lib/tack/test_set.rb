@@ -7,7 +7,7 @@ module Tack
     end
 
     def tests_for(path)
-      adapter = RSpecAdapter.new
+      adapter = Adapter.for(path)
       files = Dir[path]
       files.inject([]) do |tests, file|
         tests += adapter.tests_for(file)

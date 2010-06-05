@@ -2,7 +2,32 @@ require 'test_helper'
 
 class RSpecTest < Test::Unit::TestCase
 
-  should "run RSpec failing spec" do
+  should "grab all specs" do
+    
+    within_construct(false) do |c|
+      c.file 'fake_spec.rb' do
+        <<-EOS
+        describe String do
+          
+          specify "something" do
+          end
+
+          it "should do something" do
+          end
+
+        end
+EOS
+      end
+      set = Tack::TestSet.new(c)
+      tests = set.tests_for(c+'fake_spec.rb')
+      assert_equal 2, tests.length
+      assert_equal [(c+"fake_spec.rb").to_s, "something"], tests.sort.last
+      assert_equal [(c+"fake_spec.rb").to_s,"should do something"], tests.sort.first
+    end    
+
+  end
+
+  should "run failing spec" do
     within_construct(false) do |c|
       c.file 'fake_spec.rb' do
         <<-EOS
@@ -26,7 +51,7 @@ EOS
     end    
   end
 
-  should "run RSpec successful spec" do
+  should "run successful spec" do
     within_construct(false) do |c|
       c.file 'fake_spec.rb' do
         <<-EOS

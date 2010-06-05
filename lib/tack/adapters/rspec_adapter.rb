@@ -34,7 +34,6 @@ module Spec
         def example_pending(example)
           @results[:pending] << {
             :description => example.description,
-            :status => :pending
           }
         end
 
@@ -70,12 +69,13 @@ class RSpecAdapter
     examples = example_groups.inject([]) do |arr, group|
       arr += group.examples
     end
-    examples.map {|example| example.description}
+    examples.map {|example| [file, example.description]}
   end
   
-  def run(tests)
-    Spec::Runner.options.instance_variable_set(:@examples, tests)
+  def run(file, test)
+    Spec::Runner.options.instance_variable_set(:@examples, [test])
     Spec::Runner.options.instance_variable_set(:@example_groups, [])
+    Spec::Runner.options.instance_variable_set(:@files, [file])
     Spec::Runner.options.instance_variable_set(:@files_loaded, false)
     formatter = Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)
     Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
