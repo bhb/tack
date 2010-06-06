@@ -13,28 +13,36 @@ module Tack
     end
 
     def run(tests)
+      to_app if @start_app.nil?
+      @start_app.run_suite(tests)
+    end
+
+    def run_suite(tests)
       results = { :passed => [],
         :failed => [],
         :pending => []}
       tests.each do |path, description|
-        adapter = Adapters::Adapter.for(path)
-        result = adapter.run(path, description)
+        result = @start_app.run_test(path, description)
         results[:passed] += result[:passed]
         results[:failed] += result[:failed]
         results[:pending] += result[:pending]
-        # @handlers.reverse.inject(inner_app) { |a, e| e.call(a) }
-        @handlers.each do |handler|
-          handler.process(result)
-        end
-      end
-      @handlers.each do |handler|
-        handler.finish(results)
       end
       results
     end
 
+    def run_test(path, description)
+      adapter = Adapters::Adapter.for(path)
+      adapter.run(path, description)
+    end
+
     def use(middleware, *args, &block)
-      @handlers << middleware.new
+      @handlers << lambda { |app| 
+        middleware.new(app, *args, &block) }
+    end
+
+    def to_app
+      inner_app = self
+      @start_app = @handlers.reverse.inject(inner_app) { |a, e| e.call(a) }
     end
 
   end

@@ -3,8 +3,19 @@ module Tack
   module Formatters
 
     class ProgressBar
-      
-      def process(result)
+
+      def initialize(app)
+        @app = app
+      end
+
+      def run_suite(tests)
+        results = @app.run_suite(tests)
+        puts
+        results
+      end
+
+      def run_test(file, description)
+        result = @app.run_test(file, description)
         result[:passed].each do
           print "."
         end
@@ -14,10 +25,7 @@ module Tack
         result[:failed].each do
           print "F"
         end
-      end
-
-      def finish(results)
-        puts
+        result
       end
       
     end
