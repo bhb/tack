@@ -1,6 +1,6 @@
 = tack
 
-Description goes here.
+USE AT YOUR OWN RISK. This is highly experimental and the interface is changing rapidly. 
 
 == Note on Patches/Pull Requests
  
