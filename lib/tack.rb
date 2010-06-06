@@ -18,6 +18,7 @@ module Tack
   module Formatters
 
     autoload :BasicSummary, 'tack/formatters/basic_summary'
+    autoload :ProgressBar, 'tack/formatters/progress_bar'
 
   end
 

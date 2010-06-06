@@ -23,11 +23,11 @@ module Tack
         results[:failed] += result[:failed]
         results[:pending] += result[:pending]
         # @handlers.reverse.inject(inner_app) { |a, e| e.call(a) }
-        @handlers.reverse.each do |handler|
+        @handlers.each do |handler|
           handler.process(result)
         end
       end
-      @handlers.reverse.each do |handler|
+      @handlers.each do |handler|
         handler.finish(results)
       end
       results

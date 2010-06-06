@@ -34,6 +34,7 @@ end
 #results = Tack::Runner.new(Dir.pwd).run(tests)
 
 runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+  runner.use Tack::Formatters::ProgressBar
   runner.use Tack::Formatters::BasicSummary
   # runner.use Tack::Formatter::Failures
 end
