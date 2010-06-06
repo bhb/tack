@@ -69,7 +69,7 @@ class RSpecAdapter
     examples = example_groups.inject([]) do |arr, group|
       arr += group.examples
     end
-    examples.map {|example| [file, example.description]}
+    examples.map {|example| [file, example.description]}.select {|file,description| description.match(pattern)}
   end
   
   def run(file, test)

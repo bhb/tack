@@ -10,6 +10,13 @@ option_parser = OptionParser.new do |opts|
   opts.on("-I","--include PATH", "specify $LOAD_PATH (may be used more than once)") do |path|
     options[:include] = path.split(":")
   end
+  opts.on("-n", "--name PATTERN", "run only tests that match pattern") do |pattern|
+    if pattern=~/^\/.*\/$/
+     options[:pattern] = Regexp.new(pattern[1..-2])
+    else
+      options[:pattern] = pattern
+    end
+  end
   opts.on_tail("-h","--help", "Show this message") do
     puts opts
     exit
@@ -25,7 +32,7 @@ if includes = options[:include]
 end
 
 set = Tack::TestSet.new(Dir.pwd)
-tests = set.tests_for(options[:file])
+tests = set.tests_for(options[:file], Tack::TestPattern.new(options[:pattern]))
 
 results = Tack::Runner.new(Dir.pwd).run(tests)
 

@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 require 'tack/test_set'
 require 'tack/runner'
 require 'tack/adapters/adapter'
+require 'tack/test_pattern'
 
 module Tack
 
