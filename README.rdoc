@@ -13,6 +13,10 @@ Description goes here.
    bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+== Acknowledgements
+
+Tack is heavily inspired by Rack and Faraday and borrows ideas and code from both. Early versions of the Test::Unit and RSpec adapters borrowed code from Hydra.
+
 == Copyright
 
 Copyright (c) 2010 Ben Brinckerhoff. See LICENSE for details.
