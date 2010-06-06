@@ -6,11 +6,11 @@ module Tack
       @root_dir = root_dir
     end
 
-    def tests_for(path)
+    def tests_for(path, pattern=/.*/)
       adapter = Adapter.for(path)
       files = Dir[path]
       files.inject([]) do |tests, file|
-        tests += adapter.tests_for(file)
+        tests += adapter.tests_for(file, pattern)
       end
     end
 

@@ -58,7 +58,7 @@ end
 
 class RSpecAdapter
 
-  def tests_for(file)
+  def tests_for(file, pattern)
     Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])
     Spec::Runner.options.instance_variable_set(:@example_groups, [])
     Spec::Runner.options.instance_variable_set(:@files, [file])

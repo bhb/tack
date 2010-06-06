@@ -29,12 +29,12 @@ EOS
 
   should "grab all tests" do
     body =<<-EOS
-      def test_one
-      end
-
-      def test_two
-      end
-EOS
+    def test_one
+    end
+      
+    def test_two
+    end
+    EOS
     with_test_class(:body => body) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
@@ -42,13 +42,43 @@ EOS
       assert_equal [file_name, "test_one"], tests.sort.first
       assert_equal [file_name, "test_two"], tests.sort.last
     end
-  end                    
+  end
+
+  should "find tests that match substring" do
+    body=<<-EOS
+    def test_one
+    end
+    def test_two
+    end
+    EOS
+    with_test_class(:body => body) do |file_name, path|
+      set = Tack::TestSet.new(path.parent)
+      tests = set.tests_for(path, "two")
+      assert_equal 1, tests.length
+      assert_equal [file_name, "test_two"], tests.sort.first
+    end
+  end
+
+  should "find tests that match regular expression" do
+    body=<<-EOS
+    def test_one
+    end
+    def test_two
+    end
+    EOS
+    with_test_class(:body => body) do |file_name, path|
+      set = Tack::TestSet.new(path.parent)
+      tests = set.tests_for(path, /two/)
+      assert_equal 1, tests.length
+      assert_equal [file_name, "test_two"], tests.sort.first
+    end
+  end
 
   should "run failing test" do
     body =<<-EOS
-      def test_append_length
-        assert_equal ("ab".length - "cd".length), ("ab"+"cd").length
-      end
+    def test_append_length
+      assert_equal ("ab".length - "cd".length), ("ab"+"cd").length
+    end
 EOS
     with_test_class(:body => body) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
@@ -64,9 +94,9 @@ EOS
 
   should "run successful test" do
     body =<<-EOS
-      def test_append_length
-        assert_equal ("ab".length + "cd".length), ("ab"+"cd").length
-      end
+    def test_append_length
+      assert_equal ("ab".length + "cd".length), ("ab"+"cd").length
+    end
 EOS
     with_test_class(:body => body) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
