@@ -31,12 +31,16 @@ if includes = options[:include]
   $LOAD_PATH.unshift *includes
 end
 
+#results = Tack::Runner.new(Dir.pwd).run(tests)
+
+runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+  runner.use Tack::Formatter::BasicSummary
+  # runner.use Tack::Formatter::Failures
+end
+
 set = Tack::TestSet.new(Dir.pwd)
 tests = set.tests_for(options[:file], Tack::TestPattern.new(options[:pattern]))
-
-results = Tack::Runner.new(Dir.pwd).run(tests)
-
-pp results
+runner.run(tests)
 
 
 

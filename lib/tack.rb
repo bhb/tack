@@ -11,4 +11,10 @@ module Tack
   autoload :RSpecAdapter, 'tack/adapters/rspec_adapter'
   autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
   
+  module Formatter
+
+    autoload :BasicSummary, 'tack/formatters/basic_summary'
+
+  end
+
 end
