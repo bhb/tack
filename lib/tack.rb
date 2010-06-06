@@ -8,10 +8,14 @@ require 'tack/test_pattern'
 
 module Tack
 
-  autoload :RSpecAdapter, 'tack/adapters/rspec_adapter'
-  autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
+  module Adapters
+
+    autoload :RSpecAdapter, 'tack/adapters/rspec_adapter'
+    autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
+
+  end
   
-  module Formatter
+  module Formatters
 
     autoload :BasicSummary, 'tack/formatters/basic_summary'
 

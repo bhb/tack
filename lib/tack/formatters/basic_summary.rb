@@ -1,6 +1,6 @@
 module Tack
 
-  module Formatter
+  module Formatters
 
     class BasicSummary
 

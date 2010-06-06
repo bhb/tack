@@ -1,6 +1,6 @@
 require 'spec'
 require 'spec/runner/formatter/base_formatter'
-        
+
 if defined?(Spec)
   module Spec
     module Runner
@@ -26,8 +26,8 @@ module Spec
           io = StringIO.new # suppress output
           super(options, io)
           @results = { :passed => [],
-                       :failed => [],
-                       :pending => []}
+            :failed => [],
+            :pending => []}
         end
 
         # Stifle the output of pending examples
@@ -56,31 +56,38 @@ module Spec
   end
 end
 
-class RSpecAdapter
+module Tack
 
-  def tests_for(file, pattern)
-    Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])
-    Spec::Runner.options.instance_variable_set(:@example_groups, [])
-    Spec::Runner.options.instance_variable_set(:@files, [file])
-    Spec::Runner.options.instance_variable_set(:@files_loaded, false)
-    runner = Spec::Runner::ExampleGroupRunner.new(Spec::Runner.options)
-    runner.load_files([file])
-    example_groups = runner.send(:example_groups)
-    examples = example_groups.inject([]) do |arr, group|
-      arr += group.examples
+  module Adapters
+
+    class RSpecAdapter
+
+      def tests_for(file, pattern)
+        Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])
+        Spec::Runner.options.instance_variable_set(:@example_groups, [])
+        Spec::Runner.options.instance_variable_set(:@files, [file])
+        Spec::Runner.options.instance_variable_set(:@files_loaded, false)
+        runner = Spec::Runner::ExampleGroupRunner.new(Spec::Runner.options)
+        runner.load_files([file])
+        example_groups = runner.send(:example_groups)
+        examples = example_groups.inject([]) do |arr, group|
+          arr += group.examples
+        end
+        examples.map {|example| [file, example.description]}.select {|file,description| description.match(pattern)}
+      end
+      
+      def run(file, test)
+        Spec::Runner.options.instance_variable_set(:@examples, [test])
+        Spec::Runner.options.instance_variable_set(:@example_groups, [])
+        Spec::Runner.options.instance_variable_set(:@files, [file])
+        Spec::Runner.options.instance_variable_set(:@files_loaded, false)
+        formatter = Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)
+        Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
+        Spec::Runner.options.run_examples
+        formatter.results
+      end
+
     end
-    examples.map {|example| [file, example.description]}.select {|file,description| description.match(pattern)}
-  end
-  
-  def run(file, test)
-    Spec::Runner.options.instance_variable_set(:@examples, [test])
-    Spec::Runner.options.instance_variable_set(:@example_groups, [])
-    Spec::Runner.options.instance_variable_set(:@files, [file])
-    Spec::Runner.options.instance_variable_set(:@files_loaded, false)
-    formatter = Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)
-    Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
-    Spec::Runner.options.run_examples
-    formatter.results
-  end
 
+  end
 end

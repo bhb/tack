@@ -17,7 +17,7 @@ module Tack
         :failed => [],
         :pending => []}
       tests.each do |path, description|
-        adapter = Adapter.for(path)
+        adapter = Adapters::Adapter.for(path)
         result = adapter.run(path, description)
         results[:passed] += result[:passed]
         results[:failed] += result[:failed]
