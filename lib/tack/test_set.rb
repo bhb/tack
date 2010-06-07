@@ -6,11 +6,31 @@ module Tack
       @root_dir = root_dir
     end
 
-    def tests_for(path, pattern=TestPattern.new)
-      adapter = Adapters::Adapter.for(path)
-      files = Dir[path]
+    def tests_for(paths, pattern=TestPattern.new)
+      paths = Array(paths).map { |path| path.to_s}
+      files = paths.inject([]) do |files, path|
+        if File.directory?(path)
+          files += Dir[File.join(path,"**/*")].select {|f| valid_test_file?(f)}
+        else
+          files << path
+        end
+      end
+
       files.inject([]) do |tests, file|
+        adapter = Adapters::Adapter.for(file)
         tests += adapter.tests_for(file, pattern)
+      end
+    end
+
+    private 
+
+    def valid_test_file?(path)
+      return false if File.directory?(path)
+      case path
+      when /_test.rb$/, /_spec.rb$/:
+          true
+      else
+        false
       end
     end
 

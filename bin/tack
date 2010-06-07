@@ -25,7 +25,7 @@ end
 
 args = ARGV
 option_parser.parse! args
-options[:file] = args.last if args.last
+options[:paths] = ARGV
 
 if includes = options[:include]
   $LOAD_PATH.unshift *includes
@@ -42,7 +42,7 @@ runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
 end
 
 set = Tack::TestSet.new(Dir.pwd)
-tests = set.tests_for(options[:file], Tack::TestPattern.new(options[:pattern]))
+tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
 runner.run(tests)
 
 

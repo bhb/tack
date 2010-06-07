@@ -10,20 +10,23 @@ class TestUnitTest < Test::Unit::TestCase
     body = args.fetch(:body)
     class_name = args.fetch(:class_name) { :FakeTest } 
     within_construct(false) do |c|
-      file = c.file 'fake_test.rb' do
-      <<-EOS
-        require 'test/unit'
+      begin
+        file = c.file 'fake_test.rb' do
+          <<-EOS
+          require 'test/unit'
     
-        class #{class_name} < Test::Unit::TestCase
+          class #{class_name} < Test::Unit::TestCase
           
-          #{body}
+            #{body}
 
-        end
+          end
 EOS
+        end
+        path = c + file.to_s
+        yield file.to_s, path
+      ensure
+        remove_test_class_definition(class_name)
       end
-      path = c + file.to_s
-      yield file.to_s, path
-      remove_test_class_definition(class_name)
     end
   end
 
