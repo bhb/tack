@@ -4,6 +4,11 @@ require 'lib/tack'
 require 'pp'
 require 'optparse'
 
+def require_ruby_debug
+  require 'rubygems' unless ENV['NO_RUBYGEMS']
+  require 'ruby-debug'
+end
+
 options = {}
 option_parser = OptionParser.new do |opts|
   opts.banner = "Usage: tack [options] [file]"
@@ -16,6 +21,9 @@ option_parser = OptionParser.new do |opts|
     else
       options[:pattern] = pattern
     end
+  end
+  opts.on("-u", "--debugger", "Enable ruby-debugging.") do
+    require_ruby_debug
   end
   opts.on_tail("-h","--help", "Show this message") do
     puts opts
