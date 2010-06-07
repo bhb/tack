@@ -26,20 +26,40 @@ module Tack
         klass = test_classes_for(path).first 
         test = klass.new(description)
         result = Test::Unit::TestResult.new
+
+        result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
+          results[:failed] << build_result(description, failure)
+        end
+        
         test.run(result) do |started,name|
           # We do nothing here
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << {:description => description}
-        else
-          results[:failed] << {:description => description}
+          results[:passed] << build_result(description)
         end
         results
       end
 
       private
       
+      def build_result(description, failure=nil)
+        { :description => description, 
+          :failure => build_failure(failure) }
+      end
+
+      def build_failure(failure)
+        return {} if failure.nil?
+        case failure
+        when Test::Unit::Error
+          { :message => "#{failure.exception.class} was raised: #{failure.exception.message}",
+            :backtrace => failure.exception.backtrace }
+        else
+          { :message => failure.message,
+            :backtrace => failure.location }
+        end
+      end
+
       def test_classes_for(file)
         # taken from from hydra
         #code = ""

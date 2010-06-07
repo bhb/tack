@@ -30,10 +30,6 @@ EOS
     end
   end
 
-  should "flunk" do
-    flunk
-  end
-
   should "grab all tests" do
     body =<<-EOS
     def test_one
@@ -95,7 +91,31 @@ EOS
 
       assert_equal 0, results[:passed].length
       assert_equal 1, results[:failed].length
-      assert_equal "test_append_length", results[:failed].first[:description]
+      result = results[:failed].first
+      assert_equal "test_append_length", result[:description]
+      assert_match /expected but was/, result[:failure][:message]
+      assert_kind_of Array, result[:failure][:backtrace]
+    end
+  end
+
+  should "run test with error" do
+    body =<<-EOS
+    def test_append_length
+      raise "failing!"
+    end
+EOS
+    with_test_class(:body => body) do |file_name, path|
+      set = Tack::TestSet.new(path.parent)
+      tests = set.tests_for(path)
+      runner = Tack::Runner.new(path.parent)
+      results = runner.run(tests)
+
+      assert_equal 0, results[:passed].length
+      assert_equal 1, results[:failed].length
+      result = results[:failed].first
+      assert_equal "test_append_length", result[:description]
+      assert_match /was raised/, result[:failure][:message]
+      assert_kind_of Array, result[:failure][:backtrace]
     end
   end
 

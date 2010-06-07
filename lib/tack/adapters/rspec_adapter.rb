@@ -47,8 +47,21 @@ module Spec
           @results[:failed] <<
             {
             :description => example.description,
-            :status => error.nil? ? :pass : :fail,
+            :failure => build_failure(example, error)
           }
+        end
+
+        private
+        
+        def build_failure(example, error)
+          case error.exception
+          when Spec::Expectations::ExpectationNotMetError
+            { :message => error.exception.message,
+              :backtrace => error.exception.backtrace}
+          else
+            { :message => "#{error.exception.class} was raised: #{error.exception.message}",
+              :backtrace => error.exception.backtrace}
+          end
         end
 
       end
