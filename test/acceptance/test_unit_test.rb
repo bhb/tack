@@ -2,8 +2,8 @@ require 'test_helper'
 
 class TestUnitTest < Test::Unit::TestCase
 
-  def remove_test_class_definition(klass_name)
-    Object.send(:remove_const, klass_name)
+  def remove_test_class_definition(class_name)
+    Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
   end
 
   def with_test_class(args)

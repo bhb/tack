@@ -1,3 +1,6 @@
+if RUBY_VERSION=~/1.9/
+  gem 'test-unit', '~> 1.0'
+end
 require 'test/unit'
 require 'test/unit/testresult'
 
@@ -13,7 +16,7 @@ module Tack
         require file
         classes = test_classes_for(file)
         classes.inject([]) do |tests, klass|
-          tests += test_methods(klass).map {|method_name| [file, method_name]}.select {|file, method_name| method_name.match(pattern)}
+          tests += test_methods(klass).map {|method_name| [file, method_name.to_s]}.select {|file, method_name| method_name.match(pattern)}
         end
       end
 

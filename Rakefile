@@ -10,6 +10,7 @@ begin
     gem.email = "ben@bbrinck.com"
     gem.homepage = "http://github.com/bhb/tack"
     gem.authors = ["Ben Brinckerhoff"]
+    gem.add_dependency "test-unit", "~> 1.0" if RUBY_VERSION=~/1\.9/
     gem.add_development_dependency "shoulda"
     gem.add_development_dependency "test-construct"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings

@@ -6,9 +6,9 @@ module Tack
 
     def initialize(pattern=nil)
       pattern = case pattern
-                when nil:
+                when nil
                     DEFAULT
-                when String, Regexp:
+                when String, Regexp
                     pattern
                 else
                   DEFAULT

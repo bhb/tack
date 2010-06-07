@@ -27,7 +27,7 @@ module Tack
     def valid_test_file?(path)
       return false if File.directory?(path)
       case path
-      when /_test.rb$/, /_spec.rb$/:
+      when /_test.rb$/, /_spec.rb$/
           true
       else
         false
