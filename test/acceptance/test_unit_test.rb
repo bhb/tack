@@ -30,6 +30,10 @@ EOS
     end
   end
 
+  should "flunk" do
+    flunk
+  end
+
   should "grab all tests" do
     body =<<-EOS
     def test_one

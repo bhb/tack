@@ -23,6 +23,7 @@ module Tack
     autoload :ProgressBar, 'tack/formatters/progress_bar'
     autoload :Profiler, 'tack/formatters/profiler'
     autoload :TotalTime, 'tack/formatters/total_time'
+    autoload :PrintFailures, 'tack/formatters/print_failures'
 
   end
 
