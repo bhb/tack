@@ -22,6 +22,7 @@ module Tack
     autoload :BasicSummary, 'tack/formatters/basic_summary'
     autoload :ProgressBar, 'tack/formatters/progress_bar'
     autoload :Profiler, 'tack/formatters/profiler'
+    autoload :TotalTime, 'tack/formatters/total_time'
 
   end
 
