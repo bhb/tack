@@ -10,6 +10,13 @@ module Tack
       @app.run_test(file, description)
     end
 
+    # not necessary for the middleware API, but handy for implementing
+    # middleware methods
+    def returning(value)
+      yield(value)
+      value
+    end
+
   end
 
 end
