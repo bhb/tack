@@ -36,7 +36,7 @@ module Tack
     end
 
     def use(middleware, *args, &block)
-      @handlers << lambda { |app| 
+      @handlers << lambda { |app|
         middleware.new(app, *args, &block) }
     end
 

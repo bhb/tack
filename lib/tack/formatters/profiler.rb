@@ -5,18 +5,19 @@ module Tack
     class Profiler
       include Middleware
 
-      def initialize(app)
+      def initialize(app, args)
         @app = app
+        @num_tests = args.fetch(:tests) { 10 }
         @times = []
       end
 
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
-          puts "\n\nTop 10 slowest examples:\n"
+          puts "\n\nTop #{@num_tests} slowest examples:\n"
           @times = @times.sort_by do |description, time|
             time
           end.reverse
-          @times[0..9].each do |description, time| 
+          @times[0..@num_tests-1].each do |description, time| 
             print "%.7f" % time
             puts " #{description}"
           end
