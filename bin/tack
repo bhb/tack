@@ -26,6 +26,9 @@ option_parser = OptionParser.new do |opts|
   opts.on("-u", "--debugger", "Enable ruby-debugging.") do
     require_ruby_debug
   end
+  opts.on("-o", "--profile [NUMBER]", "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10)") do |number|
+    options[:profile_number] = number || 10
+  end
   opts.on_tail("-h","--help", "Show this message") do
     puts opts
     exit
@@ -41,7 +44,7 @@ if includes = options[:include]
 end
 
 runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
-  runner.use Tack::Formatters::Profiler, :tests => 3
+  runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
   runner.use Tack::Formatters::TotalTime
   runner.use Tack::Formatters::PrintFailures  
   runner.use Tack::Formatters::BasicSummary
