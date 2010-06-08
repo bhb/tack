@@ -8,6 +8,9 @@ module Tack
   autoload :Middleware, 'tack/middleware'
   autoload :TestPattern, 'tack/test_pattern'
   
+  # middlewares
+
+  autoload :Shuffle, 'tack/shuffle'
 
   module Adapters
 
