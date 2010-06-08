@@ -18,7 +18,7 @@ module Tack
 
       files.inject([]) do |tests, file|
         adapter = Adapters::Adapter.for(file)
-        tests += adapter.tests_for(file, pattern)
+        tests += adapter.tests_for(file).select {|file, description| description.match(pattern)}
       end
     end
 

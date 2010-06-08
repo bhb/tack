@@ -75,7 +75,7 @@ module Tack
 
     class RSpecAdapter
 
-      def tests_for(file, pattern)
+      def tests_for(file)
         Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
@@ -86,7 +86,7 @@ module Tack
         examples = example_groups.inject([]) do |arr, group|
           arr += group.examples
         end
-        examples.map {|example| [file, example.description]}.select {|file,description| description.match(pattern)}
+        examples.map {|example| [file, example.description]}
       end
       
       def run(file, test)
