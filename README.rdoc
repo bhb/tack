@@ -15,7 +15,7 @@ USE AT YOUR OWN RISK. This is highly experimental and the interface is changing 
 
 == Acknowledgements
 
-Tack is heavily inspired by Rack and Faraday and borrows ideas and code from both. Early versions of the Test::Unit and RSpec adapters borrowed code from Hydra.
+Tack is heavily inspired by Rack and Faraday and borrows ideas and code from both. Also, initial versions of the Test::Unit and RSpec adapters borrowed code from Hydra while a lot of the formatter code was taken from RSpec.
 
 == Copyright
 
