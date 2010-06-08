@@ -32,6 +32,9 @@ option_parser = OptionParser.new do |opts|
   opts.on("-s", "--shuffle [RUNS]", "Run tests in randomized order RUNS times (defaults to 1).") do |runs|
     options[:shuffle_runs] = runs || 1
   end
+  opts.on("-R", "--reverse", "Run tests in reverse order.") do 
+    options[:reverse] = true
+  end
   opts.on_tail("-h","--help", "Show this message") do
     puts opts
     exit
@@ -47,6 +50,7 @@ if includes = options[:include]
 end
 
 runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+  runner.use Tack::Reverse if options[:reverse]
   runner.use Tack::Shuffle if options[:shuffle_runs]
   runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
   runner.use Tack::Formatters::TotalTime

@@ -11,6 +11,7 @@ module Tack
   # middlewares
 
   autoload :Shuffle, 'tack/shuffle'
+  autoload :Reverse, 'tack/reverse'
 
   module Adapters
 
