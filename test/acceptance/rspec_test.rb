@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class RSpecTest < Test::Unit::TestCase
+  include TestHelpers
 
   def with_rspec_context(args)
     body = args.fetch(:body)
@@ -33,8 +34,8 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [path.to_s, "something"], tests.sort.last
-      assert_equal [path.to_s, "should do something"], tests.sort.first
+      assert_equal [path.to_s, "should do something"], tests.first
+      assert_equal [path.to_s, "something"], tests.last
     end
   end
 
@@ -50,7 +51,7 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, "some")
       assert_equal 1, tests.length
-      assert_equal [path.to_s, "something"], tests.sort.first
+      assert_equal [path.to_s, "something"], tests.first
     end
   end
 
@@ -66,7 +67,7 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /does/)
       assert_equal 1, tests.length
-      assert_equal [path.to_s, "does nothing"], tests.sort.first
+      assert_equal [path.to_s, "does nothing"], tests.first
     end
   end
 

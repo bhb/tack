@@ -1,49 +1,24 @@
 require 'test_helper'
 
 class TestUnitTest < Test::Unit::TestCase
-
-  def remove_test_class_definition(class_name)
-    Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
-  end
-
-  def with_test_class(args)
-    body = args.fetch(:body)
-    class_name = args.fetch(:class_name) { :FakeTest } 
-    within_construct(false) do |c|
-      begin
-        file = c.file 'fake_test.rb' do
-          <<-EOS
-          require 'test/unit'
-    
-          class #{class_name} < Test::Unit::TestCase
-          
-            #{body}
-
-          end
-EOS
-        end
-        path = c + file.to_s
-        yield file.to_s, path
-      ensure
-        remove_test_class_definition(class_name)
-      end
-    end
-  end
+  include TestHelpers
 
   should "grab all tests" do
+    # By default, Test::Unit gets tests alphabetically,
+    # not in the order they were defined.
     body =<<-EOS
-    def test_one
-    end
-      
     def test_two
+    end
+
+    def test_one
     end
     EOS
     with_test_class(:body => body) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [file_name, "test_one"], tests.sort.first
-      assert_equal [file_name, "test_two"], tests.sort.last
+      assert_equal [file_name, "test_one"], tests.first
+      assert_equal [file_name, "test_two"], tests.last
     end
   end
 
@@ -58,7 +33,7 @@ EOS
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, "two")
       assert_equal 1, tests.length
-      assert_equal [file_name, "test_two"], tests.sort.first
+      assert_equal [file_name, "test_two"], tests.first
     end
   end
 
@@ -73,7 +48,7 @@ EOS
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /two/)
       assert_equal 1, tests.length
-      assert_equal [file_name, "test_two"], tests.sort.first
+      assert_equal [file_name, "test_two"], tests.first
     end
   end
 
