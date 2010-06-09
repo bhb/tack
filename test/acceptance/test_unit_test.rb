@@ -13,12 +13,12 @@ class TestUnitTest < Test::Unit::TestCase
     def test_one
     end
     EOS
-    with_test_class(:body => body) do |file_name, path|
+    with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [file_name, "test_one"], tests.first
-      assert_equal [file_name, "test_two"], tests.last
+      assert_equal [file_name, "FakeTest", "test_one"], tests.first
+      assert_equal [file_name, "FakeTest", "test_two"], tests.last
     end
   end
 
@@ -29,11 +29,11 @@ class TestUnitTest < Test::Unit::TestCase
     def test_two
     end
     EOS
-    with_test_class(:body => body) do |file_name, path|
+    with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, "two")
       assert_equal 1, tests.length
-      assert_equal [file_name, "test_two"], tests.first
+      assert_equal [file_name, "FakeTest", "test_two"], tests.first
     end
   end
 
@@ -44,11 +44,11 @@ class TestUnitTest < Test::Unit::TestCase
     def test_two
     end
     EOS
-    with_test_class(:body => body) do |file_name, path|
+    with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /two/)
       assert_equal 1, tests.length
-      assert_equal [file_name, "test_two"], tests.first
+      assert_equal [file_name, "FakeTest", "test_two"], tests.first
     end
   end
 

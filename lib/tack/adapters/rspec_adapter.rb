@@ -84,12 +84,12 @@ module Tack
         runner.load_files([file])
         example_groups = runner.send(:example_groups)
         examples = example_groups.inject([]) do |arr, group|
-          arr += group.examples
+          arr += group.examples.map { |example| [group, example]}
         end
-        examples.map {|example| [file, example.description]}
+        examples.map {|group, example| [file, group.description, example.description]}
       end
       
-      def run(file, test)
+      def run(file, context, test)
         Spec::Runner.options.instance_variable_set(:@examples, [test])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
