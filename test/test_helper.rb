@@ -17,11 +17,13 @@ module TestHelpers
 
   def with_test_class(args)
     body = args.fetch(:body)
+    shoulda = args.fetch(:shoulda)  {false}
     class_name = args.fetch(:class_name) { :FakeTest } 
     within_construct(false) do |c|
       begin
         file = c.file 'fake_test.rb' do
           <<-EOS
+          #{"require 'shoulda'" if shoulda}
           require 'test/unit'
     
           class #{class_name} < Test::Unit::TestCase
