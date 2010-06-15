@@ -1,4 +1,4 @@
-#require 'test_helper'
+require 'test_helper'
 
 class ShouldaTest < Test::Unit::TestCase
   include TestHelpers
@@ -15,14 +15,11 @@ class ShouldaTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [file_name, "FooTest", "test: Foo should do something 1. "], tests.first
-      assert_equal [file_name, "FooTest", "test: Foo should do something 2. "], tests.last
+      assert_equal [file_name, ["FooTest"], "test: Foo should do something 1. "], tests.first
+      assert_equal [file_name, ["FooTest"], "test: Foo should do something 2. "], tests.last
     end
   end
   
-  should "foo" do
-  end
-
   should "grab all tests matching pattern" do
     body =<<-EOS
        should "do something" do
@@ -35,7 +32,7 @@ class ShouldaTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /else/)
       assert_equal 1, tests.length
-      assert_equal [file_name, "FooTest", "test: Foo should do something else. "], tests.first
+      assert_equal [file_name, ["FooTest"], "test: Foo should do something else. "], tests.first
     end
   end
 
@@ -50,7 +47,7 @@ class ShouldaTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /in some context/)
       assert_equal 1, tests.length
-      assert_equal [file_name, "FooTest", "test: in some context should do something. "], tests.first
+      assert_equal [file_name, ["FooTest"], "test: in some context should do something. "], tests.first
     end
   end
 

@@ -16,7 +16,7 @@ module Tack
         require file
         classes = test_classes_for(file)
         classes.inject([]) do |tests, klass|
-          tests += test_methods(klass).map {|method_name| [file, klass.to_s, method_name.to_s]}
+          tests += test_methods(klass).map {|method_name| [file, [klass.to_s], method_name.to_s]}
         end
       end
 
