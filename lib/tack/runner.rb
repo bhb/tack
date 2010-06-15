@@ -30,9 +30,9 @@ module Tack
       results
     end
 
-    def run_test(path, context, description)
+    def run_test(path, contexts, description)
       adapter = Adapters::Adapter.for(path)
-      adapter.run(path, context, description)
+      adapter.run(path, contexts, description)
     end
 
     def use(middleware, *args, &block)

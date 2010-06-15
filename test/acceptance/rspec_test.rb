@@ -34,8 +34,8 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [path.to_s, "String", "should do something"], tests.first
-      assert_equal [path.to_s, "String", "something"], tests.last
+      assert_equal [path.to_s, ["String"], "should do something"], tests.first
+      assert_equal [path.to_s, ["String"], "something"], tests.last
     end
   end
 
@@ -51,7 +51,7 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, "some")
       assert_equal 1, tests.length
-      assert_equal [path.to_s, "String", "something"], tests.first
+      assert_equal [path.to_s, ["String"], "something"], tests.first
     end
   end
 
@@ -67,7 +67,7 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /does/)
       assert_equal 1, tests.length
-      assert_equal [path.to_s, "String", "does nothing"], tests.first
+      assert_equal [path.to_s, ["String"], "does nothing"], tests.first
     end
   end
 
@@ -86,7 +86,7 @@ class RSpecTest < Test::Unit::TestCase
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /cases/)
       assert_equal 1, tests.length
-      assert_equal [path.to_s, "String sometimes in some cases", "something"], tests.first
+      assert_equal [path.to_s, ["String", "sometimes", "in some cases"], "something"], tests.first
     end
   end
 

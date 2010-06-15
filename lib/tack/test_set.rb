@@ -18,8 +18,9 @@ module Tack
 
       files.inject([]) { |tests, file|
         adapter = Adapters::Adapter.for(file)
-        tests += adapter.tests_for(file).select  do |file, context, description| 
-          description.match(pattern) || context.match(pattern)
+        tests += adapter.tests_for(file).select  do |file, contexts, description| 
+          contexts = Array(contexts)
+          description.match(pattern) || contexts.any? {|x| x.match(pattern)}
         end
       }.sort
     end
