@@ -2,6 +2,32 @@
 
 USE AT YOUR OWN RISK. This is highly experimental and the interface is changing rapidly. 
 
+Here is a basic example of where this is going.
+
+  # A really early look how Tack runners might be constructed. Everything in this example may change since the code is really new.
+
+  runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+    runner.use Tack::Reverse if options[:reverse] # Optionally reverse the order of tests
+    runner.use Tack::Shuffle if options[:shuffle] # Optionally shuffle the tests
+    runner.use Tack::Formatters::Profiler, # Write out some profiling info
+      :tests => options[:profile_number].to_i if options[:profile_number]
+    runner.use Tack::Formatters::TotalTime # Display the total running time
+    runner.use Tack::Formatters::PrintFailures
+    runner.use Tack::Formatters::BasicSummary # e.g. 5 tests, 2 failures, 0 pending
+    runner.use Tack::Formatters::ProgressBar
+  end
+
+  set = Tack::TestSet.new(Dir.pwd)
+
+  # Get the tests. Tests are currently represented like so:
+  # [["foo_test.rb", "test_one", "foo_test.rb", "test_two"]
+  # This will have to get more complicated as I add support for
+  # contexts
+  tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
+
+  runner.run(tests) # Run the tests
+
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
