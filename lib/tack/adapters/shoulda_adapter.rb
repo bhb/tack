@@ -6,6 +6,32 @@ require 'test/unit/testresult'
 
 Test::Unit.run = true
 
+require 'shoulda'
+module Shoulda
+
+  # Just here for testing purposes to see if this has been defined
+  module Tack
+  end
+
+  class << self
+    
+    attr_accessor :all_contexts
+
+    alias_method :original_add_context, :add_context
+    
+    def all_contexts
+      @all_contexts ||= []
+    end
+
+    def add_context(context)
+      all_contexts << context unless context.am_subcontext?
+      original_add_context(context)
+    end
+
+  end
+  
+end
+
 module Tack
 
   module Adapters
@@ -21,9 +47,6 @@ module Tack
           test_methods.any? do |test_method|
             test_method =~ /^test\: .*\. $/
           end
-          #debugger
-          #instance = klass.suite
-          #instance.respond_to(:contexts) && !instace.contexts.empty?
         end
       end
 
@@ -31,7 +54,45 @@ module Tack
         require file
         classes = self.class.test_classes_for(file)
         classes.inject([]) do |tests, klass|
-          tests += self.class.test_methods(klass).map {|method_name| [file, [klass.to_s], method_name.to_s]}
+          contexts = Shoulda.all_contexts.select { |context| context.parent == klass }
+          contexts.each do |context|
+            tests += get_tests(file,context)
+          end
+          tests
+        end
+      end
+
+      def get_tests(file, context) 
+        tests = []
+        context.shoulds.each do |should|
+          tests << [file, ancestors(context), should[:name]]
+        end
+        context.subcontexts.each do |subcontext|
+          tests += get_tests(file, subcontext)
+        end
+        tests
+      end
+
+      def ancestors(context)
+        ancestors = [context.name]
+        parent = context
+        until ((parent=parent.parent).is_a? Class)
+          ancestors.unshift(parent.name)
+        end
+        ancestors.reject! {|context_name| context_name + "Test" == parent.to_s}
+        [parent.to_s] + ancestors
+      end
+
+      def get_context_names(klass)
+        contexts = Shoulda.all_contexts.select { |context| context.parent == klass }
+        contexts.inject [klass.to_s] do |context_names, context|
+          
+        end
+      end
+
+      def for_subcontexts(context)
+        context.subcontexts.each do |subcontext|
+          yield subcontext if block_given?
         end
       end
 
@@ -41,12 +102,13 @@ module Tack
           :pending => []}
         require(path)
         # Note that this won't work if there are multiple classes in a file
-        klass = test_classes_for(path).first 
-        test = klass.new(description)
+        klass = self.class.test_classes_for(path).first 
+
+        test = klass.new(test_name([path,context,description]))
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results[:failed] << build_result(description, failure)
+          results[:failed] << build_result(test_name([path, context, description]), failure)
         end
         
         test.run(result) do |started,name|
@@ -54,12 +116,23 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(description)
+          results[:passed] << build_result(test_name([path,context,description]))
         end
         results
       end
 
       private
+
+      def test_name(test)
+        _, contexts, description = test
+        if contexts.length == 1
+          class_under_test = contexts.first.gsub(/Test/,'')
+          context_description = class_under_test
+        else
+          context_description = (contexts[1..-1] || []).join(" ")          
+        end
+        ["test:", context_description, "should", "#{description}. "].join(" ")
+      end
       
       def build_result(description, failure=nil)
         { :description => description, 
