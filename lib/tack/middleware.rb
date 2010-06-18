@@ -6,8 +6,8 @@ module Tack
       @app.run_suite(tests)
     end
 
-    def run_test(file, description)
-      @app.run_test(file, description)
+    def run_test(file, context, description)
+      @app.run_test(file, context, description)
     end
 
     # not necessary for the middleware API, but handy for implementing

@@ -21,8 +21,8 @@ module Tack
       results = { :passed => [],
         :failed => [],
         :pending => []}
-      tests.each do |path, description|
-        result = @start_app.run_test(path, description)
+      tests.each do |path, context, description|
+        result = @start_app.run_test(path, context, description)
         results[:passed] += result[:passed]
         results[:failed] += result[:failed]
         results[:pending] += result[:pending]
@@ -30,9 +30,9 @@ module Tack
       results
     end
 
-    def run_test(path, description)
+    def run_test(path, contexts, description)
       adapter = Adapters::Adapter.for(path)
-      adapter.run(path, description)
+      adapter.run(path, contexts, description)
     end
 
     def use(middleware, *args, &block)

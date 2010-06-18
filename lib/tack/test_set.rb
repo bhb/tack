@@ -16,10 +16,13 @@ module Tack
         end
       end
 
-      files.inject([]) do |tests, file|
+      files.inject([]) { |tests, file|
         adapter = Adapters::Adapter.for(file)
-        tests += adapter.tests_for(file).select {|file, description| description.match(pattern)}
-      end
+        tests += adapter.tests_for(file).select  do |_, contexts, description| 
+          contexts = Array(contexts)
+          description.match(pattern) || contexts.any? {|x| x.match(pattern)}
+        end
+      }.sort
     end
 
     private 

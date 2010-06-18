@@ -21,37 +21,50 @@ module Spec
       class TackFormatter < BaseFormatter
         
         attr_accessor :results
+        attr_accessor :file
         
         def initialize(options)
           io = StringIO.new # suppress output
           super(options, io)
+          # @example_groups = []
           @results = { :passed => [],
             :failed => [],
             :pending => []}
         end
 
+        #def example_group_started
+        #end
+
         # Stifle the output of pending examples
         def example_pending(example)
           @results[:pending] << {
-            :description => example.description,
+            :test => build_result(example)
           }
         end
 
         def example_passed(example)
           @results[:passed] << {
-            :description => example.description,
+            :test => build_result(example)
           }
         end
 
         def example_failed(example, counter, error=nil)
           @results[:failed] <<
             {
-            :description => example.description,
+            :test => build_result(example),
             :failure => build_failure(example, error)
           }
         end
 
+        def example_group_started(example_group_proxy)
+          @current_example_group = example_group_proxy
+        end
+
         private
+
+        def build_result(example)
+          [@file, @current_example_group.nested_descriptions, example.description]
+        end
         
         def build_failure(example, error)
           case error.exception
@@ -84,17 +97,18 @@ module Tack
         runner.load_files([file])
         example_groups = runner.send(:example_groups)
         examples = example_groups.inject([]) do |arr, group|
-          arr += group.examples
+          arr += group.examples.map { |example| [group, example]}
         end
-        examples.map {|example| [file, example.description]}
+        examples.map {|group, example| [file, group.description_parts.map {|part| part.to_s}, example.description]}
       end
       
-      def run(file, test)
+      def run(file, contexts, test)
         Spec::Runner.options.instance_variable_set(:@examples, [test])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
         Spec::Runner.options.instance_variable_set(:@files_loaded, false)
         formatter = Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)
+        formatter.file = file
         Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
         Spec::Runner.options.run_examples
         formatter.results

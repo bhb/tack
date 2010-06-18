@@ -15,8 +15,8 @@ module Tack
         end
       end
 
-      def run_test(file, description)
-        returning @app.run_test(file, description) do |result|
+      def run_test(file, context, description)
+        returning @app.run_test(file, context, description) do |result|
           result[:passed].each do
             print "."
           end

@@ -31,9 +31,14 @@ module Tack
       def print_failure(counter, result)
         puts
         puts "#{counter.to_s})"
-        puts result[:description]
+        puts full_description(result[:test])
         puts format_backtrace(result[:failure][:backtrace])
         puts result[:failure][:message]
+      end
+
+      def full_description(test)
+        _, contexts, description = test
+        "(#{contexts.first}) #{contexts[1..-1].join(" ")} should #{description}"
       end
 
     end
