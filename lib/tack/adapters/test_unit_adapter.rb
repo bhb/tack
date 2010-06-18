@@ -31,7 +31,7 @@ module Tack
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results[:failed] << build_result(description, failure)
+          results[:failed] << build_result(path, context, description, failure)
         end
         
         test.run(result) do |started,name|
@@ -39,15 +39,15 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(description)
+          results[:passed] << build_result(path, context, description)
         end
         results
       end
 
       private
       
-      def build_result(description, failure=nil)
-        { :description => description, 
+      def build_result(file, context, description, failure=nil)
+        { :test => [file, context, description],
           :failure => build_failure(failure) }
       end
 

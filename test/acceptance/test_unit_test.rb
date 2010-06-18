@@ -67,7 +67,7 @@ EOS
       assert_equal 0, results[:passed].length
       assert_equal 1, results[:failed].length
       result = results[:failed].first
-      assert_equal "test_append_length", result[:description]
+      assert_equal [path.to_s, ["FakeTest"], "test_append_length"], result[:test]
       assert_match /expected but was/, result[:failure][:message]
       assert_kind_of Array, result[:failure][:backtrace]
     end
@@ -88,7 +88,7 @@ EOS
       assert_equal 0, results[:passed].length
       assert_equal 1, results[:failed].length
       result = results[:failed].first
-      assert_equal "test_append_length", result[:description]
+      assert_equal [path.to_s, ["FakeTest"], "test_append_length"], result[:test]
       assert_match /was raised/, result[:failure][:message]
       assert_kind_of Array, result[:failure][:backtrace]
     end
@@ -107,7 +107,7 @@ EOS
       results = runner.run(tests)
       assert_equal 1, results[:passed].length
       assert_equal 0, results[:failed].length
-      assert_equal "test_append_length", results[:passed].first[:description]
+      assert_equal [path.to_s, ["FakeTest"], "test_append_length"], results[:passed].first[:test]
     end    
   end
 
