@@ -105,7 +105,7 @@ class RSpecTest < Test::Unit::TestCase
       assert_equal 0, results[:passed].length
       assert_equal 1, results[:failed].length
       result = results[:failed].first
-      assert_equal "append length is sum of component string lengths", result[:description]
+      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], result[:test]
       assert_equal "expected: 0,\n     got: 4 (using ==)", result[:failure][:message]
       assert_kind_of Array, result[:failure][:backtrace]
     end
@@ -127,7 +127,7 @@ class RSpecTest < Test::Unit::TestCase
       assert_equal 1, results[:failed].length
 
       result = results[:failed].first
-      assert_equal "append length is sum of component string lengths", result[:description]
+      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], result[:test]
       assert_match /was raised/, result[:failure][:message]
       assert_kind_of Array, result[:failure][:backtrace]
     end
@@ -147,13 +147,32 @@ class RSpecTest < Test::Unit::TestCase
       
       assert_equal 1, results[:passed].length
       assert_equal 0, results[:failed].length
-      assert_equal "append length is sum of component string lengths", results[:passed].first[:description]
+      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], results[:passed].first[:test]
     end
   end
 
+  context "in a context" do
+    
+    should "run successful spec" do
+      body = <<-EOS
+        context "in all cases" do
+          specify "append length is sum of component string lengths" do
+            ("ab"+"cd").length.should == ("ab".length + "cd".length)
+          end
+        end
+      EOS
+      with_rspec_context :describe => String, :body => body do |path|
+        set = Tack::TestSet.new(path.parent)
+        tests = set.tests_for(path)
+        runner = Tack::Runner.new(path.parent)
+        results = runner.run(tests)
+        
+        assert_equal 1, results[:passed].length
+        assert_equal 0, results[:failed].length
+        assert_equal [path.to_s, ["String", "in all cases"], "append length is sum of component string lengths"], results[:passed].first[:test]
+      end
+    end
 
-
-
-
+  end
 
 end

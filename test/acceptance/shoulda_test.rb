@@ -115,7 +115,7 @@ class ShouldaTest < Test::Unit::TestCase
 
       assert_equal 1, results[:passed].length
       assert_equal 0, results[:failed].length
-      assert_equal "test: Foo should pass. ", results[:passed].first[:description]
+      assert_equal [file_name, ["FooTest"], "pass"], results[:passed].first[:test]
     end
   end
 
@@ -137,7 +137,7 @@ class ShouldaTest < Test::Unit::TestCase
 
         assert_equal 1, results[:passed].length
         assert_equal 0, results[:failed].length
-        assert_equal "test: in some context should pass. ", results[:passed].first[:description]
+        assert_equal "pass", results[:passed].first[:test].last
       end
     end
 
@@ -148,7 +148,7 @@ class ShouldaTest < Test::Unit::TestCase
           flunk
         end
       end
-    EOS
+      EOS
       with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
         set = Tack::TestSet.new(path.parent)
         tests = set.tests_for(path)
@@ -157,11 +157,10 @@ class ShouldaTest < Test::Unit::TestCase
 
         assert_equal 0, results[:passed].length
         assert_equal 1, results[:failed].length
-        assert_equal "test: in some context should flunk. ", results[:failed].first[:description]
+        assert_equal [file_name, ["FooTest", "in some context"], "flunk"], results[:failed].first[:test]
       end
     end
 
   end
-
 
 end

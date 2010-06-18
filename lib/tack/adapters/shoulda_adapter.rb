@@ -96,7 +96,7 @@ module Tack
         end
       end
 
-      def run(path, context, description)
+      def run(path, contexts, description)
         results = { :passed => [],
           :failed => [],
           :pending => []}
@@ -104,11 +104,11 @@ module Tack
         # Note that this won't work if there are multiple classes in a file
         klass = self.class.test_classes_for(path).first 
 
-        test = klass.new(test_name([path,context,description]))
+        test = klass.new(test_name([path,contexts,description]))
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results[:failed] << build_result(test_name([path, context, description]), failure)
+          results[:failed] << build_result(path, contexts, description, failure)
         end
         
         test.run(result) do |started,name|
@@ -116,7 +116,7 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(test_name([path,context,description]))
+          results[:passed] << build_result(path, contexts, description) #test_name([path,context,description]))
         end
         results
       end
@@ -134,8 +134,8 @@ module Tack
         ["test:", context_description, "should", "#{description}. "].join(" ")
       end
       
-      def build_result(description, failure=nil)
-        { :description => description, 
+      def build_result(path, contexts, description, failure=nil)
+        { :test => [path, contexts, description], 
           :failure => build_failure(failure) }
       end
 
