@@ -99,7 +99,7 @@ module Tack
         examples = example_groups.inject([]) do |arr, group|
           arr += group.examples.map { |example| [group, example]}
         end
-        examples.map {|group, example| [file, group.description_parts.map {|part| part.to_s}, example.description]}
+        examples.map {|group, example| [file.to_s, group.description_parts.map {|part| part.to_s}, example.description]}
       end
       
       def run(file, contexts, test)

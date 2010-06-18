@@ -3,25 +3,6 @@ require 'test_helper'
 class RSpecTest < Test::Unit::TestCase
   include TestHelpers
 
-  def with_rspec_context(args)
-    body = args.fetch(:body)
-    describe = args.fetch(:describe)
-    within_construct(false) do |c|
-      file_name = 'fake_spec.rb'
-      c.file file_name do
-        <<-EOS
-        describe #{describe} do
-      
-        #{body}
-
-        end
-        EOS
-      end
-      path = c+file_name.to_s
-      yield path
-    end
-  end
-
   should "grab all specs" do
     body = <<-EOS
     specify "something" do

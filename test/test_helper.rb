@@ -11,6 +11,25 @@ require 'tack'
 module TestHelpers
   include Construct::Helpers
 
+  def with_rspec_context(args)
+    body = args.fetch(:body)
+    describe = args.fetch(:describe)
+    within_construct(false) do |c|
+      file_name = 'fake_spec.rb'
+      c.file file_name do
+        <<-EOS
+        describe #{describe} do
+      
+        #{body}
+
+        end
+        EOS
+      end
+      path = c+file_name.to_s
+      yield path
+    end
+  end
+
   def remove_test_class_definition(class_name)
     Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
   end
