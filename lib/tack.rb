@@ -7,6 +7,12 @@ module Tack
   autoload :TestSet, 'tack/test_set'
   autoload :Middleware, 'tack/middleware'
   autoload :TestPattern, 'tack/test_pattern'
+  autoload :NoMatchingTestError, 'tack/no_matching_test_error'
+
+  # convenience objects
+  autoload :ResultSet, 'tack/result_set'
+  autoload :Result, 'tack/result'
+  #autoload :Test, 'tack/test'
   
   # middlewares
 

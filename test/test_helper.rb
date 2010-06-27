@@ -11,7 +11,7 @@ require 'tack'
 module TestHelpers
   include Construct::Helpers
 
-  def with_rspec_context(args)
+  def in_rspec(args)
     body = args.fetch(:body)
     describe = args.fetch(:describe)
     within_construct(false) do |c|

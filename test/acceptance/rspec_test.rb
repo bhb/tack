@@ -11,7 +11,7 @@ class RSpecTest < Test::Unit::TestCase
     it "should do something" do
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
@@ -28,7 +28,7 @@ class RSpecTest < Test::Unit::TestCase
     it "does nothing" do
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, "some")
       assert_equal 1, tests.length
@@ -44,7 +44,7 @@ class RSpecTest < Test::Unit::TestCase
     it "does nothing" do
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /does/)
       assert_equal 1, tests.length
@@ -63,7 +63,7 @@ class RSpecTest < Test::Unit::TestCase
       end
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path, /cases/)
       assert_equal 1, tests.length
@@ -77,7 +77,7 @@ class RSpecTest < Test::Unit::TestCase
       ("ab"+"cd").length.should == ("ab".length - "cd".length)
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
@@ -98,7 +98,7 @@ class RSpecTest < Test::Unit::TestCase
       raise "failing!"
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
@@ -120,7 +120,7 @@ class RSpecTest < Test::Unit::TestCase
       ("ab"+"cd").length.should == ("ab".length + "cd".length)
     end
     EOS
-    with_rspec_context :describe => String, :body => body do |path|
+    in_rspec :describe => String, :body => body do |path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
@@ -142,7 +142,7 @@ class RSpecTest < Test::Unit::TestCase
           end
         end
       EOS
-      with_rspec_context :describe => String, :body => body do |path|
+      in_rspec :describe => String, :body => body do |path|
         set = Tack::TestSet.new(path.parent)
         tests = set.tests_for(path)
         runner = Tack::Runner.new(path.parent)

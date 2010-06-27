@@ -32,11 +32,7 @@ module Spec
             :pending => []}
         end
 
-        #def example_group_started
-        #end
-
-        # Stifle the output of pending examples
-        def example_pending(example)
+        def example_pending(example, message, deprecated_pending_location=nil)
           @results[:pending] << {
             :test => build_result(example)
           }
@@ -111,7 +107,11 @@ module Tack
         formatter.file = file
         Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
         Spec::Runner.options.run_examples
-        formatter.results
+        results = formatter.results
+        if results[:pending]==[] && results[:passed] == [] && results[:failed] == []
+          raise NoMatchingTestError, "No matching test found"
+        end
+        results
       end
 
     end
