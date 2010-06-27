@@ -1,7 +1,14 @@
 module Tack
 
   class Runner
-    
+
+    def self.run_tests(root, path, pattern=TestPattern.new)
+      test_set = TestSet.new(root)
+      tests = test_set.tests_for(path, pattern)
+      runner = Runner.new(root)
+      runner.run(tests)
+    end
+
     def initialize(args)
       if(args.is_a?(Hash))
         @root_dir = args.fetch(:root)

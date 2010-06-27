@@ -76,7 +76,8 @@ class RSpecAdapterTest < Test::Unit::TestCase
           assert_equal 1, results.failed.length
           result = results.failed.first
           assert_equal test, result.test
-          assert_not_nil result.failure
+          assert_equal "expected: 2,\n     got: 1 (using ==)", result.failure[:message]
+          assert_kind_of Array, result.failure[:backtrace]
         end
       end
 
@@ -113,7 +114,7 @@ class RSpecAdapterTest < Test::Unit::TestCase
           result = results.failed.first
           assert_equal test, result.test
           assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
-          assert_not_nil result.failure[:backtrace]
+          assert_kind_of Array, result.failure[:backtrace]
         end
       end
 

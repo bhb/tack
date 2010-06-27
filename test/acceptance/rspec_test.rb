@@ -3,24 +3,7 @@ require 'test_helper'
 class RSpecTest < Test::Unit::TestCase
   include TestHelpers
 
-  should "grab all specs" do
-    body = <<-EOS
-    specify "something" do
-    end
-
-    it "should do something" do
-    end
-    EOS
-    in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path)
-      assert_equal 2, tests.length
-      assert_equal [path.to_s, ["String"], "should do something"], tests.first
-      assert_equal [path.to_s, ["String"], "something"], tests.last
-    end
-  end
-
-  should "find specs that match substring" do
+   should "run specs that match substring" do
     body = <<-EOS
     specify "something" do
     end
@@ -29,14 +12,13 @@ class RSpecTest < Test::Unit::TestCase
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path, "some")
-      assert_equal 1, tests.length
-      assert_equal [path.to_s, ["String"], "something"], tests.first
+      raw_results = Tack::Runner.run_tests(path.parent, path, "some")
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
     end
   end
 
-  should "find specs that match regular expression" do
+  should "run specs that match regular expression" do
     body = <<-EOS
     specify "something" do
     end
@@ -45,14 +27,13 @@ class RSpecTest < Test::Unit::TestCase
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path, /does/)
-      assert_equal 1, tests.length
-      assert_equal [path.to_s, ["String"], "does nothing"], tests.first
+      raw_results = Tack::Runner.run_tests(path.parent, path, /does/)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
     end
   end
 
-  should "find specs that are in context which matches regexp" do
+  should "run specs that are in context which matches regexp" do
     body = <<-EOS
     context "sometimes" do
       context "in some cases" do
@@ -60,14 +41,16 @@ class RSpecTest < Test::Unit::TestCase
         specify "something" do
         end
 
+        specify "another thing" do
+        end
+
       end
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path, /cases/)
-      assert_equal 1, tests.length
-      assert_equal [path.to_s, ["String", "sometimes", "in some cases"], "something"], tests.first
+      raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 2, result_set.length
     end
   end
 
@@ -78,17 +61,9 @@ class RSpecTest < Test::Unit::TestCase
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path)
-      runner = Tack::Runner.new(path.parent)
-      results = runner.run(tests)
-      
-      assert_equal 0, results[:passed].length
-      assert_equal 1, results[:failed].length
-      result = results[:failed].first
-      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], result[:test]
-      assert_equal "expected: 0,\n     got: 4 (using ==)", result[:failure][:message]
-      assert_kind_of Array, result[:failure][:backtrace]
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.failed.length
     end
   end
 
@@ -99,18 +74,9 @@ class RSpecTest < Test::Unit::TestCase
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path)
-      runner = Tack::Runner.new(path.parent)
-      results = runner.run(tests)
-      
-      assert_equal 0, results[:passed].length
-      assert_equal 1, results[:failed].length
-
-      result = results[:failed].first
-      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], result[:test]
-      assert_match /was raised/, result[:failure][:message]
-      assert_kind_of Array, result[:failure][:backtrace]
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.failed.length
     end
   end
 
@@ -121,14 +87,9 @@ class RSpecTest < Test::Unit::TestCase
     end
     EOS
     in_rspec :describe => String, :body => body do |path|
-      set = Tack::TestSet.new(path.parent)
-      tests = set.tests_for(path)
-      runner = Tack::Runner.new(path.parent)
-      results = runner.run(tests)
-      
-      assert_equal 1, results[:passed].length
-      assert_equal 0, results[:failed].length
-      assert_equal [path.to_s, ["String"], "append length is sum of component string lengths"], results[:passed].first[:test]
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.passed.length
     end
   end
 
@@ -143,14 +104,9 @@ class RSpecTest < Test::Unit::TestCase
         end
       EOS
       in_rspec :describe => String, :body => body do |path|
-        set = Tack::TestSet.new(path.parent)
-        tests = set.tests_for(path)
-        runner = Tack::Runner.new(path.parent)
-        results = runner.run(tests)
-        
-        assert_equal 1, results[:passed].length
-        assert_equal 0, results[:failed].length
-        assert_equal [path.to_s, ["String", "in all cases"], "append length is sum of component string lengths"], results[:passed].first[:test]
+        raw_results = Tack::Runner.run_tests(path.parent, path)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 1, result_set.passed.length
       end
     end
 
