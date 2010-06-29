@@ -5,10 +5,10 @@ class ShouldaTest < Test::Unit::TestCase
   
   should "grab all tests" do
     body =<<-EOS
-       should "do something 2" do
+       should "do something 1" do
        end
 
-       should "do something 1" do
+       should "do something 2" do
        end
      EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|

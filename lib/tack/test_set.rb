@@ -2,8 +2,9 @@ module Tack
 
   class TestSet
     
-    def initialize(root_dir)
+    def initialize(root_dir, adapter=nil)
       @root_dir = root_dir
+      @adapter = adapter
     end
 
     def tests_for(paths, pattern=TestPattern.new)
@@ -17,12 +18,12 @@ module Tack
       end
 
       files.inject([]) { |tests, file|
-        adapter = Adapters::Adapter.for(file)
+        adapter = @adapter || Adapters::Adapter.for(file)
         tests += adapter.tests_for(file).select  do |_, contexts, description| 
           contexts = Array(contexts)
           description.match(pattern) || contexts.any? {|x| x.match(pattern)}
         end
-      }.sort
+      }
     end
 
     private 

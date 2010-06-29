@@ -4,21 +4,19 @@ class TestUnitTest < Test::Unit::TestCase
   include TestHelpers
 
   should "grab all tests" do
-    # By default, Test::Unit gets tests alphabetically,
-    # not in the order they were defined.
     body =<<-EOS
-    def test_two
+    def test_one
     end
 
-    def test_one
+    def test_two
     end
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       set = Tack::TestSet.new(path.parent)
       tests = set.tests_for(path)
       assert_equal 2, tests.length
-      assert_equal [file_name, ["FakeTest"], "test_one"], tests.first
-      assert_equal [file_name, ["FakeTest"], "test_two"], tests.last
+      assert_equal [file_name, ["FakeTest"], "test_one"], tests.sort.first
+      assert_equal [file_name, ["FakeTest"], "test_two"], tests.sort.last
     end
   end
 
