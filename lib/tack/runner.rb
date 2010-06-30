@@ -3,7 +3,7 @@ module Tack
   class Runner
 
     def self.run_tests(root, path, pattern=TestPattern.new)
-      test_set = TestSet.new(root)
+      test_set = TestSet.new
       tests = test_set.tests_for(path, pattern)
       runner = Runner.new(root)
       runner.run(tests)

@@ -12,7 +12,7 @@ class TestUnitTest < Test::Unit::TestCase
     end
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       assert_equal 2, tests.length
       assert_equal [file_name, ["FakeTest"], "test_one"], tests.sort.first
@@ -28,7 +28,7 @@ class TestUnitTest < Test::Unit::TestCase
     end
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path, "two")
       assert_equal 1, tests.length
       assert_equal [file_name, ["FakeTest"], "test_two"], tests.first
@@ -43,7 +43,7 @@ class TestUnitTest < Test::Unit::TestCase
     end
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path, /two/)
       assert_equal 1, tests.length
       assert_equal [file_name, ["FakeTest"], "test_two"], tests.first
@@ -57,7 +57,7 @@ class TestUnitTest < Test::Unit::TestCase
     end
 EOS
     with_test_class(:body => body) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
       results = runner.run(tests)
@@ -78,7 +78,7 @@ EOS
     end
 EOS
     with_test_class(:body => body) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
       results = runner.run(tests)
@@ -99,7 +99,7 @@ EOS
     end
 EOS
     with_test_class(:body => body) do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
       results = runner.run(tests)

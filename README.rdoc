@@ -17,7 +17,7 @@ Here is a basic example of where this is going.
     runner.use Tack::Formatters::ProgressBar
   end
 
-  set = Tack::TestSet.new(Dir.pwd)
+  set = Tack::TestSet.new
 
   # Get the tests. Tests are currently represented like so:
   # [["foo_test.rb", "test_one", "foo_test.rb", "test_two"]

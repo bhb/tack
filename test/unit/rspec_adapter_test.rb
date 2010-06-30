@@ -32,8 +32,7 @@ class RSpecAdapterTest < Test::Unit::TestCase
       end
       EOS
       in_rspec :describe => String, :body => body do |path|
-        set = Tack::TestSet.new(path.parent)
-        tests = set.tests_for(path)
+        tests = RSpecAdapter.new.tests_for(path)
         assert_equal 1, tests.length
         assert_equal [path.to_s, ["String", "sometimes", "in some cases"], "something"], tests.first
       end

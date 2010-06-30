@@ -59,7 +59,7 @@ runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
   runner.use Tack::Formatters::ProgressBar
 end
 
-set = Tack::TestSet.new(Dir.pwd)
+set = Tack::TestSet.new
 tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
 
 runs = (options.fetch(:shuffle_runs) {1}).to_i

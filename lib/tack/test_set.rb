@@ -2,8 +2,7 @@ module Tack
 
   class TestSet
     
-    def initialize(root_dir, adapter=nil)
-      @root_dir = root_dir
+    def initialize(adapter=nil)
       @adapter = adapter
     end
 

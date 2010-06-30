@@ -12,7 +12,7 @@ class ShouldaTest < Test::Unit::TestCase
        end
      EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       assert_equal 2, tests.length
       assert_equal [file_name, ["FooTest"], "do something 1"], tests.first
@@ -29,7 +29,7 @@ class ShouldaTest < Test::Unit::TestCase
        end
      EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path, /else/)
       assert_equal 1, tests.length
       assert_equal [file_name, ["FooTest"], "do something else"], tests.first
@@ -49,7 +49,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       assert_equal 2, tests.length
       assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
@@ -77,7 +77,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       assert_equal 3, tests.length
       assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests[0]
@@ -94,7 +94,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path, /in some context/)
       assert_equal 1, tests.length
       assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
@@ -108,7 +108,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     EOS
     with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new(path.parent)
+      set = Tack::TestSet.new
       tests = set.tests_for(path)
       runner = Tack::Runner.new(path.parent)
       results = runner.run(tests)
@@ -130,7 +130,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     EOS
       with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-        set = Tack::TestSet.new(path.parent)
+        set = Tack::TestSet.new
         tests = set.tests_for(path)
         runner = Tack::Runner.new(path.parent)
         results = runner.run(tests)
@@ -150,7 +150,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
       EOS
       with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-        set = Tack::TestSet.new(path.parent)
+        set = Tack::TestSet.new
         tests = set.tests_for(path)
         runner = Tack::Runner.new(path.parent)
         results = runner.run(tests)

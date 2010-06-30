@@ -20,30 +20,30 @@ class TestSetTest < Test::Unit::TestCase
   end
 
   should "grab all tests by default" do 
-    test_set = TestSet.new(nil, FakeAdapter1.new)
+    test_set = TestSet.new(FakeAdapter1.new)
     assert_equal FakeAdapter1.tests, test_set.tests_for("foo_test.rb")
   end
 
   should "filter description based on string" do
-    test_set = TestSet.new(nil, FakeAdapter1.new)
+    test_set = TestSet.new(FakeAdapter1.new)
     assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "it does something"]], 
     test_set.tests_for("foo_test.rb", "does something")
   end
 
   should "filter description based on regexp" do
-    test_set = TestSet.new(nil, FakeAdapter1.new)
+    test_set = TestSet.new(FakeAdapter1.new)
     assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "it does something"]], 
     test_set.tests_for("foo_test.rb", /does/)
   end
 
   should "filter context based on string" do
-    test_set = TestSet.new(nil, FakeAdapter1.new)
+    test_set = TestSet.new(FakeAdapter1.new)
     assert_equal [["foo_test.rb", ["Foo", "sometimes"], "test something"]], 
     test_set.tests_for("foo_test.rb", 'times')
   end
 
   should "filter context based on regexp" do
-    test_set = TestSet.new(nil, FakeAdapter1.new)
+    test_set = TestSet.new(FakeAdapter1.new)
     assert_equal [["foo_test.rb", ["Foo", "sometimes"], "test something"]], 
     test_set.tests_for("foo_test.rb", /times/)
   end
@@ -67,7 +67,7 @@ class TestSetTest < Test::Unit::TestCase
         d.file 'bar_test.rb'
         d.file 'foo_test.rb'
       end
-      test_set = TestSet.new(nil, FakeAdapter2.new)
+      test_set = TestSet.new(FakeAdapter2.new)
       tests = test_set.tests_for(c+'test_dir') 
       assert_equal [["bar_test.rb", ["Bar"], "test bar"],
                     ["foo_test.rb", ["Foo"], "test foo"]], tests
@@ -80,7 +80,7 @@ class TestSetTest < Test::Unit::TestCase
         d.file 'foo.rb' # not a test file
       end
       adapter = stub_everything(:tests_for => [["foo_test.rb", ["Foo"], "test foo"]])
-      test_set = TestSet.new(nil, adapter)
+      test_set = TestSet.new(adapter)
       tests = test_set.tests_for(c+'test_dir') 
       assert_equal [], tests
     end
