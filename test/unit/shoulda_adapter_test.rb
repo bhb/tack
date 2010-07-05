@@ -37,6 +37,26 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         assert_equal [file_name, ["StringTest", "sometimes", "in some cases"], "do something"], tests.first
       end
     end
+
+    should "differentiate between identically named tests with different contexts" do
+      body =<<-EOS
+      context "in some context" do
+        should "do something" do
+        end
+      end
+
+      context "in some other context" do
+        should "do something" do
+        end
+      end
+    EOS
+    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
+      tests = ShouldaAdapter.new.tests_for(path)
+      assert_equal 2, tests.length
+      assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
+      assert_equal [file_name, ["FooTest", "in some other context"], "do something"], tests.last
+    end
+  end
     
   end
 

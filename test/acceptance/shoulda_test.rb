@@ -2,162 +2,111 @@ require 'test_helper'
 
 class ShouldaTest < Test::Unit::TestCase
   include TestHelpers
-  
-  should "grab all tests" do
-    body =<<-EOS
-       should "do something 1" do
-       end
 
-       should "do something 2" do
-       end
-     EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path)
-      assert_equal 2, tests.length
-      assert_equal [file_name, ["FooTest"], "do something 1"], tests.first
-      assert_equal [file_name, ["FooTest"], "do something 2"], tests.last
+  should "run tests that match substring" do
+    body = <<-EOS
+    should "do something" do
     end
-  end
-  
-  should "grab all tests matching pattern" do
-    body =<<-EOS
-       should "do something" do
-       end
-     
-       should "do something else" do
-       end
-     EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path, /else/)
-      assert_equal 1, tests.length
-      assert_equal [file_name, ["FooTest"], "do something else"], tests.first
+
+    should "do nothing" do
     end
-  end
-
-  should "differentiate between identically named tests with different contexts" do
-    body =<<-EOS
-      context "in some context" do
-        should "do something" do
-        end
-      end
-
-      context "in some other context" do
-        should "do something" do
-        end
-      end
     EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path)
-      assert_equal 2, tests.length
-      assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
-      assert_equal [file_name, ["FooTest", "in some other context"], "do something"], tests.last
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path, "some")
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
     end
   end
 
-  should "include nested contexts" do
-    body =<<-EOS
-      context "in some context" do
+  should "run tests that match regular expression" do
+    body = <<-EOS
+    should "do something" do
+    end
+
+    should "do nothing" do
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path, /nothing/)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
+    end
+  end
+
+  should "run tests that are in context which matches regexp" do
+    body = <<-EOS
+    context "sometimes" do
+      context "in some cases" do
+
         should "do something" do
         end
 
-        context "in some subcontext" do
+        should "do another thing" do
+        end
 
-          should "do something special" do
+      end
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 2, result_set.length
+    end
+  end
+
+  should "run failing spec" do
+    body = <<-EOS
+    should "append length is sum of component string lengths" do
+      assert_equal ("ab"+"cd").length, ("ab".length - "cd".length)
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.failed.length
+    end
+  end
+
+  should "run spec that raises error" do
+    body = <<-EOS
+    should "append length is sum of component string lengths" do
+      raise "failing!"
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.failed.length
+    end
+  end
+
+  should "run successful spec" do
+    body = <<-EOS
+    should "append length is sum of component string lengths" do
+      assert_equal ("ab"+"cd").length, ("ab".length + "cd".length)
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.passed.length
+    end
+  end
+
+  context "in a context" do
+    
+    should "run successful spec" do
+      body = <<-EOS
+        context "in all cases" do
+          should "append length is sum of component string lengths" do
+            assert_equal ("ab"+"cd").length, ("ab".length + "cd".length)
           end
-
         end
-      end
-
-      context "in some other context" do
-        should "do something else" do
-        end
-      end
-    EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path)
-      assert_equal 3, tests.length
-      assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests[0]
-      assert_equal [file_name, ["FooTest", "in some context", "in some subcontext"], "do something special"], tests[1]
-      assert_equal [file_name, ["FooTest", "in some other context"], "do something else"], tests[2]
-    end
-  end
-
-  should "grab all tests in contexts that match pattern" do
-    body =<<-EOS
-      context "in some context" do
-        should "do something" do
-        end
-      end
-    EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path, /in some context/)
-      assert_equal 1, tests.length
-      assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
-    end
-  end
-
-  should "run succesful test" do
-    body =<<-EOS
-      should "pass" do
-        assert_equal 2, 1+1
-      end
-    EOS
-    with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-      set = Tack::TestSet.new
-      tests = set.tests_for(path)
-      runner = Tack::Runner.new(path.parent)
-      results = runner.run(tests)
-
-      assert_equal 1, results[:passed].length
-      assert_equal 0, results[:failed].length
-      assert_equal [file_name, ["FooTest"], "pass"], results[:passed].first[:test]
-    end
-  end
-
-  context "in a Shoulda context" do
-
-    should "run successful test" do
-      body =<<-EOS
-      context "in some context" do
-        should "pass" do
-          assert_equal 2, 1+1
-        end
-      end
-    EOS
-      with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-        set = Tack::TestSet.new
-        tests = set.tests_for(path)
-        runner = Tack::Runner.new(path.parent)
-        results = runner.run(tests)
-
-        assert_equal 1, results[:passed].length
-        assert_equal 0, results[:failed].length
-        assert_equal "pass", results[:passed].first[:test].last
-      end
-    end
-
-    should "run failing test" do
-      body =<<-EOS
-      context "in some context" do
-        should "flunk" do
-          flunk
-        end
-      end
       EOS
-      with_test_class(:body => body, :class_name => 'FooTest') do |file_name, path|
-        set = Tack::TestSet.new
-        tests = set.tests_for(path)
-        runner = Tack::Runner.new(path.parent)
-        results = runner.run(tests)
-
-        assert_equal 0, results[:passed].length
-        assert_equal 1, results[:failed].length
-        assert_equal [file_name, ["FooTest", "in some context"], "flunk"], results[:failed].first[:test]
+      with_test_class :body => body do |file_name, path|
+        raw_results = Tack::Runner.run_tests(path.parent, path)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 1, result_set.passed.length
       end
     end
 
