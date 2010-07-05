@@ -65,7 +65,7 @@ module Tack
       def get_tests(file, context) 
         tests = []
         context.shoulds.each do |should|
-          tests << [file, ancestors(context), should[:name]]
+          tests << [file.to_s, ancestors(context), should[:name]]
         end
         context.subcontexts.each do |subcontext|
           tests += get_tests(file, subcontext)
@@ -83,19 +83,6 @@ module Tack
         [parent.to_s] + ancestors
       end
 
-      def get_context_names(klass)
-        contexts = Shoulda.all_contexts.select { |context| context.parent == klass }
-        contexts.inject [klass.to_s] do |context_names, context|
-          
-        end
-      end
-
-      def for_subcontexts(context)
-        context.subcontexts.each do |subcontext|
-          yield subcontext if block_given?
-        end
-      end
-
       def run(path, contexts, description)
         results = { :passed => [],
           :failed => [],
@@ -104,7 +91,11 @@ module Tack
         # Note that this won't work if there are multiple classes in a file
         klass = self.class.test_classes_for(path).first 
 
-        test = klass.new(test_name([path,contexts,description]))
+        begin
+          test = klass.new(test_name([path,contexts,description]))
+        rescue NameError
+          raise NoMatchingTestError, "No matching test found" 
+        end
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
@@ -116,7 +107,7 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(path, contexts, description) #test_name([path,context,description]))
+          results[:passed] << build_result(path, contexts, description) 
         end
         results
       end
@@ -135,12 +126,12 @@ module Tack
       end
       
       def build_result(path, contexts, description, failure=nil)
-        { :test => [path, contexts, description], 
+        { :test => [path.to_s, contexts, description], 
           :failure => build_failure(failure) }
       end
 
       def build_failure(failure)
-        return {} if failure.nil?
+        return nil if failure.nil?
         case failure
         when Test::Unit::Error
           { :message => "#{failure.exception.class} was raised: #{failure.exception.message}",
@@ -183,16 +174,6 @@ module Tack
              test_class.instance_method(method_name).arity == -1
              )
         end
-      end
-
-      def get_test_classes
-        test_classes = []
-        ObjectSpace.each_object(Class) do |klass|
-          if(Test::Unit::TestCase > klass)
-            test_classes << klass
-          end
-        end
-        test_classes
       end
 
     end

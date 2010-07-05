@@ -61,6 +61,10 @@ EOS
     end
   end
 
+  def in_shoulda(args, &block)
+    with_test_class(args.merge(:shoulda => true), &block)
+  end
+
 end
 
 class Test::Unit::TestCase
