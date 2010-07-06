@@ -14,7 +14,7 @@ module TestHelpers
 
   def in_rspec(args)
     body = args.fetch(:body)
-    describe = args.fetch(:describe)
+    describe = args.fetch(:describe) { String }
     within_construct(false) do |c|
       file_name = 'fake_spec.rb'
       c.file file_name do

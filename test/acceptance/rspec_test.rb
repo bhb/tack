@@ -11,7 +11,7 @@ class RSpecTest < Test::Unit::TestCase
     it "does nothing" do
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, "some")
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
@@ -26,7 +26,7 @@ class RSpecTest < Test::Unit::TestCase
     it "does nothing" do
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /does/)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
@@ -47,7 +47,7 @@ class RSpecTest < Test::Unit::TestCase
       end
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 2, result_set.length
@@ -60,10 +60,23 @@ class RSpecTest < Test::Unit::TestCase
       ("ab"+"cd").length.should == ("ab".length - "cd".length)
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
+    end
+  end
+
+  should "run pending spec" do
+    body = <<-EOS
+    specify "append length is sum of component string lengths" do
+      pending
+    end
+    EOS
+    in_rspec :body => body do |path|
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.pending.length
     end
   end
 
@@ -73,7 +86,7 @@ class RSpecTest < Test::Unit::TestCase
       raise "failing!"
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
@@ -86,7 +99,7 @@ class RSpecTest < Test::Unit::TestCase
       ("ab"+"cd").length.should == ("ab".length + "cd".length)
     end
     EOS
-    in_rspec :describe => String, :body => body do |path|
+    in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.passed.length
@@ -103,7 +116,7 @@ class RSpecTest < Test::Unit::TestCase
           end
         end
       EOS
-      in_rspec :describe => String, :body => body do |path|
+      in_rspec :body => body do |path|
         raw_results = Tack::Runner.run_tests(path.parent, path)
         result_set = Tack::ResultSet.new(raw_results)
         assert_equal 1, result_set.passed.length
