@@ -54,7 +54,7 @@ class ShouldaTest < Test::Unit::TestCase
     end
   end
 
-  should "run failing spec" do
+  should "run failing test" do
     body = <<-EOS
     should "append length is sum of component string lengths" do
       assert_equal ("ab"+"cd").length, ("ab".length - "cd".length)
@@ -67,7 +67,20 @@ class ShouldaTest < Test::Unit::TestCase
     end
   end
 
-  should "run spec that raises error" do
+  should "run pending test" do
+    body = <<-EOS
+    should_eventually "append length is sum of component string lengths" do
+      assert_equal ("ab"+"cd").length, ("ab".length - "cd".length)
+    end
+    EOS
+    with_test_class :body => body do |file_name, path|
+      raw_results = Tack::Runner.run_tests(path.parent, path)
+      result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.pending.length
+    end
+  end
+
+  should "run test that raises error" do
     body = <<-EOS
     should "append length is sum of component string lengths" do
       raise "failing!"
@@ -80,7 +93,7 @@ class ShouldaTest < Test::Unit::TestCase
     end
   end
 
-  should "run successful spec" do
+  should "run successful test" do
     body = <<-EOS
     should "append length is sum of component string lengths" do
       assert_equal ("ab"+"cd").length, ("ab".length + "cd".length)
@@ -95,7 +108,7 @@ class ShouldaTest < Test::Unit::TestCase
 
   context "in a context" do
     
-    should "run successful spec" do
+    should "run successful test" do
       body = <<-EOS
         context "in all cases" do
           should "append length is sum of component string lengths" do

@@ -55,8 +55,26 @@ class ShouldaAdapterTest < Test::Unit::TestCase
       assert_equal 2, tests.length
       assert_equal [file_name, ["FooTest", "in some context"], "do something"], tests.first
       assert_equal [file_name, ["FooTest", "in some other context"], "do something"], tests.last
+      end
     end
-  end
+
+    should "return pending tests" do
+      body = <<-EOS
+      should_eventually "do something" do
+      end
+
+      context "sometimes" do
+        should_eventually "do something else" do
+        end
+      end
+      EOS
+      with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+        tests = ShouldaAdapter.new.tests_for(path)
+        assert_equal 2, tests.length
+        assert_equal [file_name, ["StringTest"], "do something"], tests.first
+        assert_equal [file_name, ["StringTest", "sometimes"], "do something else"], tests.last
+      end      
+    end
     
   end
 
@@ -99,15 +117,14 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
       end
 
-      should_eventually "run a pending test" do
+      should "run a pending test" do
         body = <<-EOS
-        should_eventually "do_something" do
+        should_eventually "do something" do
         end
         EOS
         with_test_class :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "do something"]
           results = Tack::ResultSet.new(ShouldaAdapter.new.run(*test))
-          
           assert_equal 1, results.pending.length
           assert_equal 0, results.passed.length
           assert_equal 0, results.failed.length
@@ -192,11 +209,10 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
       end
 
-      should_eventually "run a pending test" do
+      should "run a pending test" do
         body = <<-EOS
         context "sometimes" do 
           should_eventually "do something" do
-            pending
           end
         end
         EOS
@@ -209,6 +225,80 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           assert_equal 0, results.failed.length
           result = results.pending.first
           assert_equal Tack::Result.new(:test => test), result
+        end
+      end
+
+      context "with identical context name" do
+        
+        should "run a successful test" do
+          body = <<-EOS
+          context "String" do
+            should "do something" do
+              assert_equal 2, 1+1
+            end
+          end
+          EOS
+          with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+            test = [file_name, ["StringTest", "String"], "do something"]
+            results = Tack::ResultSet.new(ShouldaAdapter.new.run(*test))
+          
+            assert_equal 1, results.passed.length
+          end
+        end
+
+        # This is a known bug. There doesn't appear to be a way to easily
+        # catch this case with the current Shoulda code. I may have to 
+        # do some fancy monkey patching to make this work, but it's a rare
+        # case, so I'm punting for now.
+        should_eventually "run a pending test" do
+           body = <<-EOS
+           context "String" do 
+             should_eventually "do something" do
+             end
+           end
+           EOS
+           with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+             test = [file_name, ["StringTest", "String"], "do something"]
+             results = Tack::ResultSet.new(ShouldaAdapter.new.run(*test))
+           
+             assert_equal 1, results.pending.length
+           end
+         end
+      end
+
+      should "raise an error when running a pending test from another context" do
+        body = <<-EOS
+        context "sometimes" do 
+          should_eventually "do something" do
+          end
+        end
+        context "other times" do
+          should_eventually "do something else" do
+          end
+        end
+        EOS
+        with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+          test = [file_name, ["StringTest", "other times"], "do something"]
+          error = assert_raises Tack::NoMatchingTestError do
+            ShouldaAdapter.new.run(*test)
+          end
+        end
+      end
+
+      should "handle nested contexts with pending tests" do
+        body = <<-EOS
+        context "sometimes" do 
+          context "in some cases" do   
+            should_eventually "do something" do
+            end
+          end
+        end
+        EOS
+        with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+          test = [file_name, ["StringTest", "sometimes", "in some cases"], "do something"]
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run(*test))
+          
+          assert_equal 1, results.pending.length
         end
       end
 

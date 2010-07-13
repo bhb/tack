@@ -23,7 +23,17 @@ module Shoulda
       @all_contexts ||= []
     end
 
+    def reset_contexts!
+      @all_contexts = nil
+    end
+
     def add_context(context)
+      def context.print_should_eventuallys
+        # suppress output
+      end
+      def context.warn(_)
+        # suppress output
+      end
       all_contexts << context unless context.am_subcontext?
       original_add_context(context)
     end
@@ -39,27 +49,36 @@ module Tack
     class ShouldaAdapter
 
       def self.shoulda_file?(path)
-        require path
-        test_classes = self.test_classes_for(path)
-        return false if test_classes.empty?
-        test_classes.any? do |klass|
-          test_methods = self.test_methods(klass)
-          test_methods.any? do |test_method|
-            test_method =~ /^test\: .*\. $/
-          end
-        end
+        load path
+        # test_classes = self.test_classes_for(path)
+#         return false if test_classes.empty?
+#         test_classes.any? do |klass|
+#           test_methods = self.test_methods(klass)
+#           test_methods.any? do |test_method|
+#             test_method =~ /^test\: .*\. $/
+#           end
+#         end
+        !Shoulda.all_contexts.empty?
+      ensure
+        Shoulda.reset_contexts!
       end
 
       def tests_for(file)
-        require file
+        load file
         classes = self.class.test_classes_for(file)
         classes.inject([]) do |tests, klass|
           contexts = Shoulda.all_contexts.select { |context| context.parent == klass }
           contexts.each do |context|
             tests += get_tests(file,context)
           end
+          build_should_eventually_chains(Shoulda.all_contexts).each do |chain|
+            context, description = chain
+            tests << [file.to_s, context, description]
+          end
           tests
         end
+      ensure
+        Shoulda.reset_contexts!
       end
 
       def get_tests(file, context) 
@@ -84,17 +103,24 @@ module Tack
       end
 
       def run(path, contexts, description)
+        x = Shoulda.all_contexts
         results = { :passed => [],
           :failed => [],
           :pending => []}
-        require(path)
+        load(path)
         # Note that this won't work if there are multiple classes in a file
         klass = self.class.test_classes_for(path).first 
-
         begin
           test = klass.new(test_name([path,contexts,description]))
         rescue NameError
-          raise NoMatchingTestError, "No matching test found" 
+          chains = build_should_eventually_chains(Shoulda.all_contexts)
+          if chains.member?([contexts, description])
+            results[:pending] << build_result(path, contexts, description)
+            return results
+          else
+            Shoulda.reset_contexts!
+            raise NoMatchingTestError, "No matching test found" 
+          end
         end
         result = Test::Unit::TestResult.new
 
@@ -110,9 +136,49 @@ module Tack
           results[:passed] << build_result(path, contexts, description) 
         end
         results
+      ensure
+        Shoulda.reset_contexts!
       end
 
       private
+
+      def build_should_eventually_chains(contexts)
+        chains = []
+        # if contexts.length == 1
+#           context = contexts.first
+#           context.should_eventuallys.each do |should_eventually|
+#             chains << [[context.parent.to_s], should_eventually[:name]]
+#           end
+#         else
+          contexts.each do |context|
+            _build_should_eventually_chains(context, chains)
+          end
+        #end
+        #debugger
+        chains
+      end
+
+      def _build_should_eventually_chains(context, chains)
+        context.should_eventuallys.each do |should_eventually|
+          chains << [context_chain(context), should_eventually[:name]]
+        end
+        context.subcontexts.each do |subcontext|
+          _build_should_eventually_chains(subcontext, chains)
+        end
+        chains
+      end
+      
+      def context_chain(context)
+        if context.am_subcontext?
+          context_chain(context.parent) + [context.name]
+        else
+          if context.name + "Test" == context.parent.to_s
+            [context.parent.to_s]
+          else
+            [context.parent.to_s, context.name]
+          end
+        end
+      end
 
       def test_name(test)
         _, contexts, description = test
