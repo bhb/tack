@@ -49,6 +49,7 @@ module Tack
     class ShouldaAdapter
 
       def self.shoulda_file?(path)
+        Shoulda.reset_contexts!
         load path
         # test_classes = self.test_classes_for(path)
 #         return false if test_classes.empty?
@@ -64,6 +65,7 @@ module Tack
       end
 
       def tests_for(file)
+        Shoulda.reset_contexts!
         load file
         classes = self.class.test_classes_for(file)
         classes.inject([]) do |tests, klass|
@@ -103,10 +105,10 @@ module Tack
       end
 
       def run(path, contexts, description)
-        x = Shoulda.all_contexts
         results = { :passed => [],
           :failed => [],
           :pending => []}
+        Shoulda.reset_contexts!
         load(path)
         # Note that this won't work if there are multiple classes in a file
         klass = self.class.test_classes_for(path).first 
