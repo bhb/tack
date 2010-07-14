@@ -35,6 +35,7 @@ module Tack
     autoload :Profiler, 'tack/formatters/profiler'
     autoload :TotalTime, 'tack/formatters/total_time'
     autoload :PrintFailures, 'tack/formatters/print_failures'
+    autoload :PrintPending, 'tack/formatters/print_pending'
 
   end
 
