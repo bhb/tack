@@ -35,6 +35,9 @@ option_parser = OptionParser.new do |opts|
   opts.on("-R", "--reverse", "Run tests in reverse order.") do 
     options[:reverse] = true
   end
+  opts.on("-F", "--fork", "Run each test in a separate process") do
+    options[:fork] = true
+  end
   opts.on_tail("-h","--help", "Show this message") do
     puts opts
     exit
@@ -53,6 +56,7 @@ runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
   runner.use Tack::Reverse if options[:reverse]
   runner.use Tack::Shuffle if options[:shuffle_runs]
   runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
+  runner.use Tack::Fork if options[:fork]
   runner.use Tack::Formatters::TotalTime
   runner.use Tack::Formatters::PrintFailures
   runner.use Tack::Formatters::BasicSummary

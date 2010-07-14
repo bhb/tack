@@ -2,6 +2,10 @@ module Tack
 
   module Middleware
     
+    def initialize(app)
+      @app = app
+    end
+
     def run_suite(tests)
       @app.run_suite(tests)
     end

@@ -18,6 +18,7 @@ module Tack
 
   autoload :Shuffle, 'tack/shuffle'
   autoload :Reverse, 'tack/reverse'
+  autoload :Fork, 'tack/fork'
 
   module Adapters
 
