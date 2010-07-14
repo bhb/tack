@@ -55,8 +55,8 @@ runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
   runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
   runner.use Tack::Formatters::TotalTime
   runner.use Tack::Formatters::PrintFailures
-  runner.use Tack::Formatters::PrintPending
   runner.use Tack::Formatters::BasicSummary
+  runner.use Tack::Formatters::PrintPending
   runner.use Tack::Formatters::ProgressBar
 end
 

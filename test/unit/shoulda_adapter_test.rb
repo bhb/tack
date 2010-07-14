@@ -75,6 +75,22 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         assert_equal [file_name, ["StringTest", "sometimes"], "do something else"], tests.last
       end      
     end
+
+    should "return pending tests in nested contexts" do
+      body = <<-EOS
+      context "sometimes" do
+        context "in some cases" do
+          should_eventually "do something else" do
+          end
+        end
+      end
+      EOS
+      with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+        tests = ShouldaAdapter.new.tests_for(path)
+        assert_equal 1, tests.length
+        assert_equal [file_name, ["StringTest", "sometimes", "in some cases"], "do something else"], tests.last
+      end      
+    end
     
   end
 
@@ -287,7 +303,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
 
       should "handle nested contexts with pending tests" do
         body = <<-EOS
-        context "sometimes" do 
+        context "sometimes" do
           context "in some cases" do   
             should_eventually "do something" do
             end

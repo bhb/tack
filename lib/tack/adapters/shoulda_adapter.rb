@@ -152,7 +152,7 @@ module Tack
 #             chains << [[context.parent.to_s], should_eventually[:name]]
 #           end
 #         else
-          contexts.each do |context|
+        contexts.reject{|context| context.am_subcontext?}.each do |context|
             _build_should_eventually_chains(context, chains)
           end
         #end
