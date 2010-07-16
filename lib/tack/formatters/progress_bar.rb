@@ -5,10 +5,6 @@ module Tack
     class ProgressBar
       include Middleware
 
-      def initialize(app)
-        @app = app
-      end
-
       def run_suite(tests)
         returning @app.run_suite(tests) do 
           puts

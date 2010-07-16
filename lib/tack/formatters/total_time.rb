@@ -5,10 +5,6 @@ module Tack
     class TotalTime
       include Middleware
 
-      def initialize(app)
-        @app = app
-      end
-
       def run_suite(tests)
         time = Time.now
         returning @app.run_suite(tests) do

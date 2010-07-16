@@ -3,10 +3,6 @@ module Tack
   class Shuffle
     include Middleware
     
-    def initialize(app)
-      @app = app
-    end
-
     def run_suite(tests)
       puts "--> Shuffling tests"
 
