@@ -53,10 +53,10 @@ if includes = options[:include]
 end
 
 runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
-  runner.use Tack::Reverse if options[:reverse]
-  runner.use Tack::Shuffle if options[:shuffle_runs]
+  runner.use Tack::Middleware::Reverse if options[:reverse]
+  runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
   runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
-  runner.use Tack::Fork if options[:fork]
+  runner.use Tack::Middleware::Fork if options[:fork]
   runner.use Tack::Formatters::TotalTime
   runner.use Tack::Formatters::PrintFailures
   runner.use Tack::Formatters::BasicSummary

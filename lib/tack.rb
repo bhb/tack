@@ -14,11 +14,13 @@ module Tack
   autoload :Result, 'tack/result'
   #autoload :Test, 'tack/test'
   
-  # middlewares
+  module Middleware
 
-  autoload :Shuffle, 'tack/shuffle'
-  autoload :Reverse, 'tack/reverse'
-  autoload :Fork, 'tack/fork'
+    autoload :Shuffle, 'tack/middleware/shuffle'
+    autoload :Reverse, 'tack/middleware/reverse'
+    autoload :Fork, 'tack/middleware/fork'
+    
+  end
 
   module Adapters
 
