@@ -1,32 +1,53 @@
-= tack
+= Tack
 
-USE AT YOUR OWN RISK. This is highly experimental and the interface is changing rapidly. 
+USE AT YOUR OWN RISK. Tack is a work in progress and the API will change in the future.
 
-Here is a basic example of where this is going.
+Tack is a {interface gem}[http://jamesarosen.com/post/783132142/on-interface-gems] for testing. No matter what test framework you use, it provides a unified API to query a test suite and run tests. Additionally, it provides a simple middleware system so anyone can write test tools that will immediately work for all supported test frameworks.
 
-  # A really early look how Tack runners might be constructed. Everything in this example may change since the code is really new.
+In other words, Tack is like Rack, but for testing. Tack currently supports Test::Unit, Shoulda, and RSpec.
 
-  runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
-    runner.use Tack::Reverse if options[:reverse] # Optionally reverse the order of tests
-    runner.use Tack::Shuffle if options[:shuffle] # Optionally shuffle the tests
-    runner.use Tack::Formatters::Profiler, # Write out some profiling info
-      :tests => options[:profile_number].to_i if options[:profile_number]
-    runner.use Tack::Formatters::TotalTime # Display the total running time
-    runner.use Tack::Formatters::PrintFailures
-    runner.use Tack::Formatters::BasicSummary # e.g. 5 tests, 2 failures, 0 pending
-    runner.use Tack::Formatters::ProgressBar
-  end
+== Who cares?
 
-  set = Tack::TestSet.new
+=== Ruby hackers in general
 
-  # Get the tests. Tests are currently represented like so:
-  # [["foo_test.rb", "test_one", "foo_test.rb", "test_two"]
-  # This will have to get more complicated as I add support for
-  # contexts
-  tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
+Out of the box, Tack provides a command line tool to run any type of test suite (even one that includes tests written in different frameworks). As a result, you can write tests in any framework and run them using the same tool with the same options.
 
-  runner.run(tests) # Run the tests
+Tack also supports customization via middleware, so you can customize its behavior and output to your liking.
 
+Here are the options currently supported:
+
+  Usage: tack [options] [file]
+      -I, --include PATH               Specify $LOAD_PATH (may be used more than once).
+      -n, --name PATTERN               Run only tests that match pattern.
+      -u, --debugger                   Enable ruby-debugging.
+      -o, --profile [NUMBER]           Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).
+      -s, --shuffle [RUNS]             Run tests in randomized order RUNS times (defaults to 1).
+      -R, --reverse                    Run tests in reverse order.
+      -F, --fork                       Run each test in a separate process
+      -h, --help                       Show this message
+
+=== Test tool hackers
+
+If you are building a test tool, it's a pain to write bindings to each test framework you want to support (and make sure it works across versions). Instead, write your app to use the Tack API and you'll support all Tack-compatible frameworks without any additional work.
+
+Additionally, Tack's middleware system makes it easy to mix and match functionality, so your tool will play nicely with other tools.
+
+=== Test framework hackers
+
+If you're building a new test framework, you'll get tons of existing tools and functionality by making a Tack adapter for your library.
+
+=== IDE hackers
+
+Tack's unified API for displaying all tests in a suite and running them selectively makes building IDE support for many testing frameworks simple.
+
+== Upcoming features
+
+Tack is a work in progress but many features are coming up. Help is appreciated.
+
+* Support for Cucumber, Riot, Bacon, and more
+* Per-project configuration file (.tack) for configuring middleware (like a rackup file)
+* Rake tasks
+* Documentation on the actual API
 
 == Note on Patches/Pull Requests
  
