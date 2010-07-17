@@ -3,22 +3,22 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 module Tack
 
-  autoload :Runner, 'tack/runner'
-  autoload :TestSet, 'tack/test_set'
   autoload :Middleware, 'tack/middleware'
-  autoload :TestPattern, 'tack/test_pattern'
   autoload :NoMatchingTestError, 'tack/no_matching_test_error'
+  autoload :Runner, 'tack/runner'
+  autoload :TestPattern, 'tack/test_pattern'
+  autoload :TestSet, 'tack/test_set'
 
   # convenience objects
-  autoload :ResultSet, 'tack/result_set'
   autoload :Result, 'tack/result'
+  autoload :ResultSet, 'tack/result_set'
   #autoload :Test, 'tack/test'
   
   module Middleware
 
-    autoload :Shuffle, 'tack/middleware/shuffle'
-    autoload :Reverse, 'tack/middleware/reverse'
     autoload :Fork, 'tack/middleware/fork'
+    autoload :Reverse, 'tack/middleware/reverse'
+    autoload :Shuffle, 'tack/middleware/shuffle'
     
   end
 
@@ -26,19 +26,20 @@ module Tack
 
     autoload :Adapter, 'tack/adapters/adapter'
     autoload :RSpecAdapter, 'tack/adapters/rspec_adapter'
-    autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
     autoload :ShouldaAdapter, 'tack/adapters/shoulda_adapter'
+    autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
 
   end
   
   module Formatters
     
     autoload :BasicSummary, 'tack/formatters/basic_summary'
-    autoload :ProgressBar, 'tack/formatters/progress_bar'
-    autoload :Profiler, 'tack/formatters/profiler'
-    autoload :TotalTime, 'tack/formatters/total_time'
+    autoload :Newline, 'tack/formatters/newline'
     autoload :PrintFailures, 'tack/formatters/print_failures'
     autoload :PrintPending, 'tack/formatters/print_pending'
+    autoload :Profiler, 'tack/formatters/profiler'
+    autoload :ProgressBar, 'tack/formatters/progress_bar'
+    autoload :TotalTime, 'tack/formatters/total_time'
 
   end
 
