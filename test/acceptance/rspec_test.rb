@@ -76,6 +76,7 @@ class RSpecTest < Test::Unit::TestCase
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
       assert_equal 1, result_set.pending.length
     end
   end
@@ -89,6 +90,7 @@ class RSpecTest < Test::Unit::TestCase
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
       assert_equal 1, result_set.failed.length
     end
   end
@@ -102,6 +104,7 @@ class RSpecTest < Test::Unit::TestCase
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
+      assert_equal 1, result_set.length
       assert_equal 1, result_set.passed.length
     end
   end
@@ -119,6 +122,7 @@ class RSpecTest < Test::Unit::TestCase
       in_rspec :body => body do |path|
         raw_results = Tack::Runner.run_tests(path.parent, path)
         result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 1, result_set.length
         assert_equal 1, result_set.passed.length
       end
     end

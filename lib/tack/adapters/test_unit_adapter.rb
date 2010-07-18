@@ -101,16 +101,6 @@ module Tack
         end
       end
 
-      def get_test_classes
-        test_classes = []
-        ObjectSpace.each_object(Class) do |klass|
-          if(Test::Unit::TestCase > klass)
-            test_classes << klass
-          end
-        end
-        test_classes
-      end
-
     end
 
   end
