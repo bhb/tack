@@ -21,9 +21,7 @@ module Tack
       end
 
       def run(path, context, description)
-        results = { :passed => [],
-          :failed => [],
-          :pending => []}
+        results = Tack::ResultSet.new
         require(path)
         # Note that this won't work if there are multiple classes in a file
         klass = test_classes_for(path).first 
@@ -35,7 +33,7 @@ module Tack
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results[:failed] << build_result(path, context, description, failure)
+          results.failed << build_result(path, context, description, failure)
         end
         
         test.run(result) do |started,name|
@@ -43,9 +41,9 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(path, context, description)
+          results.passed << build_result(path, context, description)
         end
-        results
+        results.to_primitives
       end
 
       private

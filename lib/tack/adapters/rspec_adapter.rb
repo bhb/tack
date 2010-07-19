@@ -26,26 +26,23 @@ module Spec
         def initialize(options)
           io = StringIO.new # suppress output
           super(options, io)
-          # @example_groups = []
-          @results = { :passed => [],
-            :failed => [],
-            :pending => []}
+          @results = Tack::ResultSet.new
         end
 
         def example_pending(example, message, deprecated_pending_location=nil)
-          @results[:pending] << {
+          @results.pending << {
             :test => build_result(example)
           }
         end
 
         def example_passed(example)
-          @results[:passed] << {
+          @results.passed << {
             :test => build_result(example)
           }
         end
 
         def example_failed(example, counter, error=nil)
-          @results[:failed] <<
+          @results.failed <<
             {
             :test => build_result(example),
             :failure => build_failure(example, error)
@@ -108,10 +105,10 @@ module Tack
         Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
         Spec::Runner.options.run_examples
         results = formatter.results
-        if results[:pending]==[] && results[:passed] == [] && results[:failed] == []
+        if results.length == 0
           raise NoMatchingTestError, "No matching test found"
         end
-        results
+        results.to_primitives
       end
 
     end

@@ -51,14 +51,6 @@ module Tack
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!
         load path
-        # test_classes = self.test_classes_for(path)
-#         return false if test_classes.empty?
-#         test_classes.any? do |klass|
-#           test_methods = self.test_methods(klass)
-#           test_methods.any? do |test_method|
-#             test_method =~ /^test\: .*\. $/
-#           end
-#         end
         !Shoulda.all_contexts.empty?
       ensure
         Shoulda.reset_contexts!
@@ -105,9 +97,7 @@ module Tack
       end
 
       def run(path, contexts, description)
-        results = { :passed => [],
-          :failed => [],
-          :pending => []}
+        results = Tack::ResultSet.new
         Shoulda.reset_contexts!
         load(path)
         # Note that this won't work if there are multiple classes in a file
@@ -117,8 +107,8 @@ module Tack
         rescue NameError
           chains = build_should_eventually_chains(Shoulda.all_contexts)
           if chains.member?([contexts, description])
-            results[:pending] << build_result(path, contexts, description)
-            return results
+            results.pending << build_result(path, contexts, description)
+            return results.to_primitives
           else
             Shoulda.reset_contexts!
             raise NoMatchingTestError, "No matching test found" 
@@ -127,7 +117,7 @@ module Tack
         result = Test::Unit::TestResult.new
 
         result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results[:failed] << build_result(path, contexts, description, failure)
+          results.failed << build_result(path, contexts, description, failure)
         end
         
         test.run(result) do |started,name|
@@ -135,9 +125,9 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results[:passed] << build_result(path, contexts, description) 
+          results.passed << build_result(path, contexts, description) 
         end
-        results
+        results.to_primitives
       ensure
         Shoulda.reset_contexts!
       end
@@ -146,17 +136,9 @@ module Tack
 
       def build_should_eventually_chains(contexts)
         chains = []
-        # if contexts.length == 1
-#           context = contexts.first
-#           context.should_eventuallys.each do |should_eventually|
-#             chains << [[context.parent.to_s], should_eventually[:name]]
-#           end
-#         else
         contexts.reject{|context| context.am_subcontext?}.each do |context|
             _build_should_eventually_chains(context, chains)
           end
-        #end
-        #debugger
         chains
       end
 

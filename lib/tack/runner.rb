@@ -25,16 +25,12 @@ module Tack
     end
 
     def run_suite(tests)
-      results = { :passed => [],
-        :failed => [],
-        :pending => []}
+      results = ResultSet.new
       tests.each do |path, context, description|
         result = @start_app.run_test(path, context, description)
-        results[:passed] += result[:passed]
-        results[:failed] += result[:failed]
-        results[:pending] += result[:pending]
+        results.merge(result)
       end
-      results
+      results.to_primitives
     end
 
     def run_test(path, contexts, description)
