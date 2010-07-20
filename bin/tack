@@ -72,12 +72,17 @@ set = Tack::TestSet.new
 tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
 
 runs = (options.fetch(:shuffle_runs) {1}).to_i
+results = {}
 runs.times do |i|
   puts "\n---- Running test run ##{i+1} ----" unless runs == 1
-  runner.run(tests)
+  results.merge!(runner.run(tests))
 end
 
-exit 0
+if results[:failed].empty?
+  exit 0
+else
+  exit 1
+end
 
 
 

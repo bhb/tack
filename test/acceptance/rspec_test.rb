@@ -2,7 +2,7 @@ require 'test_helper'
 
 class RSpecTest < Test::Unit::TestCase
   include TestHelpers
-
+  
    should "run specs that match substring" do
     body = <<-EOS
     specify "something" do
