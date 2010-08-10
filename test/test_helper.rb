@@ -9,9 +9,19 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'tack'
 
+autoload :FormatterTestHelper, 'unit/formatters/formatter_test_helper'
+
 module TestHelpers
   include Construct::Helpers
 
+  def build_test
+    ['foo.rb', ['FooTest'], 'test1']
+  end
+
+  def results_for(tests)
+    Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(tests).to_primitives}).to_primitives
+  end
+  
   def in_rspec(args)
     body = args.fetch(:body)
     describe = args.fetch(:describe) { String }

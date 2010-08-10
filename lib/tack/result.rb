@@ -4,6 +4,10 @@ module Tack
 
     attr_accessor :test, :failure
 
+    def self.for_test(test, failure = nil)
+      self.new(:test => test, :failure => failure)
+    end
+
     def initialize(opts)
       @test = opts.fetch(:test)
       @failure = opts.fetch(:failure) { nil }

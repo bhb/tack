@@ -2,7 +2,7 @@ module Tack
 
   module Middleware
     
-    def initialize(app)
+    def initialize(app, options = {})
       @app = app
     end
 
@@ -14,8 +14,8 @@ module Tack
       @app.run_test(file, context, description)
     end
 
-    # not necessary for the middleware API, but handy for implementing
-    # middleware methods
+    # not necessary for the middleware API, but handy for 
+    # implementing middleware methods
     def returning(value)
       yield(value)
       value
