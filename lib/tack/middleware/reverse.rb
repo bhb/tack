@@ -6,7 +6,7 @@ module Tack
       include Middleware
       
       def run_suite(tests)
-        puts "--> Reversing order of tests"
+        @output.puts "--> Reversing order of tests"
         @app.run_suite(tests.reverse) 
       end
 

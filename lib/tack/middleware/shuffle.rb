@@ -6,7 +6,7 @@ module Tack
       include Middleware
       
       def run_suite(tests)
-        puts "--> Shuffling tests"
+        @output.puts "--> Shuffling tests"
 
         tests = shuffle(tests)
         @app.run_suite(tests) 

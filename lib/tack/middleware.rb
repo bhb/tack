@@ -4,6 +4,7 @@ module Tack
     
     def initialize(app, options = {})
       @app = app
+      @output = options.fetch(:output){ STDOUT }
     end
 
     def run_suite(tests)
