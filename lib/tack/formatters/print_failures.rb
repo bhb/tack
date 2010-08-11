@@ -5,6 +5,11 @@ module Tack
     class PrintFailures
       include Middleware
 
+      def initialize(middleware, options={})
+        super
+        @output = options.fetch(:output) {STDOUT}
+      end
+
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
           results[:failed].each_with_index do |result, index|
@@ -25,11 +30,11 @@ module Tack
       end
 
       def print_failure(counter, result)
-        puts
-        puts "#{counter.to_s})"
-        puts full_description(result[:test])
-        puts format_backtrace(result[:failure][:backtrace])
-        puts result[:failure][:message]
+        @output.puts
+        @output.puts "#{counter.to_s})"
+        @output.puts full_description(result[:test])
+        @output.puts format_backtrace(result[:failure][:backtrace])
+        @output.puts result[:failure][:message]
       end
 
       def full_description(test)

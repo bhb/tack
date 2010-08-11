@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class BasicSummaryTest < Test::Unit::TestCase
+class ProfilerTest < Test::Unit::TestCase
   include FormatterTestHelper
   include MiddlewareTestHelper
 
   def middleware_class
-    BasicSummary
+    Profiler
   end
 
   should_behave_like_middleware

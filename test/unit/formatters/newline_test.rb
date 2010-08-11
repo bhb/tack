@@ -1,11 +1,11 @@
 require 'test_helper'
 
-class BasicSummaryTest < Test::Unit::TestCase
+class NewlineTest < Test::Unit::TestCase
   include FormatterTestHelper
   include MiddlewareTestHelper
 
   def middleware_class
-    BasicSummary
+    Newline
   end
 
   should_behave_like_middleware

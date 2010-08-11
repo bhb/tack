@@ -10,6 +10,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'tack'
 
 autoload :FormatterTestHelper, 'unit/formatters/formatter_test_helper'
+autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 
 module TestHelpers
   include Construct::Helpers
@@ -81,3 +82,4 @@ class Test::Unit::TestCase
   # I'm trying not to pollute TestCase since Shoulda adds to it
   # and it caused weird interactions in some of the tests.
 end
+
