@@ -75,6 +75,47 @@ module Tack
         Shoulda.reset_contexts!
       end
 
+      def run(path, contexts, description)
+        results = Tack::ResultSet.new
+        Shoulda.reset_contexts!
+        load(path)
+        # Note that this won't work if there are multiple classes in a file
+        self.class.test_classes_for(path).each do |klass|
+          next if contexts.first != klass.to_s
+          begin
+            test = klass.new(test_name([path,contexts,description]))
+          rescue NameError
+            chains = build_should_eventually_chains(Shoulda.all_contexts)
+            if chains.member?([contexts, description])
+              results.pending << build_result(path, contexts, description)
+              return results.to_primitives
+          else
+            Shoulda.reset_contexts!
+            raise NoMatchingTestError, "No matching test found" 
+          end
+        end
+        result = Test::Unit::TestResult.new
+
+        result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
+          results.failed << build_result(path, contexts, description, failure)
+        end
+        
+        test.run(result) do |started,name|
+          # We do nothing here
+          # but this method requires a block
+        end
+        if result.passed?
+          results.passed << build_result(path, contexts, description) 
+        end
+        end
+
+        results.to_primitives
+      ensure
+        Shoulda.reset_contexts!
+      end
+
+      private
+
       def get_tests(file, context) 
         tests = []
         context.shoulds.each do |should|
@@ -95,44 +136,6 @@ module Tack
         ancestors.reject! {|context_name| context_name + "Test" == parent.to_s}
         [parent.to_s] + ancestors
       end
-
-      def run(path, contexts, description)
-        results = Tack::ResultSet.new
-        Shoulda.reset_contexts!
-        load(path)
-        # Note that this won't work if there are multiple classes in a file
-        klass = self.class.test_classes_for(path).first 
-        begin
-          test = klass.new(test_name([path,contexts,description]))
-        rescue NameError
-          chains = build_should_eventually_chains(Shoulda.all_contexts)
-          if chains.member?([contexts, description])
-            results.pending << build_result(path, contexts, description)
-            return results.to_primitives
-          else
-            Shoulda.reset_contexts!
-            raise NoMatchingTestError, "No matching test found" 
-          end
-        end
-        result = Test::Unit::TestResult.new
-
-        result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results.failed << build_result(path, contexts, description, failure)
-        end
-        
-        test.run(result) do |started,name|
-          # We do nothing here
-          # but this method requires a block
-        end
-        if result.passed?
-          results.passed << build_result(path, contexts, description) 
-        end
-        results.to_primitives
-      ensure
-        Shoulda.reset_contexts!
-      end
-
-      private
 
       def build_should_eventually_chains(contexts)
         chains = []
