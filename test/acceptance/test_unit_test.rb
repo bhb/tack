@@ -66,11 +66,37 @@ EOS
     end
 EOS
     with_test_class(:body => body) do |file_name, path|
-     raw_results = Tack::Runner.run_tests(path.parent, path)
+      raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.passed.length
     end
   end
+
+  context "two testcases in the same file" do
+    
+    should "run all tests" do
+      code =<<-EOS
+      require 'test/unit'
+      class TestCase1 < Test::Unit::TestCase
+        def test_one
+        end
+      end
+
+      class TestCase2 < Test::Unit::TestCase
+        def test_two
+        end
+      end
+EOS
+      within_construct(false) do |c|
+        file = c.file 'fake_test.rb', code
+        raw_results = Tack::Runner.run_tests(file.parent, file)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 2, result_set.length
+      end
+    end
+
+  end
+
 
 end

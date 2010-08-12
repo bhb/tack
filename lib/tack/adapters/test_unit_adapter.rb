@@ -23,8 +23,17 @@ module Tack
       def run(path, context, description)
         results = Tack::ResultSet.new
         require(path)
-        # Note that this won't work if there are multiple classes in a file
-        klass = test_classes_for(path).first 
+        test_classes_for(path).each do |klass|
+          if klass.to_s==context.first
+            run_tests_for_class(klass, path, context, description, results)
+          end
+        end
+        results.to_primitives
+      end
+
+      private
+
+      def run_tests_for_class(klass, path, context, description, results)
         begin
           test = klass.new(description)
         rescue NameError
@@ -43,10 +52,7 @@ module Tack
         if result.passed?
           results.passed << build_result(path, context, description)
         end
-        results.to_primitives
       end
-
-      private
       
       def build_result(file, context, description, failure=nil)
         { :test => [file.to_s, context, description],
