@@ -129,4 +129,28 @@ class RSpecTest < Test::Unit::TestCase
 
   end
 
+ context "two describe blocks in the same file" do
+    
+    should "run all tests" do
+      code =<<-EOS
+      describe :Foo do
+        specify "do something" do
+        end
+      end
+
+      describe :Bar do
+        specify "do something else" do
+        end
+      end
+EOS
+      within_construct(false) do |c|
+        file = c.file 'fake_spec.rb', code
+        raw_results = Tack::Runner.run_tests(file.parent, file)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 2, result_set.length
+      end
+    end
+
+  end
+
 end
