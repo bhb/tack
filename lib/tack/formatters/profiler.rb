@@ -6,10 +6,9 @@ module Tack
       include Middleware
 
       def initialize(app, args={})
-        @app = app
+        super
         @num_tests = args.fetch(:tests) { 10 }
         @times = []
-        @output = args.fetch(:output) {STDOUT}
       end
 
       def run_suite(tests)

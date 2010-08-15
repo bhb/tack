@@ -5,11 +5,6 @@ module Tack
     class TotalTime
       include Middleware
 
-      def initialize(middleware, options={})
-        super
-        @output = options.fetch(:output) {STDOUT}
-      end
-
       def run_suite(tests)
         time = Time.now
         returning @app.run_suite(tests) do

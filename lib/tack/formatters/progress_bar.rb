@@ -5,11 +5,6 @@ module Tack
     class ProgressBar
       include Middleware
 
-      def initialize(middleware, options={})
-        super
-        @output = options.fetch(:output) {STDOUT}
-      end
-
       def run_suite(tests)
         returning @app.run_suite(tests) do 
           @output.puts
@@ -18,15 +13,17 @@ module Tack
 
       def run_test(file, context, description)
         returning @app.run_test(file, context, description) do |result|
-          result[:passed].each do
-            @output.print "."
-          end
-          result[:pending].each do
-            @output.print "P"
-          end
-          result[:failed].each do
-            @output.print "F"
-          end
+          print_char_for_results(result[:passed], '.')
+          print_char_for_results(result[:pending], 'P')
+          print_char_for_results(result[:failed], 'F')
+        end
+      end
+
+      private
+
+      def print_char_for_results(results, char)
+        results.each do
+          @output.print(char)
         end
       end
       

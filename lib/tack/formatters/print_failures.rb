@@ -5,11 +5,6 @@ module Tack
     class PrintFailures
       include Middleware
 
-      def initialize(middleware, options={})
-        super
-        @output = options.fetch(:output) {STDOUT}
-      end
-
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
           results[:failed].each_with_index do |result, index|

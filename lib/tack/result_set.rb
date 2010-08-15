@@ -5,9 +5,9 @@ module Tack
     attr_accessor :passed, :failed, :pending
 
     def initialize(results={})
-      @passed = results.fetch(:passed){[]}.map { |result| Result.new(result) }
-      @failed = results.fetch(:failed){[]}.map { |result| Result.new(result) }
-      @pending = results.fetch(:pending){[]}.map { |result| Result.new(result) }
+      @passed = result_objects(results[:passed])
+      @failed = result_objects(results[:failed])
+      @pending = result_objects(results[:pending])
     end
 
     def length
@@ -28,6 +28,14 @@ module Tack
     end
 
     private
+
+    def result_objects(results)
+      if results == nil
+        []
+      else
+        results.map { |result| Result.new(result) }
+      end
+    end
 
     def result_to_primitives(result)
       if result.respond_to?(:to_primitives)
