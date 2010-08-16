@@ -359,4 +359,73 @@ class ShouldaAdapterTest < Test::Unit::TestCase
 
   end
 
+
+  context "handling #default_test" do
+
+    context "when there are no tests" do
+
+      context "when #default_test not implemented" do
+
+        should "report one test and one failure" do
+          body = <<-EOS
+          # no tests
+          EOS
+          with_test_class :body => body do |_, path|
+            tests = ShouldaAdapter.new.tests_for(path)
+            results = Tack::ResultSet.new
+            tests.each do |test|
+              results.merge(Tack::ResultSet.new(ShouldaAdapter.new.run(*test)))
+            end
+            assert_equal 1, results.length
+            assert_equal 1, results.failed.length
+          end
+        end
+      end
+
+      context "when #default_test implemented" do
+        
+        should "report one test" do
+          body = <<-EOS
+          def default_test; assert true; end;
+          EOS
+          with_test_class :body => body do |_, path|
+            tests = ShouldaAdapter.new.tests_for(path)
+            results = Tack::ResultSet.new
+            tests.each do |test|
+              results.merge(Tack::ResultSet.new(ShouldaAdapter.new.run(*test)))
+            end
+            assert_equal 1, results.length
+            assert_equal 1, results.passed.length
+          end
+        end
+      end
+      
+    end
+
+    context "when there are tests" do
+
+      context "when #default_test is implemented" do
+        
+        should "report number of tests, not including #default_test" do
+          body = <<-EOS
+          def default_test; assert true; end;
+          should "do something" do; end;
+          should "do something else" do; end;
+          EOS
+          with_test_class :body => body do |_, path|
+            tests = ShouldaAdapter.new.tests_for(path)
+            results = Tack::ResultSet.new
+            tests.each do |test|
+              results.merge(Tack::ResultSet.new(ShouldaAdapter.new.run(*test)))
+            end
+            assert_equal 2, results.length
+          end
+        end
+
+      end
+
+    end
+
+  end
+     
 end

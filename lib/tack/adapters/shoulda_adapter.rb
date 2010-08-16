@@ -60,17 +60,23 @@ module Tack
         Shoulda.reset_contexts!
         load file
         classes = self.class.test_classes_for(file)
-        classes.inject([]) do |tests, klass|
+        tests = []
+        classes.each do |klass|
+          tests_for_class = []
           contexts = Shoulda.all_contexts.select { |context| context.parent == klass }
           contexts.each do |context|
-            tests += get_tests(file,context)
+            tests_for_class += get_tests(file,context)
           end
           build_should_eventually_chains(Shoulda.all_contexts).each do |chain|
             context, description = chain
-            tests << [file.to_s, context, description]
+            tests_for_class << [file.to_s, context, description]
           end
-          tests
+          if tests_for_class.empty?
+            tests_for_class << [file.to_s, [klass.to_s], 'default_test']
+          end
+          tests += tests_for_class
         end
+        tests
       ensure
         Shoulda.reset_contexts!
       end
@@ -89,24 +95,24 @@ module Tack
             if chains.member?([contexts, description])
               results.pending << build_result(path, contexts, description)
               return results.to_primitives
-          else
-            Shoulda.reset_contexts!
-            raise NoMatchingTestError, "No matching test found" 
+            else
+              Shoulda.reset_contexts!
+              raise NoMatchingTestError, "No matching test found" 
+            end
           end
-        end
-        result = Test::Unit::TestResult.new
+          result = Test::Unit::TestResult.new
 
-        result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
-          results.failed << build_result(path, contexts, description, failure)
-        end
+          result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
+            results.failed << build_result(path, contexts, description, failure)
+          end
         
-        test.run(result) do |started,name|
-          # We do nothing here
-          # but this method requires a block
-        end
-        if result.passed?
-          results.passed << build_result(path, contexts, description) 
-        end
+          test.run(result) do |started,name|
+            # We do nothing here
+            # but this method requires a block
+          end
+          if result.passed?
+            results.passed << build_result(path, contexts, description) 
+          end
         end
 
         results.to_primitives
@@ -169,6 +175,7 @@ module Tack
 
       def test_name(test)
         _, contexts, description = test
+        return description if description == 'default_test' && contexts.length == 1
         if contexts.length == 1
           class_under_test = contexts.first.gsub(/Test/,'')
           context_description = class_under_test

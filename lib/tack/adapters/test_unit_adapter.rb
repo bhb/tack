@@ -15,9 +15,15 @@ module Tack
       def tests_for(file)
         require file
         classes = test_classes_for(file)
-        classes.inject([]) do |tests, klass|
-          tests += test_methods(klass).map {|method_name| [file.to_s, [klass.to_s], method_name.to_s]}
+        tests = []
+        classes.each do |klass|
+          tests_for_class = test_methods(klass).map {|method_name| [file.to_s, [klass.to_s], method_name.to_s]}
+          if tests_for_class.empty?
+            tests_for_class << [file.to_s, [klass.to_s], 'default_test']
+          end
+          tests += tests_for_class
         end
+        tests
       end
 
       def run(path, context, description)

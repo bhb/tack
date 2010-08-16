@@ -51,11 +51,11 @@ module Tack
         runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
         runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
         runner.use Tack::Middleware::Fork if options[:fork]
-        runner.use Tack::Formatters::TotalTime
+        runner.use Tack::Formatters::BasicSummary
         runner.use Tack::Formatters::Newline
         runner.use Tack::Formatters::PrintFailures
         runner.use Tack::Formatters::Newline
-        runner.use Tack::Formatters::BasicSummary
+        runner.use Tack::Formatters::TotalTime
         runner.use Tack::Formatters::Newline
         runner.use Tack::Formatters::PrintPending
         runner.use Tack::Formatters::Newline

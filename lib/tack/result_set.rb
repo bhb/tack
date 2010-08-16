@@ -5,6 +5,8 @@ module Tack
     attr_accessor :passed, :failed, :pending
 
     def initialize(results={})
+      # TODO - figure out better way to smartly handle either ResultSet or primitive objects
+      results = results.to_primitives if results.respond_to?(:to_primitives)
       @passed = result_objects(results[:passed])
       @failed = result_objects(results[:failed])
       @pending = result_objects(results[:pending])
@@ -28,7 +30,7 @@ module Tack
     end
 
     private
-
+    
     def result_objects(results)
       if results == nil
         []
