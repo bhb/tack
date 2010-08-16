@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 module Tack
 
+  autoload :CommandLine, 'tack/command_line'
   autoload :NoMatchingTestError, 'tack/no_matching_test_error'
   autoload :Runner, 'tack/runner'
   autoload :TestPattern, 'tack/test_pattern'

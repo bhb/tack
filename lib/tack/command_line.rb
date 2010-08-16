@@ -1,0 +1,90 @@
+require 'optparse'
+
+module Tack
+
+  class CommandLine
+
+    def self.run(args)
+      options = {}
+      option_parser = OptionParser.new do |opts|
+        opts.banner = "Usage: tack [options] [file]"
+        opts.on("-I","--include PATH", "Specify $LOAD_PATH (may be used more than once).") do |path|
+          options[:include] = path.split(":")
+        end
+        opts.on("-n", "--name PATTERN", "Run only tests that match pattern.") do |pattern|
+          if pattern=~/^\/.*\/$/
+            options[:pattern] = Regexp.new(pattern[1..-2])
+          else
+            options[:pattern] = pattern
+          end
+        end
+        opts.on("-u", "--debugger", "Enable ruby-debugging.") do
+          require_ruby_debug
+        end
+        opts.on("-o", "--profile [NUMBER]", "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).") do |number|
+          options[:profile_number] = number || 10
+        end
+        opts.on("-s", "--shuffle [RUNS]", "Run tests in randomized order RUNS times (defaults to 1).") do |runs|
+          options[:shuffle_runs] = runs || 1
+        end
+        opts.on("-R", "--reverse", "Run tests in reverse order.") do 
+          options[:reverse] = true
+        end
+        opts.on("-F", "--fork", "Run each test in a separate process") do
+          options[:fork] = true
+        end
+        opts.on_tail("-h","--help", "Show this message") do
+          puts opts
+          exit
+        end
+      end
+
+      option_parser.parse! args
+      options[:paths] = args
+
+      if includes = options[:include]
+        $LOAD_PATH.unshift *includes
+      end
+
+      runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+        runner.use Tack::Middleware::Reverse if options[:reverse]
+        runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
+        runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
+        runner.use Tack::Middleware::Fork if options[:fork]
+        runner.use Tack::Formatters::TotalTime
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::PrintFailures
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::BasicSummary
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::PrintPending
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::ProgressBar
+      end
+      
+      set = Tack::TestSet.new
+      tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
+
+      runs = (options.fetch(:shuffle_runs) {1}).to_i
+      results = {}
+      runs.times do |i|
+        puts "\n---- Running test run ##{i+1} ----" unless runs == 1
+        results.merge!(runner.run(tests))
+      end
+      
+      if results[:failed].empty?
+        0
+      else
+        1
+      end
+    end
+
+    def self.require_ruby_debug
+      require 'rubygems' unless ENV['NO_RUBYGEMS']
+      require 'ruby-debug'
+    end
+
+  end
+
+
+end
