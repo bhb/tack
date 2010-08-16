@@ -96,6 +96,28 @@ EOS
       end
     end
 
+    should "run tests defined in superclass" do
+      code =<<-EOS
+      require 'test/unit'
+      class BaseTest < Test::Unit::TestCase
+        def test_one
+        end
+      end
+
+      class DerivedTest < BaseTest
+        def test_two
+        end
+      end
+EOS
+      within_construct(false) do |c|
+        file = c.file 'fake_test.rb', code
+        raw_results = Tack::Runner.run_tests(file.parent, file, /DerivedTest/)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 2, result_set.length
+        assert_equal ['test_one', 'test_two'], result_set.passed.map {|result| result.test.last}.sort
+      end
+    end
+
   end
 
 
