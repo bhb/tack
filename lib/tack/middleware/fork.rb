@@ -3,7 +3,7 @@ module Tack
   module Middleware
 
     class Fork
-      include Middleware
+      include Middleware::Base
       
       def run_test(file, context, description)
         @reader, @writer = IO.pipe

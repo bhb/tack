@@ -3,7 +3,7 @@ module Tack
   module Middleware
 
     class Reverse
-      include Middleware
+      include Middleware::Base
       
       def run_suite(tests)
         @output.puts "--> Reversing order of tests"

@@ -3,7 +3,7 @@ module Tack
   module Formatters
 
     class Profiler
-      include Middleware
+      include Middleware::Base
 
       def initialize(app, args={})
         super

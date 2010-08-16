@@ -3,7 +3,7 @@ module Tack
   module Formatters
 
     class TotalTime
-      include Middleware
+      include Middleware::Base
 
       def run_suite(tests)
         time = Time.now

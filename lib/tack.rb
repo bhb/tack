@@ -3,7 +3,6 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 module Tack
 
-  autoload :Middleware, 'tack/middleware'
   autoload :NoMatchingTestError, 'tack/no_matching_test_error'
   autoload :Runner, 'tack/runner'
   autoload :TestPattern, 'tack/test_pattern'
@@ -16,6 +15,7 @@ module Tack
   
   module Middleware
 
+    autoload :Base, 'tack/middleware/base'
     autoload :Fork, 'tack/middleware/fork'
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'

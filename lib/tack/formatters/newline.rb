@@ -3,7 +3,7 @@ module Tack
   module Formatters
 
     class Newline
-      include Middleware
+      include Middleware::Base
 
       def initialize(app, args={})
         @app = app

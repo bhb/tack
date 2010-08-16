@@ -2,9 +2,10 @@ require 'test_helper'
 
 class ShuffleTest < Test::Unit::TestCase
   include MiddlewareTestHelper
+  include Tack::Middleware
 
   def middleware_class
-    Tack::Middleware::Shuffle
+    Shuffle
   end
 
   should_behave_like_middleware

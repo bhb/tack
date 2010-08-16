@@ -3,7 +3,7 @@ module Tack
   module Middleware
 
     class Shuffle
-      include Middleware
+      include Middleware::Base
       
       def run_suite(tests)
         @output.puts "--> Shuffling tests"
