@@ -50,7 +50,7 @@ module Tack
 
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!
-        load path
+        Tack::SandboxLoader.load(path)
         !Shoulda.all_contexts.empty?
       ensure
         Shoulda.reset_contexts!
@@ -58,7 +58,7 @@ module Tack
 
       def tests_for(file)
         Shoulda.reset_contexts!
-        load file
+        Tack::SandboxLoader.load(file)
         classes = self.class.test_classes_for(file)
         tests = []
         classes.each do |klass|
@@ -76,6 +76,10 @@ module Tack
           end
           tests += tests_for_class
         end
+        tests.each do |test|
+          _, context, _ = test
+          context.first.gsub!('Tack::Sandbox::','')
+        end
         tests
       ensure
         Shoulda.reset_contexts!
@@ -84,7 +88,8 @@ module Tack
       def run(path, contexts, description)
         results = Tack::ResultSet.new
         Shoulda.reset_contexts!
-        load(path)
+        Tack::SandboxLoader.load(path)
+        contexts[0] = "Tack::Sandbox::"+contexts[0]
         # Note that this won't work if there are multiple classes in a file
         self.class.test_classes_for(path).each do |klass|
           next if contexts.first != klass.to_s
@@ -204,8 +209,6 @@ module Tack
 
       def self.test_classes_for(file)
         # taken from from hydra
-        #code = ""
-        #    File.open(file) {|buffer| code = buffer.read}
         code = File.read(file)
         matches = code.scan(/class\s+([\S]+)/)
         klasses = matches.collect do |c|
@@ -213,7 +216,8 @@ module Tack
             if c.first.respond_to? :constantize
               c.first.constantize
             else
-              eval(c.first)
+              #eval(c.first)
+              eval("Tack::Sandbox::"+c.first)
             end
           rescue NameError
             # means we could not load [c.first], but thats ok, its just not

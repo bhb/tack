@@ -8,6 +8,8 @@ module Tack
   autoload :Runner, 'tack/runner'
   autoload :TestPattern, 'tack/test_pattern'
   autoload :TestSet, 'tack/test_set'
+  autoload :Sandbox, 'tack/sandbox'
+  autoload :SandboxLoader, 'tack/sandbox'
 
   # convenience objects
   autoload :Result, 'tack/result'

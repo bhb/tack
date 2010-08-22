@@ -359,6 +359,29 @@ class ShouldaAdapterTest < Test::Unit::TestCase
 
   end
 
+  context "loading tests" do
+
+    should "not print 'already initialized constant' warnings" do
+      body = <<-EOS
+        CONSTANT = 1
+
+        should "do something" do; end;
+        should "do something else" do; end;
+      EOS
+      with_test_class :body => body do |file_name, path|
+        test1 = [file_name, ["StringTest"], "do something"]
+        test2 = [file_name, ["StringTest"], "do something"]
+        adapter = ShouldaAdapter.new
+        stdout, stderr = capture_io do
+          adapter.run(*test1)
+          adapter.run(*test2)
+        end
+        assert_no_match /warning: already initialized constant/, stdout
+        assert_no_match /warning: already initialized constant/, stderr
+      end
+    end
+
+  end
 
   context "handling #default_test" do
 

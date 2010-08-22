@@ -1,5 +1,10 @@
 require 'test_helper'
 
+# Tack should only define this constant once when running. If you see the warning
+#   warning: already initialized constant
+# then something is wrong with the Shoulda adapter
+CONSTANT_SHOULD_BE_DEFINED_ONLY_ONCE = 'foobar'
+
 class ShouldaTest < Test::Unit::TestCase
   include TestHelpers
 
