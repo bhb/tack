@@ -24,8 +24,8 @@ module Tack
         opts.on("-o", "--profile [NUMBER]", "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).") do |number|
           options[:profile_number] = number || 10
         end
-        opts.on("-s", "--shuffle [RUNS]", "Run tests in randomized order RUNS times (defaults to 1).") do |runs|
-          options[:shuffle_runs] = runs || 1
+        opts.on("-s", "--shuffle", "Run tests in randomized order.") do |runs|
+          options[:shuffle_runs] = true
         end
         opts.on("-R", "--reverse", "Run tests in reverse order.") do 
           options[:reverse] = true
@@ -65,7 +65,7 @@ module Tack
       set = Tack::TestSet.new
       tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
 
-      runs = (options.fetch(:shuffle_runs) {1}).to_i
+      runs = 1
       results = {}
       runs.times do |i|
         puts "\n---- Running test run ##{i+1} ----" unless runs == 1
