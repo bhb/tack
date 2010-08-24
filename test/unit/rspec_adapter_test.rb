@@ -216,6 +216,30 @@ class RSpecAdapterTest < Test::Unit::TestCase
         end
       end
 
+      context "when two contexts have identically named tests" do
+
+        should "only run specified test" do
+          body = <<-EOS
+            context "sometimes" do
+             it "should pass" do
+             end
+            end
+            context "other times" do
+             it "should pass" do
+             end
+            end
+          EOS
+          in_rspec :describe => String, :body => body do |path|
+            test = [path.to_s, ['String', "sometimes"], "should pass"]
+            results = Tack::ResultSet.new(RSpecAdapter.new.run(*test))
+          
+            assert_equal 1, results.length
+            assert_equal ['String', 'sometimes'], results.passed.first.test[1]
+          end
+        end
+
+      end
+
       should "raise exception if test not found" do
         body = <<-EOS
         context "sometimes" do

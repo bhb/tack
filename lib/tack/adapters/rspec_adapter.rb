@@ -96,7 +96,7 @@ module Tack
       end
       
       def run(file, contexts, test)
-        Spec::Runner.options.instance_variable_set(:@examples, [test])
+        Spec::Runner.options.instance_variable_set(:@examples, [contexts.join(" ")+" "+test])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
         Spec::Runner.options.instance_variable_set(:@files_loaded, false)
@@ -105,6 +105,7 @@ module Tack
         Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
         Spec::Runner.options.run_examples
         results = formatter.results
+        
         if results.length == 0
           raise NoMatchingTestError, "No matching test found"
         end
