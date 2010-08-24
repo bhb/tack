@@ -216,6 +216,59 @@ class RSpecAdapterTest < Test::Unit::TestCase
         end
       end
 
+      context "when contexts have spaces" do
+        
+        should "run test" do
+          body = <<-EOS
+            context " sometimes" do
+             it "should work" do
+             end
+            end
+          EOS
+          in_rspec :describe => String, :body => body do |path|
+            test = [path.to_s, ['String', " sometimes"], "should work"]
+            results = Tack::ResultSet.new(RSpecAdapter.new.run(*test))
+          
+            assert_equal 1, results.length
+          end
+        end
+
+      end
+
+      context "when contexts refer to methods" do
+        
+        should "run test for context that refers to instance method" do
+          body = <<-EOS
+            context "#join" do
+             it "should work" do
+             end
+            end
+          EOS
+          in_rspec :describe => String, :body => body do |path|
+            test = [path.to_s, ['String', "#join"], "should work"]
+            results = Tack::ResultSet.new(RSpecAdapter.new.run(*test))
+          
+            assert_equal 1, results.length
+          end
+        end
+
+        should "run test for context that refers to class method" do
+          body = <<-EOS
+            context ".new" do
+             it "should work" do
+             end
+            end
+          EOS
+          in_rspec :describe => String, :body => body do |path|
+            test = [path.to_s, ['String', ".new"], "should work"]
+            results = Tack::ResultSet.new(RSpecAdapter.new.run(*test))
+          
+            assert_equal 1, results.length
+          end
+        end
+
+      end
+
       context "when two contexts have identically named tests" do
 
         should "only run specified test" do

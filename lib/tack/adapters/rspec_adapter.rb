@@ -95,8 +95,8 @@ module Tack
         examples.map {|group, example| [file.to_s, group.description_parts.map {|part| part.to_s}, example.description]}
       end
       
-      def run(file, contexts, test)
-        Spec::Runner.options.instance_variable_set(:@examples, [contexts.join(" ")+" "+test])
+      def run(file, contexts, description)
+        Spec::Runner.options.instance_variable_set(:@examples, [full_example_name(contexts, description)])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
         Spec::Runner.options.instance_variable_set(:@files_loaded, false)
@@ -110,6 +110,19 @@ module Tack
           raise NoMatchingTestError, "No matching test found"
         end
         results.to_primitives
+      end
+
+      private
+
+      def full_example_name(contexts, description)
+        name = contexts.first
+        contexts[1..-1].each do |context|
+          if !(context=~/^(\s)|\.|#/)
+           name += " " 
+          end
+          name += context
+        end
+        "#{name} #{description}"
       end
 
     end
