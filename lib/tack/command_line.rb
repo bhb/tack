@@ -33,6 +33,9 @@ module Tack
         opts.on("-F", "--fork", "Run each test in a separate process") do
           options[:fork] = true
         end
+        opts.on('-d', '--dry-run', "Display (but do not run) matching tests") do
+          options[:dry_run] = true
+        end
         opts.on_tail("-h","--help", "Show this message") do
           puts opts
           exit
@@ -46,36 +49,41 @@ module Tack
         $LOAD_PATH.unshift *includes
       end
 
-      runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
-        runner.use Tack::Middleware::Reverse if options[:reverse]
-        runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
-        runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
-        runner.use Tack::Middleware::Fork if options[:fork]
-        runner.use Tack::Formatters::BasicSummary
-        runner.use Tack::Formatters::Newline
-        runner.use Tack::Formatters::PrintFailures
-        runner.use Tack::Formatters::Newline
-        runner.use Tack::Formatters::TotalTime
-        runner.use Tack::Formatters::Newline
-        runner.use Tack::Formatters::PrintPending
-        runner.use Tack::Formatters::Newline
-        runner.use Tack::Formatters::ProgressBar
-      end
-      
       set = Tack::TestSet.new
       tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
 
-      runs = 1
-      results = {}
-      runs.times do |i|
-        puts "\n---- Running test run ##{i+1} ----" unless runs == 1
-        results.merge!(runner.run(tests))
-      end
-      
-      if results[:failed].empty?
-        0
+      if options[:dry_run]==true
+        pp tests
+        exit 0
       else
-        1
+        runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+          runner.use Tack::Middleware::Reverse if options[:reverse]
+          runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
+          runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
+          runner.use Tack::Middleware::Fork if options[:fork]
+          runner.use Tack::Formatters::BasicSummary
+          runner.use Tack::Formatters::Newline
+          runner.use Tack::Formatters::PrintFailures
+          runner.use Tack::Formatters::Newline
+          runner.use Tack::Formatters::TotalTime
+          runner.use Tack::Formatters::Newline
+          runner.use Tack::Formatters::PrintPending
+          runner.use Tack::Formatters::Newline
+          runner.use Tack::Formatters::ProgressBar
+        end
+        
+        runs = 1
+        results = {}
+        runs.times do |i|
+          puts "\n---- Running test run ##{i+1} ----" unless runs == 1
+          results.merge!(runner.run(tests))
+        end
+        
+        if results[:failed].empty?
+          0
+        else
+          1
+        end
       end
     end
 
