@@ -4,7 +4,7 @@ end
 require 'test/unit'
 require 'test/unit/testresult'
 
-Test::Unit.run = true
+::Test::Unit.run = true
 
 require 'shoulda'
 module Shoulda
@@ -105,9 +105,9 @@ module Tack
               raise NoMatchingTestError, "No matching test found" 
             end
           end
-          result = Test::Unit::TestResult.new
+          result = ::Test::Unit::TestResult.new
 
-          result.add_listener(Test::Unit::TestResult::FAULT) do |failure|
+          result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
             results.failed << build_result(path, contexts, description, failure)
           end
         
@@ -198,7 +198,7 @@ module Tack
       def build_failure(failure)
         return nil if failure.nil?
         case failure
-        when Test::Unit::Error
+        when ::Test::Unit::Error
           { :message => "#{failure.exception.class} was raised: #{failure.exception.message}",
             :backtrace => failure.exception.backtrace }
         else

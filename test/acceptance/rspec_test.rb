@@ -153,4 +153,44 @@ EOS
 
   end
 
+  context "with before/after blocks" do
+
+    
+    should_eventually "run all blocks and return correct results" do
+      body =<<-EOS
+        before :all do
+          File.open('tripwire','a') {|f| f << "In before :all\n"}
+        end
+        before :each do
+          File.open('tripwire','a') { |f| f << "In before :each\n"}
+        end
+        it 'should do something' do
+        end
+        it 'should do something else' do
+        end
+        after :each do
+          File.open('tripwire','a') {|f| f << "In after :each\n"}
+        end
+        after :all do
+          File.open('tripwire','a') {|f| f << "In after :all\n"}
+        end
+      EOS
+      in_rspec :body => body do |path|
+        raw_results = Tack::Runner.run_tests(path.parent, path)
+        result_set = Tack::ResultSet.new(raw_results)
+        assert_equal 2, result_set.length
+        actual = File.readlines('tripwire')
+        expected = ["In before :all\n",
+                    "In before :each\n",
+                    "In after :each\n",
+                    "In before :each\n",
+                    "In after :each\n",
+                    "In after :all\n"]
+        assert_equal expected, actual
+      end
+    end
+
+    
+  end
+
 end

@@ -7,7 +7,7 @@ class ForkTest < Test::Unit::TestCase
   should "return test result" do
     fake_middleware = stub_everything
     middleware = Fork.new(fake_middleware, :output => StringIO.new)
-    test = build_test
+    test = Tack::Util::Test.make.to_primitives
     expected_result = results_for([test])
     fake_middleware.stubs(:run_test).returns(expected_result)
     assert_equal expected_result, middleware.run_test(*test)

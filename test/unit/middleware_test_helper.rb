@@ -22,7 +22,7 @@ module MiddlewareTestHelper
         should "call #run_suite on inner middleware" do
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
-          tests = [build_test]
+          tests = [Tack::Util::Test.make.to_primitives]
           fake_middleware.expects(:run_suite).with(tests).returns(results_for(tests))
           middleware.run_suite(tests)
         end
@@ -38,7 +38,7 @@ module MiddlewareTestHelper
         should "call #run_test on inner middleware" do
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
-          test = build_test
+          test = Tack::Util::Test.make.to_primitives
           fake_middleware.expects(:run_test).with(*test).returns(results_for([test]))
           middleware.run_test(*test)
         end

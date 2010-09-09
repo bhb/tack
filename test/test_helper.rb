@@ -5,19 +5,18 @@ require 'construct'
 require 'ruby-debug'
 require 'mocha'
 
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
+
 require 'tack'
+require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
 autoload :FormatterTestHelper, 'unit/formatters/formatter_test_helper'
 autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 
 module TestHelpers
   include Construct::Helpers
-
-  def build_test
-    ['foo.rb', ['FooTest'], 'test1']
-  end
 
   def results_for(tests)
     Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(tests).to_primitives}).to_primitives

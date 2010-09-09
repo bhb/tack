@@ -14,7 +14,10 @@ module Tack
   # convenience objects
   autoload :Result, 'tack/result'
   autoload :ResultSet, 'tack/result_set'
-  #autoload :Test, 'tack/test'
+
+  module Util
+    autoload :Test, 'tack/test'
+  end
   
   module Middleware
 
