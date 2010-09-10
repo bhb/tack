@@ -46,6 +46,8 @@ module Tack
       option_parser.parse! args
       options[:paths] = args
 
+      raise OptionParser::MissingArgument, 'No test files provided' if options[:paths].empty?
+
       if includes = options[:include]
         $LOAD_PATH.unshift *includes
       end
@@ -86,6 +88,11 @@ module Tack
           1
         end
       end
+
+    rescue OptionParser::ParseError => e
+      puts e.message
+      puts option_parser
+      exit 1
     end
 
     def self.require_ruby_debug
