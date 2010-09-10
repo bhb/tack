@@ -7,16 +7,17 @@ module Tack
 
     def self.run(args)
       options = {}
+      options[:pattern] ||= []
       option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: tack [options] [file]"
         opts.on("-I","--include PATH", "Specify $LOAD_PATH (may be used more than once).") do |path|
           options[:include] = path.split(":")
         end
-        opts.on("-n", "--name PATTERN", "Run only tests that match pattern.") do |pattern|
+        opts.on("-n", "--name PATTERN", "Run only tests that match pattern. Can be used multiple times to run tests that match ANY of the patterns.") do |pattern|
           if pattern=~/^\/.*\/$/
-            options[:pattern] = Regexp.new(pattern[1..-2])
+            options[:pattern] << Regexp.new(pattern[1..-2])
           else
-            options[:pattern] = pattern
+            options[:pattern] << pattern
           end
         end
         opts.on("-u", "--debugger", "Enable ruby-debugging.") do
@@ -53,7 +54,7 @@ module Tack
       end
 
       set = Tack::TestSet.new
-      tests = set.tests_for(options[:paths], Tack::TestPattern.new(options[:pattern]))
+      tests = set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
       if options[:dry_run]==true
         pp tests

@@ -5,7 +5,6 @@ module Tack
     attr_accessor :passed, :failed, :pending
 
     def initialize(results={})
-      # TODO - figure out better way to smartly handle either ResultSet or primitive objects
       results = basics(results)
       @passed = result_objects(results[:passed])
       @failed = result_objects(results[:failed])

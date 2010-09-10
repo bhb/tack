@@ -6,7 +6,9 @@ module Tack
       @adapter = adapter
     end
 
-    def tests_for(paths, pattern=TestPattern.new)
+    def tests_for(paths, patterns = [])
+      patterns = Array(patterns)
+      patterns = [TestPattern.new] if patterns.empty?
       paths = Array(paths).map { |path| path.to_s}
       files = paths.inject([]) do |files, path|
         if File.directory?(path)
@@ -20,7 +22,9 @@ module Tack
         adapter = @adapter || Adapters::Adapter.for(file)
         tests += adapter.tests_for(file).select  do |_, contexts, description| 
           contexts = Array(contexts)
-          description.match(pattern) || contexts.any? {|x| x.match(pattern)}
+          patterns.any? do |pattern|
+            description.match(pattern) || contexts.any? {|x| x.match(pattern)}
+          end
         end
       }
     end
