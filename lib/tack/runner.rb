@@ -30,7 +30,7 @@ module Tack
         result = @start_app.run_test(path, context, description)
         results.merge(result)
       end
-      results.to_primitives
+      basics(results)
     end
 
     def run_test(path, contexts, description)

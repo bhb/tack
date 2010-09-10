@@ -99,7 +99,7 @@ module Tack
             chains = build_should_eventually_chains(Shoulda.all_contexts)
             if chains.member?([contexts, description])
               results.pending << build_result(path, contexts, description)
-              return results.to_primitives
+              return basics(results)
             else
               Shoulda.reset_contexts!
               raise NoMatchingTestError, "No matching test found" 
@@ -120,7 +120,7 @@ module Tack
           end
         end
 
-        results.to_primitives
+        basics(results)
       ensure
         Shoulda.reset_contexts!
       end

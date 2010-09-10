@@ -34,7 +34,7 @@ module Tack
             run_tests_for_class(klass, path, context, description, results)
           end
         end
-        results.to_primitives
+        basics(results)
       end
 
       private

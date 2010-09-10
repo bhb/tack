@@ -17,9 +17,9 @@ module Tack
       other.is_a?(Result) && @test == other.test && @failure == other.failure
     end
 
-    def to_primitives
-      { :test => test,
-        :failure => failure
+    def to_basics
+      { :test => basics(test),
+        :failure => basics(failure)
       }
     end
 

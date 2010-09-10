@@ -1,6 +1,8 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
+require 'tack/basics'
+
 module Tack
 
   autoload :CommandLine, 'tack/command_line'

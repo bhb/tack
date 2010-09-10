@@ -109,7 +109,7 @@ module Tack
         if results.length == 0
           raise NoMatchingTestError, "No matching test found"
         end
-        results.to_primitives
+        basics(results)
       end
 
       private

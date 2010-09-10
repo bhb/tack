@@ -20,7 +20,7 @@ module FormatterTestHelper
         should "not alter results" do
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
-          tests = [Tack::Util::Test.make.to_primitives]
+          tests = [Tack::Util::Test.make.to_basics]
           expected_results = results_for(tests)
           fake_middleware.stubs(:run_suite).returns(expected_results)
           assert_equal expected_results, middleware.run_suite(tests)
@@ -33,7 +33,7 @@ module FormatterTestHelper
         should "not alter result" do
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
-          test = Tack::Util::Test.make.to_primitives
+          test = Tack::Util::Test.make.to_basics
           expected_result = results_for([test])
           fake_middleware.stubs(:run_test).returns(expected_result)
           assert_equal expected_result, middleware.run_test(*test)

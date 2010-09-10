@@ -6,7 +6,7 @@ module Tack
 
     def initialize(results={})
       # TODO - figure out better way to smartly handle either ResultSet or primitive objects
-      results = results.to_primitives if results.respond_to?(:to_primitives)
+      results = basics(results)
       @passed = result_objects(results[:passed])
       @failed = result_objects(results[:failed])
       @pending = result_objects(results[:pending])
@@ -16,10 +16,10 @@ module Tack
       @passed.length + @failed.length + @pending.length
     end
 
-    def to_primitives
-      { :passed => passed.map {|x| result_to_primitives(x)},
-        :failed => failed.map{|x| result_to_primitives(x)},
-        :pending => pending.map{|x| result_to_primitives(x)} }
+    def to_basics
+      { :passed => passed.map {|x| basics(x)},
+        :failed => failed.map{|x| basics(x)},
+        :pending => pending.map{|x| basics(x)} }
     end
 
     def merge(results)
@@ -39,14 +39,6 @@ module Tack
       end
     end
 
-    def result_to_primitives(result)
-      if result.respond_to?(:to_primitives)
-        result.to_primitives
-      else
-        result
-      end
-    end
-    
   end
 
 end

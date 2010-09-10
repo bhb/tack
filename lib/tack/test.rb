@@ -12,8 +12,8 @@ module Tack
         @description = opts.fetch(:description) {''}
       end
 
-      def to_primitives
-        [file, context, description]
+      def to_basics
+        [file, context, description].map {|x| basics(x)}
       end
 
     end

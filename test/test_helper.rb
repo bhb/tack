@@ -19,7 +19,7 @@ module TestHelpers
   include Construct::Helpers
 
   def results_for(tests)
-    Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(tests).to_primitives}).to_primitives
+    Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(tests).to_basics}).to_basics
   end
   
   def in_rspec(args)
