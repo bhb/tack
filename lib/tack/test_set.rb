@@ -23,7 +23,7 @@ module Tack
         tests += adapter.tests_for(file).select  do |_, contexts, description| 
           contexts = Array(contexts)
           patterns.any? do |pattern|
-            description.match(pattern) || contexts.any? {|x| x.match(pattern)}
+            "#{contexts.join(' ')} #{description}".match(pattern)
           end
         end
       }

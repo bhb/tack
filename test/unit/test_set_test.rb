@@ -8,8 +8,8 @@ class TestSetTest < Test::Unit::TestCase
 
     def self.tests
       [
-       ["foo_test.rb", ["Foo", "sometimes"], "test something"], 
-       ["foo_test.rb", ["Foo", "in certain cases"], "it does something"],
+       ["foo_test.rb", ["Foo", "sometimes"], "should test something"], 
+       ["foo_test.rb", ["Foo", "in certain cases"], "should do something"],
       ]
     end
 
@@ -26,26 +26,38 @@ class TestSetTest < Test::Unit::TestCase
 
   should "filter description based on string" do
     test_set = TestSet.new(FakeAdapter1.new)
-    assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "it does something"]], 
-    test_set.tests_for("foo_test.rb", "does something")
+    assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "should do something"]], 
+    test_set.tests_for("foo_test.rb", "do something")
   end
 
   should "filter description based on regexp" do
     test_set = TestSet.new(FakeAdapter1.new)
-    assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "it does something"]], 
-    test_set.tests_for("foo_test.rb", /does/)
+    assert_equal [["foo_test.rb", ["Foo", "in certain cases"], "should do something"]], 
+    test_set.tests_for("foo_test.rb", /do/)
   end
 
   should "filter context based on string" do
     test_set = TestSet.new(FakeAdapter1.new)
-    assert_equal [["foo_test.rb", ["Foo", "sometimes"], "test something"]], 
+    assert_equal [["foo_test.rb", ["Foo", "sometimes"], "should test something"]], 
     test_set.tests_for("foo_test.rb", 'times')
   end
 
   should "filter context based on regexp" do
     test_set = TestSet.new(FakeAdapter1.new)
-    assert_equal [["foo_test.rb", ["Foo", "sometimes"], "test something"]], 
+    assert_equal [["foo_test.rb", ["Foo", "sometimes"], "should test something"]], 
     test_set.tests_for("foo_test.rb", /times/)
+  end
+
+  should "filter test if context + description matches string" do
+    test_set = TestSet.new(FakeAdapter1.new)
+    assert_equal [['foo_test.rb', ['Foo', 'sometimes'], 'should test something']],
+    test_set.tests_for('foo_test.rb', 'sometimes should test something')
+  end
+
+  should "filter test if context + description matches regexp" do
+    test_set = TestSet.new(FakeAdapter1.new)
+    assert_equal [['foo_test.rb', ['Foo', 'sometimes'], 'should test something']],
+    test_set.tests_for('foo_test.rb', /sometimes should test something/)
   end
 
   class FakeAdapter2

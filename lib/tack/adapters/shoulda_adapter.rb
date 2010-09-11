@@ -130,7 +130,7 @@ module Tack
       def get_tests(file, context) 
         tests = []
         context.shoulds.each do |should|
-          tests << [file.to_s, ancestors(context), should[:name]]
+          tests << [file.to_s, ancestors(context), "should "+should[:name]]
         end
         context.subcontexts.each do |subcontext|
           tests += get_tests(file, subcontext)
@@ -158,7 +158,7 @@ module Tack
 
       def _build_should_eventually_chains(context, chains)
         context.should_eventuallys.each do |should_eventually|
-          chains << [context_chain(context), should_eventually[:name]]
+          chains << [context_chain(context), "should "+should_eventually[:name]]
         end
         context.subcontexts.each do |subcontext|
           _build_should_eventually_chains(subcontext, chains)
@@ -187,7 +187,7 @@ module Tack
         else
           context_description = (contexts[1..-1] || []).join(" ")          
         end
-        ["test:", context_description, "should", "#{description}. "].join(" ")
+        ["test:", context_description, "#{description}. "].join(" ")
       end
       
       def build_result(path, contexts, description, failure=nil)
