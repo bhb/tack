@@ -155,42 +155,50 @@ EOS
 
   context "with before/after blocks" do
 
-    
-    should_eventually "run all blocks and return correct results" do
-      body =<<-EOS
-        before :all do
-          File.open('tripwire','a') {|f| f << "In before :all\n"}
-        end
+    # "before :all" and "after :all" blocks are NOT supported, in the
+    # sense that they will run, but will be run multiple times.
+    # It's possible to make them work, but pretty hard until a better
+    # RSpec adapter is written. Considerations:
+    #   1. The RSpec adapter must be stateful to remember which contexts
+    #      have been started so it doesn't run "before :all" blocks again
+    #   2. All instance variables created/altered in "before/after :all" blocks
+    #      must be availalbe in before :each blocks and actual specs
+    #   3. A strategy for running "after :all" blocks must be created. When is the 
+    #      right time to do this? Will the adapter need to know the full set of
+    #      tests ahead of time? Will it run "after :all" blocks when the context 
+    #      changes?
+    #  Since, in the vast majority of cases, running the "before :all" and "after 
+    # :all" blocks multiple times won't break a suite (although it may slow it down
+    # and *could* potentially break it), I'm punting for now. Hopefully someone who
+    # understands RSpec better than I can write an adapter that works.
+    should "run all blocks and return correct results" do
+      within_construct(false) do |c|
+        tripwire = c.file 'tripwire'
+        body =<<-EOS
         before :each do
-          File.open('tripwire','a') { |f| f << "In before :each\n"}
+          File.open('#{tripwire}','a') { |f| f << "In before :each\n"}
         end
         it 'should do something' do
         end
         it 'should do something else' do
         end
         after :each do
-          File.open('tripwire','a') {|f| f << "In after :each\n"}
+          File.open('#{tripwire}','a') {|f| f << "In after :each\n"}
         end
-        after :all do
-          File.open('tripwire','a') {|f| f << "In after :all\n"}
+        EOS
+        in_rspec :body => body do |path|
+          raw_results = Tack::Runner.run_tests(path.parent, path)
+          result_set = Tack::ResultSet.new(raw_results)
+          assert_equal 2, result_set.length
+          actual = File.readlines(tripwire)
+          expected = ["In before :each\n",
+                      "In after :each\n",
+                      "In before :each\n",
+                      "In after :each\n"]
+          assert_equal expected, actual
         end
-      EOS
-      in_rspec :body => body do |path|
-        raw_results = Tack::Runner.run_tests(path.parent, path)
-        result_set = Tack::ResultSet.new(raw_results)
-        assert_equal 2, result_set.length
-        actual = File.readlines('tripwire')
-        expected = ["In before :all\n",
-                    "In before :each\n",
-                    "In after :each\n",
-                    "In before :each\n",
-                    "In after :each\n",
-                    "In after :all\n"]
-        assert_equal expected, actual
       end
     end
-
-    
   end
 
 end
