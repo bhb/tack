@@ -5,6 +5,7 @@ require 'tack/basics'
 
 module Tack
 
+  autoload :ConfigFile, 'tack/config_file'
   autoload :CommandLine, 'tack/command_line'
   autoload :NoMatchingTestError, 'tack/no_matching_test_error'
   autoload :Runner, 'tack/runner'

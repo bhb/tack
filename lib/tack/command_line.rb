@@ -6,7 +6,11 @@ module Tack
   class CommandLine
 
     def self.run(args)
-      options = {}
+      
+      Tack::ConfigFile.read
+      options = Tack.options
+      options ||= {}
+      
       options[:pattern] ||= []
       option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: tack [options] [file]"
