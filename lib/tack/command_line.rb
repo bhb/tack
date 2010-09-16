@@ -49,7 +49,8 @@ module Tack
       end
 
       option_parser.parse! args
-      options[:paths] = args
+      options[:paths] ||= []
+      options[:paths] = args unless args.empty? || args.nil?
 
       raise OptionParser::MissingArgument, 'No test files provided' if options[:paths].empty?
 
