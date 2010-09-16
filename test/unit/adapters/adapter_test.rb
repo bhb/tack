@@ -4,6 +4,27 @@ class AdapterTest < Test::Unit::TestCase
   include TestHelpers
   include Tack::Adapters
 
+  should "return Test::Unit adapter for files starting in 'test'" do
+    within_construct(false) do |c|
+      file = c.file 'test_something.rb'
+      assert_kind_of TestUnitAdapter, Adapter.for(file)
+    end
+  end
+
+  should "return Test::Unit adapter for files ending in 'test.rb'" do
+    within_construct(false) do |c|
+      file = c.file 'myclass_test.rb'
+      assert_kind_of TestUnitAdapter, Adapter.for(file)
+    end
+  end
+
+  should "return RSpec adapter for files ending in 'spec.rb'" do
+    within_construct(false) do |c|
+      file = c.file 'myclass_spec.rb'
+      assert_kind_of RSpecAdapter, Adapter.for(file)
+    end
+  end
+
   context "when combining Shoulda and Test::Unit" do
 
     should "return the correct adapters" do

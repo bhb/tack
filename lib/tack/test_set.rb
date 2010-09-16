@@ -1,3 +1,5 @@
+require 'pathname'
+
 module Tack
 
   class TestSet
@@ -30,11 +32,12 @@ module Tack
     end
 
     private 
-
+    
+    # TODO - these regexp are duplicated in Adapter
     def valid_test_file?(path)
       return false if File.directory?(path)
-      case path
-      when /_test.rb$/, /_spec.rb$/
+      case Pathname.new(path).basename
+      when /_test.rb$/, /_spec.rb$/, /^test_.+.rb/
           true
       else
         false
