@@ -42,7 +42,8 @@ module TestHelpers
   end
 
   def remove_test_class_definition(class_name)
-    Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
+    top = class_name.to_s.split('::').first
+    Object.send(:remove_const, top) if Object.const_defined?(top)
   end
 
   def with_test_class(args)

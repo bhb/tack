@@ -21,7 +21,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
         assert_equal [path.to_s, ['FakeTest'], "test_two"], tests.sort.last
       end
     end
-    
+
   end
   
   context "running tests" do
@@ -152,6 +152,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           EOS
           with_test_class :body => body do |_, path|
             tests = TestUnitAdapter.new.tests_for(path)
+            # TODO - this is really awkward to run tests directly
             results = Tack::ResultSet.new
             tests.each do |test|
               results.merge(Tack::ResultSet.new(TestUnitAdapter.new.run(*test)))
@@ -164,6 +165,34 @@ class TestUnitAdapterTest < Test::Unit::TestCase
 
     end
 
+  end
+
+  context "in a testcase in a module" do
+
+    should_eventually "find and run tests" do
+      begin
+        body =<<-EOS
+        require 'test/unit'
+      
+        module FooModule
+          class BarTest < Test::Unit::TestCase
+            def test_foo
+            end
+          end
+        end
+        EOS
+        within_construct(false) do |c|
+          adapter = TestUnitAdapter.new
+          test_file = c.file('foo_test.rb',body)
+          tests = adapter.tests_for(test_file)
+          assert_equal [['Foo::TestBar',[],'test_foo']], tests
+          results = adapter.run(*test.first)
+          assert_equal 1, results.length
+        end
+      ensure 
+        remove_test_class_definition("FooModule::BarTest".to_sym)
+      end
+    end
   end
 
 end
