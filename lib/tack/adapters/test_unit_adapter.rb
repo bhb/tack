@@ -12,8 +12,11 @@ module Tack
 
     class TestUnitAdapter
 
+      def initialize
+      end
+
       def tests_for(file)
-        require file
+        #require file
         classes = test_classes_for(file)
         tests = []
         classes.each do |klass|
@@ -28,7 +31,6 @@ module Tack
 
       def run(path, context, description)
         results = Tack::ResultSet.new
-        require(path)
         test_classes_for(path).each do |klass|
           if klass.to_s==context.first
             run_tests_for_class(klass, path, context, description, results)
@@ -77,29 +79,50 @@ module Tack
         end
       end
 
-      def test_classes_for(file)
-        # taken from from hydra
-        #code = ""
-        #    File.open(file) {|buffer| code = buffer.read}
-        code = File.read(file)
-        matches = code.scan(/class\s+([\S]+)/)
-        klasses = matches.collect do |c|
-          begin
-            if c.first.respond_to? :constantize
-              c.first.constantize
-            else
-              eval(c.first)
-            end
-          rescue NameError
-            # means we could not load [c.first], but thats ok, its just not
-            # one of the classes we want to test
-            nil
-          rescue SyntaxError
-            # see above
-            nil
+#       def test_classes_for(file)
+#         # taken from from hydra
+#         #code = ""
+#         #    File.open(file) {|buffer| code = buffer.read}
+#         code = File.read(file)
+#         matches = code.scan(/class\s+([\S]+)/)
+#         klasses = matches.collect do |c|
+#           begin
+#             if c.first.respond_to? :constantize
+#               c.first.constantize
+#             else
+#               eval(c.first)
+#             end
+#           rescue NameError
+#             # means we could not load [c.first], but thats ok, its just not
+#             # one of the classes we want to test
+#             nil
+#           rescue SyntaxError
+#             # see above
+#             nil
+#           end
+#         end
+#         return klasses.select{|k| k.respond_to? 'suite'}
+#       end
+
+      def test_classes_for(test_file)
+        @test_classes ||= begin
+        # TODO - I think this will fail if they have a file that doesn't define a new class
+        # for instance, if they are adding methods to an existing test class
+                            old_test_classes = get_test_classes
+                            require test_file
+                            new_test_classes = get_test_classes
+                            new_test_classes - old_test_classes
+                          end
+      end
+      
+      def get_test_classes
+        test_classes = []
+        ObjectSpace.each_object(Class) do |klass|
+          if(Test::Unit::TestCase > klass)
+            test_classes << klass
           end
         end
-        return klasses.select{|k| k.respond_to? 'suite'}
+        test_classes
       end
 
       def test_methods(test_class)

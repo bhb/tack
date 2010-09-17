@@ -109,10 +109,11 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           # no tests
           EOS
           with_test_class :body => body do |_, path|
-            tests = TestUnitAdapter.new.tests_for(path)
+            adapter = TestUnitAdapter.new
+            tests = adapter.tests_for(path)
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(TestUnitAdapter.new.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run(*test)))
             end
             assert_equal 1, results.length
             assert_equal 1, results.failed.length
@@ -127,10 +128,11 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           def default_test; assert true; end;
           EOS
           with_test_class :body => body do |_, path|
-            tests = TestUnitAdapter.new.tests_for(path)
+            adapter = TestUnitAdapter.new
+            tests = adapter.tests_for(path)
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(TestUnitAdapter.new.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run(*test)))
             end
             assert_equal 1, results.length
             assert_equal 1, results.passed.length
@@ -151,11 +153,12 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           def test_two; end;
           EOS
           with_test_class :body => body do |_, path|
-            tests = TestUnitAdapter.new.tests_for(path)
+            adapter = TestUnitAdapter.new
+            tests = adapter.tests_for(path)
             # TODO - this is really awkward to run tests directly
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(TestUnitAdapter.new.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run(*test)))
             end
             assert_equal 2, results.length
           end
@@ -169,7 +172,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
 
   context "in a testcase in a module" do
 
-    should_eventually "find and run tests" do
+    should "find and run tests" do
       begin
         body =<<-EOS
         require 'test/unit'
@@ -185,9 +188,9 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           adapter = TestUnitAdapter.new
           test_file = c.file('foo_test.rb',body)
           tests = adapter.tests_for(test_file)
-          assert_equal [['Foo::TestBar',[],'test_foo']], tests
-          results = adapter.run(*test.first)
-          assert_equal 1, results.length
+          assert_equal [[test_file.to_s,['FooModule::BarTest'],'test_foo']], tests
+          results = adapter.run(*tests.first)
+          assert_equal 1, results[:passed].length
         end
       ensure 
         remove_test_class_definition("FooModule::BarTest".to_sym)

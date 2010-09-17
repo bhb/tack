@@ -16,6 +16,7 @@ module Tack
         @root_dir = args
       end
       @handlers = []
+      @adapters = {}
       yield self if block_given?
     end
 
