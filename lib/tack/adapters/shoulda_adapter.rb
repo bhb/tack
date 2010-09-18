@@ -58,8 +58,8 @@ module Tack
 
       def tests_for(file)
         Shoulda.reset_contexts!
-        Tack::SandboxLoader.load(file)
-        classes = self.class.test_classes_for(file)
+        #Tack::SandboxLoader.load(file)
+        classes = test_classes_for(file)
         tests = []
         classes.each do |klass|
           tests_for_class = []
@@ -91,7 +91,7 @@ module Tack
         Tack::SandboxLoader.load(path)
         contexts[0] = "Tack::Sandbox::"+contexts[0]
         # Note that this won't work if there are multiple classes in a file
-        self.class.test_classes_for(path).each do |klass|
+        test_classes_for(path).each do |klass|
           next if contexts.first != klass.to_s
           begin
             test = klass.new(test_name([path,contexts,description]))
@@ -207,28 +207,10 @@ module Tack
         end
       end
 
-      def self.test_classes_for(file)
-        # taken from from hydra
-        code = File.read(file)
-        matches = code.scan(/class\s+([\S]+)/)
-        klasses = matches.collect do |c|
-          begin
-            if c.first.respond_to? :constantize
-              c.first.constantize
-            else
-              #eval(c.first)
-              eval("Tack::Sandbox::"+c.first)
-            end
-          rescue NameError
-            # means we could not load [c.first], but thats ok, its just not
-            # one of the classes we want to test
-            nil
-          rescue SyntaxError
-            # see above
-            nil
-          end
+      def test_classes_for(file)
+        @test_classes ||= TestClassDetector.test_classes_for(file) do |test_file|
+          Tack::SandboxLoader.load(test_file)
         end
-        return klasses.select{|k| k.respond_to? 'suite'}
       end
 
       def self.test_methods(test_class)

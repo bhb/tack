@@ -37,6 +37,7 @@ module Tack
     autoload :RSpecAdapter, 'tack/adapters/rspec_adapter'
     autoload :ShouldaAdapter, 'tack/adapters/shoulda_adapter'
     autoload :TestUnitAdapter, 'tack/adapters/test_unit_adapter'
+    autoload :TestClassDetector, 'tack/adapters/test_class_detector'
 
   end
   

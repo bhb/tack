@@ -53,13 +53,22 @@ module Tack
       options[:paths] = args unless args.empty? || args.nil?
 
       raise OptionParser::MissingArgument, 'No test files provided' if options[:paths].empty?
-
       if includes = options[:include]
         $LOAD_PATH.unshift *includes
       end
 
+      tests = []
+
+      # Test::Unit will find tests in any subsclass of Test::Unit::TestCase, 
+      # and sometimes libraries extend it in a helper class. This hidden
+      # option (only usable in a .tackrc) will force Tack to load tests from
+      # a non-test file.
+      (options[:extra_test_files]||[]).each do |file, adapter_klass|
+        tests += adapter_klass.new().tests_for(file)
+      end
+
       set = Tack::TestSet.new
-      tests = set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
+      tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
       if options[:dry_run]==true
         pp tests

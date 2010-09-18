@@ -105,8 +105,9 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
         EOS
         with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+          adapter = ShouldaAdapter.new
           test = [file_name, ["StringTest"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run(*test))
+          results = Tack::ResultSet.new(adapter.run(*test))
           assert_equal 1, results.passed.length
           assert_equal 0, results.failed.length
           result = results.passed.first
@@ -449,6 +450,35 @@ class ShouldaAdapterTest < Test::Unit::TestCase
 
     end
 
+  end
+
+  context "in a testcase in a module" do
+
+    should "find and run tests" do
+      begin
+        body =<<-EOS
+        require 'test/unit'
+        require 'shoulda'
+      
+        module FooModule
+          class BarTest < Test::Unit::TestCase
+            should "do something" do
+            end
+          end
+        end
+        EOS
+        within_construct(false) do |c|
+          adapter = ShouldaAdapter.new
+          test_file = c.file('foo_test.rb',body)
+          tests = adapter.tests_for(test_file)
+          assert_equal [[test_file.to_s,['FooModule::BarTest'],'should do something']], tests
+          results = adapter.run(*tests.first)
+          assert_equal 1, results[:passed].length
+        end
+      ensure 
+        remove_test_class_definition("FooModule::BarTest".to_sym)
+      end
+    end
   end
      
 end
