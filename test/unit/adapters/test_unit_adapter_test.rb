@@ -26,6 +26,20 @@ class TestUnitAdapterTest < Test::Unit::TestCase
   
   context "running tests" do
     
+    should "not change test object" do
+      body = <<-EOS
+      def test_one
+        assert_equal 1, 1
+      end
+      EOS
+      with_test_class :class_name => 'FakeTest', :body => body do |_, path|
+        test = [path.to_s, ['FakeTest'], "test_one"]
+        test_copy = deep_clone(test)
+        results = Tack::ResultSet.new(TestUnitAdapter.new.run(*test))
+        assert_equal test_copy, test
+      end
+    end
+
     should "run a successful test" do
       body = <<-EOS
       def test_one

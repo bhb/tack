@@ -18,6 +18,10 @@ autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 module TestHelpers
   include Construct::Helpers
 
+  def deep_clone(obj)
+    Marshal.load( Marshal.dump(obj))
+  end
+
   def results_for(tests)
     Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(tests).to_basics}).to_basics
   end

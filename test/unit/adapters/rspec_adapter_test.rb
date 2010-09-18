@@ -43,6 +43,21 @@ class RSpecAdapterTest < Test::Unit::TestCase
   context "running tests" do
     
     context "without context" do
+
+      should "not change test object" do
+        body = <<-EOS
+        specify "something" do
+          1.should == 1
+        end
+        EOS
+        in_rspec :describe => String, :body => body do |path|
+          test = [path.to_s, ["String"], "something"]
+          test_copy = deep_clone(test)
+          results = Tack::ResultSet.new(RSpecAdapter.new.run(*test))
+          assert_equal test_copy, test
+        end
+      end
+
       
       should "run a successful test" do
         body = <<-EOS

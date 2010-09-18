@@ -89,6 +89,7 @@ module Tack
         results = Tack::ResultSet.new
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
+        contexts = contexts.clone
         contexts[0] = "Tack::Sandbox::"+contexts[0]
         # Note that this won't work if there are multiple classes in a file
         test_classes_for(path).each do |klass|
@@ -191,8 +192,13 @@ module Tack
       end
       
       def build_result(path, contexts, description, failure=nil)
-        { :test => [path.to_s, contexts, description], 
+        { :test => [path.to_s, clean_contexts(contexts), description], 
           :failure => build_failure(failure) }
+      end
+
+      def clean_contexts(contexts)
+        contexts[0] = contexts[0].gsub('Tack::Sandbox::','')
+        contexts
       end
 
       def build_failure(failure)

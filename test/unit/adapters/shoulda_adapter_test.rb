@@ -97,6 +97,21 @@ class ShouldaAdapterTest < Test::Unit::TestCase
   context "running tests" do
     
     context "without context" do
+
+      should "not change test object" do
+        body = <<-EOS
+        should "do something" do
+          assert_equal 2, 1+1
+        end
+        EOS
+        with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+          adapter = ShouldaAdapter.new
+          test = [file_name, ["StringTest"], "should do something"]
+          test_copy = deep_clone(test)
+          results = Tack::ResultSet.new(adapter.run(*test))
+          assert_equal test_copy, test
+        end
+      end
       
       should "run a successful test" do
         body = <<-EOS
