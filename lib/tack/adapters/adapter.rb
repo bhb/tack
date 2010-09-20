@@ -6,18 +6,30 @@ module Tack
 
     class Adapter
 
+      def self.file_patterns
+        test_unit_file_patterns + rspec_file_patterns
+      end
+
+      def self.test_unit_file_patterns
+        [/test\.rb$/, /^test_.+\.rb$/]
+      end
+
+      def self.rspec_file_patterns
+        [/_spec\.rb$/]
+      end
+
       def self.for(path)
         @adapters ||= {}
         return @adapters[path] if @adapters.key?(path)
         # Using a simple path-based heuristic for now
         case Pathname.new(path).basename
-        when /test\.rb$/,/^test_.+\.rb$/
+        when *test_unit_file_patterns
           if ShouldaAdapter.shoulda_file?(path)
             @adapters[path]=ShouldaAdapter.new
           else
             @adapters[path]=TestUnitAdapter.new
           end
-        when /spec\.rb$/
+        when *rspec_file_patterns
           @adapters[path]=RSpecAdapter.new
         else
           raise "Cannot determine an adapter for path #{path}"

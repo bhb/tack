@@ -12,9 +12,6 @@ module Tack
 
     class TestUnitAdapter
 
-      def initialize
-      end
-
       def tests_for(file)
         #require file
         classes = test_classes_for(file)

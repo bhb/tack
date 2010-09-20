@@ -33,11 +33,10 @@ module Tack
 
     private 
     
-    # TODO - these regexp are duplicated in Adapter
     def valid_test_file?(path)
       return false if File.directory?(path)
       case Pathname.new(path).basename
-      when /_test.rb$/, /_spec.rb$/, /^test_.+.rb/
+      when *Adapters::Adapter.file_patterns
           true
       else
         false
