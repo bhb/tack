@@ -71,7 +71,23 @@ module Tack
       tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
       if options[:dry_run]==true
-        pp tests
+        mapping = {}
+        # Hashes are not ordered in 1.8, so we pull the list of files out separately
+        test_files = []
+        tests.each do |test_file, contexts, description|
+          test_files << test_file
+          mapping[test_file] ||= []
+          mapping[test_file] << "#{contexts.join(' ')} #{description}"
+        end
+        test_files.uniq!
+        test_files.each do |test_file|
+          puts "In #{test_file}:"
+          mapping[test_file].each do |full_description|
+            puts "    #{full_description}"
+          end
+        end
+        puts "-"*40
+        puts "#{test_files.count} files, #{tests.count} tests"
         exit 0
       else
         runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
