@@ -91,7 +91,22 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         assert_equal [file_name, ["StringTest", "sometimes", "in some cases"], "should do something else"], tests.last
       end      
     end
-    
+
+    context "when test class starts with 'Test'" do
+      
+      should "return test name correctly" do
+        body = <<-EOS
+          should "do something" do
+          end
+        EOS
+        with_test_class :class_name => :TestFooTest, :body => body do |file_name, path|
+          tests = ShouldaAdapter.new.tests_for(path)
+          assert_equal [file_name, ['TestFooTest'], 'should do something'], tests.first
+        end
+      end
+
+     end
+
   end
 
   context "running tests" do

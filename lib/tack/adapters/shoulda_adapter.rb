@@ -78,7 +78,7 @@ module Tack
         end
         tests.each do |test|
           _, context, _ = test
-          context.first.gsub!('Tack::Sandbox::','')
+          context.first.sub!('Tack::Sandbox::','')
         end
         tests
       ensure
@@ -145,7 +145,8 @@ module Tack
         until ((parent=parent.parent).is_a? Class)
           ancestors.unshift(parent.name)
         end
-        ancestors.reject! {|context_name| context_name + "Test" == parent.to_s}
+        # Blindly replacing Test with '' seems insane, but it's real Shoulda behavior
+        ancestors.reject! {|context_name| context_name == parent.to_s.gsub('Test','')}
         [parent.to_s] + ancestors
       end
 
