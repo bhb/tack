@@ -58,7 +58,6 @@ module Tack
 
       def tests_for(file)
         Shoulda.reset_contexts!
-        #Tack::SandboxLoader.load(file)
         classes = test_classes_for(file)
         tests = []
         classes.each do |klass|
@@ -78,7 +77,7 @@ module Tack
         end
         tests.each do |test|
           _, context, _ = test
-          context.first.sub!('Tack::Sandbox::','')
+          context.first.sub!(Tack::Sandbox.prefix,'')
         end
         tests
       ensure
@@ -90,7 +89,7 @@ module Tack
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
         contexts = contexts.clone
-        contexts[0] = "Tack::Sandbox::"+contexts[0]
+        contexts[0] = Tack::Sandbox.prefix+contexts[0]
         # Note that this won't work if there are multiple classes in a file
         test_classes_for(path).each do |klass|
           next if contexts.first != klass.to_s
@@ -198,7 +197,7 @@ module Tack
       end
 
       def clean_contexts(contexts)
-        contexts[0] = contexts[0].gsub('Tack::Sandbox::','')
+        contexts[0] = contexts[0].gsub(Tack::Sandbox.prefix,'')
         contexts
       end
 

@@ -1,7 +1,13 @@
 module Tack
 
-  module Sandbox
-  end
+  SANDBOX_CODE = "module Sandbox
+
+    def self.prefix
+      self.to_s+\"::\"
+    end
+
+  end"
+  eval SANDBOX_CODE
 
   module SandboxLoader
 
@@ -13,9 +19,9 @@ module Tack
     
     def self.clear
       Tack.send(:remove_const, :Sandbox)
-      Tack.class_eval("module Sandbox; end;")
+      Tack.class_eval(SANDBOX_CODE)
     end
-
+    
   end
 
 end
