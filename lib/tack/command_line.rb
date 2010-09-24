@@ -5,8 +5,10 @@ module Tack
 
   class CommandLine
 
-    def self.run(args)
-      
+    def self.run(args, opts = {})
+      stdout = opts.fetch(:stdout) { STDOUT }
+      stderr = opts.fetch(:stderr) { STDERR }
+
       Tack::ConfigFile.read
       options = Tack.options
       options ||= {}
@@ -61,12 +63,25 @@ module Tack
       end
 
       tests = []
+      options[:extra_test_files] ||= []
+
+      missing_files = false
+      (options[:paths] + options[:extra_test_files]).each do |path|
+        if !File.exists?(path)
+          stderr.puts "#{path}: No such file or directory"
+          missing_files = true 
+        end
+      end
+      if missing_files
+        stderr.puts "Some test files were missing. Quitting."
+        return 1
+      end
 
       # Test::Unit will find tests in any subsclass of Test::Unit::TestCase, 
       # and sometimes libraries extend it in a helper class. This hidden
       # option (only usable in a .tackrc) will force Tack to load tests from
       # a non-test file.
-      (options[:extra_test_files]||[]).each do |file, adapter_klass|
+      (options[:extra_test_files]).each do |file, adapter_klass|
         tests += adapter_klass.new().tests_for(file)
       end
 
