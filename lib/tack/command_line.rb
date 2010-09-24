@@ -39,6 +39,9 @@ module Tack
         opts.on("-F", "--fork", "Run each test in a separate process") do
           options[:fork] = true
         end
+        opts.on('-v', '--verbose', "Display the full test name before running") do
+          options[:verbose] = true
+        end
         opts.on('-d', '--dry-run', "Display (but do not run) matching tests") do
           options[:dry_run] = true
         end
@@ -103,7 +106,7 @@ module Tack
           runner.use Tack::Formatters::Newline
           runner.use Tack::Formatters::PrintPending
           runner.use Tack::Formatters::Newline
-          runner.use Tack::Formatters::ProgressBar
+          runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
         end
         
         runs = 1
