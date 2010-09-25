@@ -17,7 +17,7 @@ autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 
 module TestHelpers
   include Construct::Helpers
-
+  
   def deep_clone(obj)
     Marshal.load( Marshal.dump(obj))
   end

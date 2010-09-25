@@ -9,7 +9,7 @@ module Tack
       stdout = opts.fetch(:stdout) { STDOUT }
       stderr = opts.fetch(:stderr) { STDERR }
 
-      Tack::ConfigFile.read
+      Tack::ConfigFile.read(stdout)
       options = Tack.options
       options ||= {}
       
@@ -48,7 +48,7 @@ module Tack
           options[:dry_run] = true
         end
         opts.on_tail("-h","--help", "Show this message") do
-          puts opts
+          stdout.puts opts
           exit
         end
       end
@@ -99,13 +99,13 @@ module Tack
         end
         test_files.uniq!
         test_files.each do |test_file|
-          puts "In #{test_file}:"
+          stdout.puts "In #{test_file}:"
           mapping[test_file].each do |full_description|
-            puts "    #{full_description}"
+            stdout.puts "    #{full_description}"
           end
         end
-        puts "-"*40
-        puts "#{test_files.count} files, #{tests.count} tests"
+        stdout.puts "-"*40
+        stdout.puts "#{test_files.count} files, #{tests.count} tests"
         exit 0
       else
         runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
@@ -139,8 +139,8 @@ module Tack
       end
 
     rescue OptionParser::ParseError => e
-      puts e.message
-      puts option_parser
+      stdout.puts e.message
+      stdout.puts option_parser
       exit 1
     end
 

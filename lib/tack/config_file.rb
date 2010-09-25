@@ -2,13 +2,13 @@ module Tack
 
   class ConfigFile
 
-    def self.read
+    def self.read(stdout)
       path = '.tackrc'
       if File.exists?(path)
-        puts "Found .tackrc"
+        stdout.puts "Found .tackrc"
         eval File.read(path)
       else
-        puts "No .tackrc found. Only using command line arguments"
+        stdout.puts "No .tackrc found. Only using command line arguments"
       end
     end
 
