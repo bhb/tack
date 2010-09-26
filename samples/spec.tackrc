@@ -1,0 +1,4 @@
+Tack.config do |options|
+  options[:include] = %w{lib spec}
+  options[:paths] = ['spec']
+end

@@ -1,0 +1,4 @@
+Tack.config do |options|
+  options[:include] = %w{lib test}
+  options[:paths] = ['test']
+end
