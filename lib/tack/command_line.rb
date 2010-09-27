@@ -95,7 +95,7 @@ module Tack
         tests.each do |test_file, contexts, description|
           test_files << test_file
           mapping[test_file] ||= []
-          mapping[test_file] << "#{contexts.join(' ')} #{description}"
+          mapping[test_file] << Tack::Util::Test.new(test_file,contexts,description).name
         end
         test_files.uniq!
         test_files.each do |test_file|

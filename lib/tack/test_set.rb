@@ -25,7 +25,7 @@ module Tack
         tests += adapter.tests_for(file).select  do |_, contexts, description| 
           contexts = Array(contexts)
           patterns.any? do |pattern|
-            "#{contexts.join(' ')} #{description}".match(pattern)
+            Util::Test.new(file,contexts,description).name.match(pattern)
           end
         end
       }
