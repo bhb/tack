@@ -4,6 +4,8 @@ module Tack
 
   module Adapters
 
+    class AdapterDetectionError < RuntimeError; end;
+
     class Adapter
 
       def self.file_patterns
@@ -32,7 +34,7 @@ module Tack
         when *rspec_file_patterns
           @adapters[path]=RSpecAdapter.new
         else
-          raise "Cannot determine an adapter for path #{path}"
+          raise AdapterDetectionError, "Cannot determine a test adapter for file #{path}"
         end
       end
     end

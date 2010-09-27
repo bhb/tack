@@ -49,7 +49,7 @@ module Tack
         end
         opts.on_tail("-h","--help", "Show this message") do
           stdout.puts opts
-          exit
+          status = 0
         end
       end
 
@@ -74,7 +74,7 @@ module Tack
       end
       if missing_files
         stderr.puts "Some test files were missing. Quitting."
-        return 1
+        return status = 1
       end
 
       # Test::Unit will find tests in any subsclass of Test::Unit::TestCase, 
@@ -106,7 +106,7 @@ module Tack
         end
         stdout.puts "-"*40
         stdout.puts "#{test_files.count} files, #{tests.count} tests"
-        exit 0
+        return status = 0
       else
         runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
           runner.use Tack::Middleware::Reverse if options[:reverse]
@@ -132,16 +132,19 @@ module Tack
         end
         
         if results[:failed].empty?
-          0
+          return status = 0
         else
-          1
+          return status = 1
         end
       end
 
+    rescue Tack::Adapters::AdapterDetectionError => e
+      stderr.puts e.message
+      return status = 1
     rescue OptionParser::ParseError => e
-      stdout.puts e.message
-      stdout.puts option_parser
-      exit 1
+      stderr.puts e.message
+      stderr.puts option_parser
+      return status = 1
     end
 
     def self.require_ruby_debug

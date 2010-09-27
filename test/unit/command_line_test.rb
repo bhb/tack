@@ -22,7 +22,7 @@ class CommandLineTest < Test::Unit::TestCase
     assert_match /Some test files were missing. Quitting./, stderr
   end
 
-  should "should exit 1 if any files are missing" do
+  should "exit 1 if any files are missing" do
     status = nil
     within_construct(false) do |c|
       testrb = c.file 'test.rb'
@@ -30,6 +30,18 @@ class CommandLineTest < Test::Unit::TestCase
       status = command_line(['missing_file.rb', testrb])
     end
     assert_equal 1, status
+  end
+
+  should "give error and exit 1 if adapter cannot be found" do
+    within_construct(false) do |c|
+      testrb = c.file 'foobar.rb'
+      assert File.exists?(testrb)
+      stderr = StringIO.new
+      status = command_line([testrb], :stderr => stderr)
+      stderr.rewind
+      assert_match /Cannot determine a test adapter for file .*\/foobar.rb/, stderr.read
+      assert_equal 1, status
+    end
   end
 
 end
