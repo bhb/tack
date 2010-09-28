@@ -138,7 +138,7 @@ module Tack
         end
       end
 
-    rescue Tack::Adapters::AdapterDetectionError => e
+    rescue Tack::Adapters::AdapterDetectionError, Tack::NoMatchingTestError => e
       stderr.puts e.message
       return status = 1
     rescue OptionParser::ParseError => e
