@@ -63,10 +63,10 @@ module Tack
       end
 
       tests = []
-      options[:extra_test_files] ||= []
+      options[:extra_test_files] ||= {}
 
       missing_files = false
-      (options[:paths] + options[:extra_test_files]).each do |path|
+      (options[:paths] + options[:extra_test_files].keys).each do |path|
         if !File.exists?(path)
           stderr.puts "#{path}: No such file or directory"
           missing_files = true 
@@ -84,7 +84,7 @@ module Tack
       (options[:extra_test_files]).each do |file, adapter_klass|
         tests += adapter_klass.new().tests_for(file)
       end
-
+      
       set = Tack::TestSet.new
       tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
