@@ -16,8 +16,7 @@ class CommandLineTest < Test::Unit::TestCase
     assert_nothing_raised do 
       command_line(['missing_file'], :stderr => stderr)
     end
-    stderr.rewind
-    stderr = stderr.read
+    stderr = stderr.string
     assert_match /No such file or directory/, stderr
     assert_match /Some test files were missing. Quitting./, stderr
   end
@@ -38,8 +37,7 @@ class CommandLineTest < Test::Unit::TestCase
       assert File.exists?(testrb)
       stderr = StringIO.new
       status = command_line([testrb], :stderr => stderr)
-      stderr.rewind
-      assert_match /Cannot determine a test adapter for file .*\/foobar.rb/, stderr.read
+      assert_match /Cannot determine a test adapter for file .*\/foobar.rb/, stderr.string
       assert_equal 1, status
     end
   end
