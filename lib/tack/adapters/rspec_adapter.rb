@@ -107,7 +107,7 @@ module Tack
         results = formatter.results
         
         if results.length == 0
-          raise NoMatchingTestError, "No matching test found"
+          raise NoMatchingTestError, Tack::Util::Test.new(file,contexts,description)
         end
         basics(results)
       end

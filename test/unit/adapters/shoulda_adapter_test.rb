@@ -205,11 +205,11 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
         EOS
         with_test_class :class_name => :StringTest, :body => body do |file_name, path|
-          test = [file_name, ["StringTest"], "another spec"]
+          test = [file_name, ["StringTest"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
             ShouldaAdapter.new.run(*test)
           end
-          assert_equal "No matching test found", error.message
+          assert_equal %Q{Could not find test "StringTest should do something else" in #{path}}, error.message
         end
       end
       
@@ -378,11 +378,11 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
         EOS
         with_test_class :class_name => :StringTest, :body => body do |file_name, path|
-          test = [file_name, ["StringTest", "sometimes"], "another spec"]
+          test = [file_name, ["StringTest", "sometimes"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
             ShouldaAdapter.new.run(*test)
           end
-          assert_equal "No matching test found", error.message
+          assert_equal %Q{Could not find test "StringTest sometimes should do something else" in #{path}}, error.message
         end
       end
       

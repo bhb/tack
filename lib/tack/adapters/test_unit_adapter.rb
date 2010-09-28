@@ -42,7 +42,7 @@ module Tack
         begin
           test = klass.new(description)
         rescue NameError
-          raise NoMatchingTestError, "No matching test found" 
+          raise NoMatchingTestError, Tack::Util::Test.new(path,context,description) 
         end
         result = ::Test::Unit::TestResult.new
 

@@ -102,7 +102,7 @@ module Tack
               return basics(results)
             else
               Shoulda.reset_contexts!
-              raise NoMatchingTestError, "No matching test found" 
+              raise NoMatchingTestError, Tack::Util::Test.new(path,clean_contexts(contexts),description) 
             end
           end
           result = ::Test::Unit::TestResult.new

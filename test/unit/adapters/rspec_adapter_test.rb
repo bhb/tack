@@ -139,11 +139,11 @@ class RSpecAdapterTest < Test::Unit::TestCase
         end
         EOS
         in_rspec :describe => String, :body => body do |path|
-          test = [path.to_s, ["String"], "another spec"]
+          test = [path.to_s, ["String"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
             RSpecAdapter.new.run(*test)
           end
-          assert_equal "No matching test found", error.message
+          assert_equal %Q{Could not find test "String should do something else" in #{path}}, error.message
         end
       end
       
@@ -317,11 +317,11 @@ class RSpecAdapterTest < Test::Unit::TestCase
         end
         EOS
         in_rspec :describe => String, :body => body do |path|
-          test = [path.to_s, ["String", "sometimes"], "another spec"]
+          test = [path.to_s, ["String", "sometimes"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
             RSpecAdapter.new.run(*test)
           end
-          assert_equal "No matching test found", error.message
+          assert_equal %Q{Could not find test "String sometimes should do something else" in #{path}}, error.message
         end
       end
       

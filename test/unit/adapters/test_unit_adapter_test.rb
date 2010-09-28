@@ -105,7 +105,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
         error = assert_raises Tack::NoMatchingTestError do
           TestUnitAdapter.new.run(*test)
         end
-        assert_equal "No matching test found", error.message
+        assert_equal %Q{Could not find test "FakeTest test_two" in #{path}}, error.message
       end
     end
     
