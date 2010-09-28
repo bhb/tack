@@ -6,6 +6,7 @@ module Tack
       include Middleware::Base
 
       def run_suite(tests)
+        tests = basics(tests)
         returning @app.run_suite(tests) do |results|
           results[:failed].each_with_index do |result, index|
             print_failure(index+1, result)
@@ -33,8 +34,7 @@ module Tack
       end
 
       def full_description(test)
-        _, contexts, description = test
-        "(#{contexts.first}) #{contexts[1..-1].join(" ")} should #{description}"
+        Tack::Util::Test.new(*test).name
       end
 
     end

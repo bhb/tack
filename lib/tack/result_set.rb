@@ -21,6 +21,18 @@ module Tack
         :pending => pending.map{|x| basics(x)} }
     end
 
+    def pass(test)
+      @passed << Result.for_test(test)
+    end
+
+    def fail(test, failure)
+      @failed << Result.for_test(test, failure)
+    end
+
+    def pend(test)
+      @pending << Result.for_test(test)
+    end
+
     def merge(results)
       new_results = ResultSet.new(results)
       self.passed += new_results.passed

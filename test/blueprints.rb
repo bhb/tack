@@ -6,3 +6,8 @@ Tack::Util::Test.blueprint do
   context ['FooTest']
   description 'test1'
 end
+
+Tack::Util::TestFailure.blueprint do
+  message 'FAKE FAILURE MESSAGE'
+  backtrace []
+end

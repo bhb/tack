@@ -20,6 +20,7 @@ module Tack
 
   module Util
     autoload :Test, 'tack/test'
+    autoload :TestFailure, 'tack/test_failure'
   end
   
   module Middleware

@@ -13,7 +13,7 @@ module Tack
           @context = opts.fetch(:context) {[]}
           @description = opts.fetch(:description) {''}
         else
-          @file, @context, @description = *args
+          @file, @context, @description = args
         end
       end
 
