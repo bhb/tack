@@ -78,6 +78,7 @@ module Tack
         tests.each do |test|
           _, context, _ = test
           context.first.sub!(Tack::Sandbox.prefix,'')
+          context.delete("")
         end
         tests
       ensure

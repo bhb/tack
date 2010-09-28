@@ -105,7 +105,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
       end
 
-     end
+    end
 
   end
 
@@ -386,6 +386,30 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
       end
       
+    end
+
+  end
+
+  # This happens in the Jeweler test suite
+  context "with '' context" do
+    
+    should "run a successful test" do
+      body = <<-EOS
+      context "sometimes" do
+        context "" do
+          should "do something" do
+            assert_equal 2, 1+1
+          end
+        end
+      end
+      EOS
+      with_test_class :class_name => :StringTest, :body => body do |file_name, path|
+        adapter = ShouldaAdapter.new
+        test = adapter.tests_for(path).first
+        assert_equal [file_name, ["StringTest", "sometimes"], "should do something"], test
+        results = Tack::ResultSet.new(adapter.run(*test))
+        assert_equal 1, results.passed.length
+      end
     end
 
   end
