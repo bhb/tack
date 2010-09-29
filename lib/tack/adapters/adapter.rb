@@ -26,7 +26,7 @@ module Tack
         # Using a simple path-based heuristic for now
         case Pathname.new(path).basename
         when *test_unit_file_patterns
-          if ShouldaAdapter.shoulda_file?(path)
+          if shoulda_file?(path)
             @adapters[path]=ShouldaAdapter.new
           else
             @adapters[path]=TestUnitAdapter.new
@@ -37,6 +37,12 @@ module Tack
           raise AdapterDetectionError, "Cannot determine a test adapter for file #{path}"
         end
       end
+
+      def self.shoulda_file?(path)
+        return false unless defined?(Shoulda)
+        ShouldaAdapter.shoulda_file?(path)
+      end
+
     end
 
   end

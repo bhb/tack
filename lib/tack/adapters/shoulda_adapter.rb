@@ -7,6 +7,7 @@ require 'test/unit/testresult'
 ::Test::Unit.run = true
 
 require 'shoulda'
+
 module Shoulda
 
   # Just here for testing purposes to see if this has been defined
@@ -47,7 +48,7 @@ module Tack
   module Adapters
 
     class ShouldaAdapter
-
+      
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
@@ -55,7 +56,7 @@ module Tack
       ensure
         Shoulda.reset_contexts!
       end
-
+      
       def tests_for(file)
         Shoulda.reset_contexts!
         classes = test_classes_for(file)
