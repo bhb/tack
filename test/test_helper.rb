@@ -50,6 +50,10 @@ module TestHelpers
     Object.send(:remove_const, top) if Object.const_defined?(top)
   end
 
+  def with_shoulda_test(args,&block)
+    with_test_class(args.merge({:shoulda => true}), &block)
+  end
+
   def with_test_class(args)
     body = args.fetch(:body)
     shoulda = args.fetch(:shoulda)  {false}

@@ -16,7 +16,7 @@ class ShouldaTest < Test::Unit::TestCase
     should "do nothing" do
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, "some")
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
@@ -31,7 +31,7 @@ class ShouldaTest < Test::Unit::TestCase
     should "do nothing" do
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /nothing/)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
@@ -52,7 +52,7 @@ class ShouldaTest < Test::Unit::TestCase
       end
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 2, result_set.length
@@ -65,7 +65,7 @@ class ShouldaTest < Test::Unit::TestCase
       assert_equal ("ab"+"cd").length, ("ab".length - "cd".length)
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
@@ -78,7 +78,7 @@ class ShouldaTest < Test::Unit::TestCase
       assert_equal ("ab"+"cd").length, ("ab".length - "cd".length)
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.pending.length
@@ -91,7 +91,7 @@ class ShouldaTest < Test::Unit::TestCase
       raise "failing!"
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
@@ -104,7 +104,7 @@ class ShouldaTest < Test::Unit::TestCase
       assert_equal ("ab"+"cd").length, ("ab".length + "cd".length)
     end
     EOS
-    with_test_class :body => body do |file_name, path|
+    with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
       result_set = Tack::ResultSet.new(raw_results)
       assert_equal 1, result_set.passed.length
@@ -121,7 +121,7 @@ class ShouldaTest < Test::Unit::TestCase
           end
         end
       EOS
-      with_test_class :body => body do |file_name, path|
+      with_shoulda_test :body => body do |file_name, path|
         raw_results = Tack::Runner.run_tests(path.parent, path)
         result_set = Tack::ResultSet.new(raw_results)
         assert_equal 1, result_set.passed.length
