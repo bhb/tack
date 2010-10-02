@@ -27,8 +27,8 @@ module Tack
 
     def run_suite(tests)
       results = ResultSet.new
-      tests.each do |path, context, description|
-        result = @start_app.run_test(path, context, description)
+      tests.each do |path, contexts, description|
+        result = @start_app.run_test(path, contexts, description)
         results.merge(result)
       end
       basics(results)

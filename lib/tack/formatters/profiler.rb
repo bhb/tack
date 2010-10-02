@@ -24,9 +24,9 @@ module Tack
         end
       end
 
-      def run_test(file, context, description)
+      def run_test(file, contexts, description)
         time = Time.now
-        returning @app.run_test(file, context, description) do 
+        returning @app.run_test(file, contexts, description) do 
           @times << [description, Time.now - time]
         end
       end

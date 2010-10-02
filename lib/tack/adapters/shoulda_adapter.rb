@@ -77,9 +77,9 @@ module Tack
           tests += tests_for_class
         end
         tests.each do |test|
-          _, context, _ = test
-          context.first.sub!(Tack::Sandbox.prefix,'')
-          context.delete("")
+          _, contexts, _ = test
+          contexts.first.sub!(Tack::Sandbox.prefix,'')
+          contexts.delete("")
         end
         tests
       ensure

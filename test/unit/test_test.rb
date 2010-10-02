@@ -9,23 +9,23 @@ class TestTest < Test::Unit::TestCase
     should "work with args" do
       test = Test.new('file',['Class','context'],'description')
       assert_equal 'file', test.file
-      assert_equal ['Class','context'], test.context
+      assert_equal ['Class','context'], test.contexts
       assert_equal 'description', test.description
     end
 
     should "work with args array" do
       test = Test.new(['file',['Class','context'],'description'])
       assert_equal 'file', test.file
-      assert_equal ['Class','context'], test.context
+      assert_equal ['Class','context'], test.contexts
       assert_equal 'description', test.description
     end
 
     should "work with args hash" do
       test = Test.new(:file => 'file',
-                      :context => ['Class','context'],
+                      :contexts => ['Class','context'],
                       :description => 'description')
       assert_equal 'file', test.file
-      assert_equal ['Class','context'], test.context
+      assert_equal ['Class','context'], test.contexts
       assert_equal 'description', test.description
     end
 

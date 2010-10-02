@@ -5,20 +5,20 @@ module Tack
     class Fork
       include Middleware::Base
       
-      def run_test(file, context, description)
+      def run_test(file, contexts, description)
         @reader, @writer = IO.pipe
         if @child = fork
           proceed_as_parent
         else
-          proceed_as_child(file,context, description)
+          proceed_as_child(file,contexts, description)
         end
       end
 
       private
       
-      def proceed_as_child(file, context, description)
+      def proceed_as_child(file, contexts, description)
         @reader.close
-        result = @app.run_test(file, context, description)
+        result = @app.run_test(file, contexts, description)
         Marshal.dump([:ok, result], @writer)
       rescue Object => error
         Marshal.dump([

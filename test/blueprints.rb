@@ -3,7 +3,7 @@ require 'sham'
 
 Tack::Util::Test.blueprint do
   file 'foo.rb'
-  context ['FooTest']
+  contexts ['FooTest']
   description 'test1'
 end
 

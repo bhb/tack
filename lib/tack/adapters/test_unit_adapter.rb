@@ -26,11 +26,11 @@ module Tack
         tests
       end
 
-      def run(path, context, description)
+      def run(path, contexts, description)
         results = Tack::ResultSet.new
         test_classes_for(path).each do |klass|
-          if klass.to_s==context.first
-            run_tests_for_class(klass, path, context, description, results)
+          if klass.to_s==contexts.first
+            run_tests_for_class(klass, path, contexts, description, results)
           end
         end
         basics(results)
@@ -38,16 +38,16 @@ module Tack
 
       private
 
-      def run_tests_for_class(klass, path, context, description, results)
+      def run_tests_for_class(klass, path, contexts, description, results)
         begin
           test = klass.new(description)
         rescue NameError
-          raise NoMatchingTestError, Tack::Util::Test.new(path,context,description) 
+          raise NoMatchingTestError, Tack::Util::Test.new(path,contexts,description) 
         end
         result = ::Test::Unit::TestResult.new
 
         result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
-          results.failed << build_result(path, context, description, failure)
+          results.failed << build_result(path, contexts, description, failure)
         end
         
         test.run(result) do |started,name|
@@ -55,12 +55,12 @@ module Tack
           # but this method requires a block
         end
         if result.passed?
-          results.passed << build_result(path, context, description)
+          results.passed << build_result(path, contexts, description)
         end
       end
       
-      def build_result(file, context, description, failure=nil)
-        { :test => [file.to_s, context, description],
+      def build_result(file, contexts, description, failure=nil)
+        { :test => [file.to_s, contexts, description],
           :failure => build_failure(failure) }
       end
 

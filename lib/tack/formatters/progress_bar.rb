@@ -16,10 +16,11 @@ module Tack
         end
       end
 
-      def run_test(file, context, description)
-        returning @app.run_test(file, context, description) do |result|
+      def run_test(file, contexts, description)
+        returning @app.run_test(file, contexts, description) do |result|
           if @verbose
-            @output.print("#{context.join(' ')} #{description}: ")
+            # TODO - replace with Test#name
+            @output.print("#{contexts.join(' ')} #{description}: ")
           end
           print_char_for_results(result[:passed], '.')
           print_char_for_results(result[:pending], 'P')
