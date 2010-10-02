@@ -221,15 +221,6 @@ module Tack
         end
       end
 
-      def self.test_methods(test_class)
-        test_class.instance_methods.select do |method_name|
-          method_name =~ /^test./ &&
-            (test_class.instance_method(method_name).arity == 0 ||
-             test_class.instance_method(method_name).arity == -1
-             )
-        end
-      end
-
     end
 
   end

@@ -4,6 +4,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
   include TestHelpers
   include Tack::Adapters
 
+  should "should prevent auto-run at exit" do
+    assert_equal 0, Spec::Runner.run
+  end
+
   context "getting tests" do
 
     should "get return all tests" do
