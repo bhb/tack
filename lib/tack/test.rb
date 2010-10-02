@@ -7,11 +7,15 @@ module Tack
       attr_accessor :file, :context, :description
 
       def initialize(*args)
-        if(args.length == 1 && args.first.is_a?(Hash))
-          opts = args.first
-          @file = opts.fetch(:file) {''}
-          @context = opts.fetch(:context) {[]}
-          @description = opts.fetch(:description) {''}
+        if args.length == 1
+          if args.first.is_a?(Hash)
+            opts = args.first
+            @file = opts.fetch(:file) {''}
+            @context = opts.fetch(:context) {[]}
+            @description = opts.fetch(:description) {''}
+          elsif args.first.is_a?(Enumerable)
+            @file, @context, @description = args.first
+          end
         else
           @file, @context, @description = args
         end
