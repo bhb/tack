@@ -45,6 +45,7 @@ module Tack
   
   module Formatters
     
+    autoload :BacktraceCleaner, 'tack/formatters/backtrace_cleaner'
     autoload :BasicSummary, 'tack/formatters/basic_summary'
     autoload :Newline, 'tack/formatters/newline'
     autoload :PrintFailures, 'tack/formatters/print_failures'
