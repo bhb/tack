@@ -46,7 +46,9 @@ module Tack
       if results == nil
         []
       else
-        results.map { |result| Result.new(result) }
+        results.map do |result| 
+          Result.new(result)
+        end
       end
     end
 

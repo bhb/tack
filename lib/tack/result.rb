@@ -9,8 +9,14 @@ module Tack
     end
 
     def initialize(opts)
-      @test = opts.fetch(:test)
-      @failure = opts.fetch(:failure) { nil }
+      if opts.is_a?(Result)
+        other = opts
+        @test = other.test
+        @failure = other.failure
+      else
+        @test = opts.fetch(:test)
+        @failure = opts.fetch(:failure) { nil }
+      end
     end
 
     def ==(other)

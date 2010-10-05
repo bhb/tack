@@ -27,6 +27,9 @@ module Tack
       end
 
       def run(path, contexts, description)
+        # TODO - since each test is unique, I think 
+        # that it's not necessary to return a full result set, 
+        # just a result. That might simplify things
         results = Tack::ResultSet.new
         test_classes_for(path).each do |klass|
           if klass.to_s==contexts.first
