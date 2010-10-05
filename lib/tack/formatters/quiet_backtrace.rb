@@ -13,10 +13,11 @@ module Tack
         
         RUBY_NOISE       = %w( ruby Ruby.framework 
                            rubygems/custom_require benchmark.rb )
-        TEST_UNIT_NOISE  = %w( test/unit )
+        #TEST_UNIT_NOISE  = %w( test/unit )
+        TEST_UNIT_NOISE  = [%r{[^\.]/test/unit}]
         GEM_NOISE        = %w( -e:1 )
 
-        SHOULDA_NOISE    = %w( shoulda )
+        SHOULDA_NOISE    = %w( lib/shoulda )
 
         RAILS_NOISE = %w( script/server lib/active_record )
         VENDOR_DIRS = %w( vendor/gems vendor/rails vendor/plugins )
@@ -37,7 +38,7 @@ module Tack
           end
           
           add_filter { |line| line.sub(ERB_METHOD_SIG, '') }
-          add_filter { |line| line.sub('./', '/') }
+          # add_filter { |line| line.sub('./', '/') }
           
           if defined?(Gem)
             add_filter do |line| 
@@ -45,7 +46,7 @@ module Tack
             end
           end
 
-          add_silencer { |line| ALL_NOISE.any? { |dir| line.include?(dir) } }
+          add_silencer { |line| ALL_NOISE.any? { |dir| line=~(Regexp.new(dir)) } }
         end
         
         # Returns the backtrace after all filters and silencers has been run against it. 

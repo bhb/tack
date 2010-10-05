@@ -47,6 +47,9 @@ module Tack
         opts.on('-d', '--dry-run', "Display (but do not run) matching tests") do
           options[:dry_run] = true
         end
+        opts.on('-b', '--backtrace', 'Output full backtrace') do
+          options[:backtrace] = true
+        end
         opts.on_tail("-h","--help", "Show this message") do
           stdout.puts opts
           status = 0
@@ -122,6 +125,7 @@ module Tack
           runner.use Tack::Formatters::PrintPending
           runner.use Tack::Formatters::Newline
           runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
+          runner.use Tack::Formatters::BacktraceCleaner, :full => options[:backtrace]
         end
         
         runs = 1
