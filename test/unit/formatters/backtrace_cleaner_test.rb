@@ -41,19 +41,39 @@ class BacktraceCleanerTest < Test::Unit::TestCase
   
   context "by default" do
 
-    should_eventually "remove lines contains tack executable" do
+    should "remove lines contains tack executable" do
+      backtrace = ['line1', 'bin/tack:5:', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter)
+      assert_equal %w{line1 line3}, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "remove lines contains tack code" do
+    should "remove lines contains tack code" do
+      backtrace = ['line1', './lib/tack/middleware/base.rb:17:in `run_test\'', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter)
+      assert_equal %w{line1 line3}, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "remove lines containing Should_Eventuallya code" do
+    should "remove lines containing Shoulda code" do
+      backtrace = ['line1', 'lib/shoulda/context.rb:382:in `call\'', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter)
+      assert_equal %w{line1 line3}, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "remove lines containing Test::Unit code" do
+    should "remove lines containing Test::Unit code" do
+      backtrace = ['line1', 'test/unit/testcase.rb:78:in `run\'', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter)
+      assert_equal %w{line1 line3}, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "remove lines containing RSpec code" do
+    should "remove lines containing RSpec code" do
+      backtrace = ['line1', 'lib/spec/runner/example_group_runner.rb', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter)
+      assert_equal %w{line1 line3}, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
   end
@@ -75,7 +95,11 @@ class BacktraceCleanerTest < Test::Unit::TestCase
       assert_equal backtrace, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "not remove lines containing Shoulda code" do
+    should "not remove lines containing Shoulda code" do
+      backtrace = ['line1', 'lib/shoulda/context.rb:382:in `call\'', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter, :full => true)
+      assert_equal backtrace, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
     should "not remove lines containing Test::Unit code" do
@@ -85,7 +109,11 @@ class BacktraceCleanerTest < Test::Unit::TestCase
       assert_equal backtrace, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
-    should_eventually "not remove lines containing RSpec code" do
+    should "not remove lines containing RSpec code" do
+      backtrace = ['line1', 'lib/spec/runner/example_group_runner.rb', 'line3']
+      adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
+      middleware = BacktraceCleaner.new(adapter, :full => true)
+      assert_equal backtrace, middleware.run_test(*Test.make.to_basics)[:failed].first[:failure][:backtrace]
     end
 
   end

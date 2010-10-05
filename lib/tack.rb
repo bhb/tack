@@ -46,6 +46,8 @@ module Tack
   module Formatters
     
     autoload :BacktraceCleaner, 'tack/formatters/backtrace_cleaner'
+    # TODO - Should make a 'helpers' directory within Formatters
+    autoload :QuietBacktrace, 'tack/formatters/quiet_backtrace'
     autoload :BasicSummary, 'tack/formatters/basic_summary'
     autoload :Newline, 'tack/formatters/newline'
     autoload :PrintFailures, 'tack/formatters/print_failures'
