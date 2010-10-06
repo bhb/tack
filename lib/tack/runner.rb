@@ -34,6 +34,11 @@ module Tack
       basics(results)
     end
 
+    # TODO - this class both builds the middleware chain 
+    # and acts as a kind of wrapper around real adapters.
+    # I think I should move some functionality around 
+    # (make a real middleware that identifies the adapter on
+    # the fly and have the builder be separate)
     def run_test(path, contexts, description)
       adapter = Adapters::Adapter.for(path)
       adapter.run(path, contexts, description)

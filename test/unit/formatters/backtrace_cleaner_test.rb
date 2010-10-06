@@ -1,36 +1,10 @@
 require 'test_helper'
 
-class StubAdapter
-  include Tack
-  
-  def initialize(mapping={})
-    @mapping = {}
-    mapping.each do |key, value|
-      @mapping[basics(key)] = value
-    end
-  end
-
-  def run_test(path,contexts,description)
-    test = [path,contexts,description]
-    result = @mapping[test]
-    raise "No stubbed result for #{test.inspect}" if result.nil?
-    status, message, backtrace = result
-    case status
-    when :fail
-      ResultSet.new(:failed => [Result.new(:test => test, 
-                                          :failure => { :message => message, 
-                                            :backtrace => backtrace})]).to_basics
-    else
-      raise "Unknown status #{status}"
-    end
-  end
-
-end
-
 class BacktraceCleanerTest < Test::Unit::TestCase
   include FormatterTestHelper
   include MiddlewareTestHelper
   include Tack::Util
+  include Tack
 
   def middleware_class
     BacktraceCleaner

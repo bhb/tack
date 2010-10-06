@@ -10,6 +10,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require 'tack'
+require File.expand_path(File.dirname(__FILE__) + "/stub_adapter")
 require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
 autoload :FormatterTestHelper, 'unit/formatters/formatter_test_helper'
