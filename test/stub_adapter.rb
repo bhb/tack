@@ -29,7 +29,7 @@ module Tack
       # out of runner and into an Adapter base class
       results = ResultSet.new
       tests.each do |test|
-        result = run_test(*test)
+        result = run_test(*basics(test))
         results.merge(result)
       end
       basics(results)

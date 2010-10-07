@@ -14,8 +14,8 @@ module Tack
       def run_suite(tests)
         returning @app.run_suite(tests) do
           @times.times do 
-            @output.puts "\n"
-          end
+           @output.puts "\n"
+         end
         end
       end
 
