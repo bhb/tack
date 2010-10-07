@@ -15,7 +15,7 @@ module FormatterTestHelper
     
     def should_behave_like_formatter
 
-      context "run_suites" do
+      context "#run_suites" do
 
         should "not alter results" do
           fake_middleware = stub_everything
@@ -28,7 +28,7 @@ module FormatterTestHelper
         
       end
 
-      context "run_test" do
+      context "#run_test" do
 
         should "not alter result" do
           fake_middleware = stub_everything

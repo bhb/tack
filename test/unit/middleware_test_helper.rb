@@ -12,7 +12,8 @@ module MiddlewareTestHelper
   module ClassMethods
     
     def should_behave_like_middleware
-      context "run_suites" do
+
+      context "#run_suites" do
 
         should "define #run_suite method" do
           assert middleware_class.new(nil).respond_to?(:run_suite)
@@ -28,7 +29,7 @@ module MiddlewareTestHelper
         end
       end
 
-      context "run_test" do
+      context "#run_test" do
 
         should "define #run_test method" do
           assert middleware_class.new(nil).respond_to?(:run_test)
