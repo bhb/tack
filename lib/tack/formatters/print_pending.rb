@@ -10,7 +10,7 @@ module Tack
           results[:pending].each do |result|
             file, contexts, description = result[:test]
             # TODO - use Test#name
-            @output.puts "PENDING: #{[contexts<<description].join(" ")}"
+            @output.puts "PENDING: #{[contexts.clone<<description].join(" ")}"
           end
         end
       end

@@ -28,7 +28,7 @@ module Tack
       # The right thing is to refactor the run_suite method
       # out of runner and into an Adapter base class
       results = ResultSet.new
-      tests.each do |test|
+      tests.clone.each do |test|
         result = run_test(*basics(test))
         results.merge(result)
       end
