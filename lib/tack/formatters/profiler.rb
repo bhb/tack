@@ -13,7 +13,7 @@ module Tack
 
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
-          @output.puts "\n\nTop #{@num_tests} slowest examples:\n"
+          @output.puts "\n\nTop #{@num_tests} slowest tests:\n"
           @times = @times.sort_by do |description, time|
             time
           end.reverse
@@ -27,7 +27,7 @@ module Tack
       def run_test(file, contexts, description)
         time = Time.now
         returning @app.run_test(file, contexts, description) do 
-          @times << [description, Time.now - time]
+          @times << [Tack::Util::Test.new(file,contexts,description).name, Time.now - time]
         end
       end
 

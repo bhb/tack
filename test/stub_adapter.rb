@@ -2,6 +2,8 @@ module Tack
 
   class StubAdapter
     
+    attr_accessor :top
+
     def initialize(mapping={})
       @mapping = {}
       mapping.each do |key, value|
@@ -29,7 +31,7 @@ module Tack
       # out of runner and into an Adapter base class
       results = ResultSet.new
       tests.clone.each do |test|
-        result = run_test(*basics(test))
+        result = (top||self).run_test(*basics(test))
         results.merge(result)
       end
       basics(results)
