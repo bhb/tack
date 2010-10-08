@@ -11,15 +11,15 @@ module Tack
     end
 
     def pass(test)
-      @mapping[test] = :pass
+      @mapping[basics(test)] = :pass
     end
 
     def fail(test, message = "Default failure message", backtrace = [])
-      @mapping[test] = [:fail, message, backtrace]
+      @mapping[basics(test)] = [:fail, message, backtrace]
     end
     
     def pend(test)
-      @mapping[test] = :pend
+      @mapping[basics(test)] = :pend
     end
     
     def run_suite(tests)
