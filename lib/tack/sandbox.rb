@@ -12,6 +12,7 @@ module Tack
   module SandboxLoader
 
     def self.load(path)
+      path = path.to_s
       self.clear
       content = File.read(path)
       Sandbox.class_eval(content, path)
