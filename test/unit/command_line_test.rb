@@ -42,4 +42,10 @@ class CommandLineTest < Test::Unit::TestCase
     end
   end
 
+  should "--help should exit 0 and not run tests" do
+    status = command_line(["--help"])
+    Tack::Runner.any_instance.expects(:run).never
+    assert_equal 0, status
+  end
+
 end

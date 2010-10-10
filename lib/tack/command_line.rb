@@ -52,7 +52,7 @@ module Tack
         end
         opts.on_tail("-h","--help", "Show this message") do
           stdout.puts opts
-          status = 0
+          return status = 0
         end
       end
 
