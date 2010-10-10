@@ -1,3 +1,5 @@
+require 'rubygems' unless ENV['NO_RUBYGEMS']
+require 'bundler/setup'
 require 'optparse'
 require 'pp'
 
@@ -152,7 +154,6 @@ module Tack
     end
 
     def self.require_ruby_debug
-      require 'rubygems' unless ENV['NO_RUBYGEMS']
       require 'ruby-debug'
     end
 

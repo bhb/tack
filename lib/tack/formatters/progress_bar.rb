@@ -1,3 +1,5 @@
+
+
 module Tack
 
   module Formatters
@@ -8,6 +10,7 @@ module Tack
       def initialize(app, options = {})
         super
         @verbose = options.fetch(:verbose) { false }
+        @output.sync = TRUE
       end
 
       def run_suite(tests)

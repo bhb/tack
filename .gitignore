@@ -5,3 +5,5 @@ rdoc
 pkg
 .rvmrc
 .tackrc
+.bundle
+*.rbc
