@@ -3,6 +3,35 @@ require 'bundler/setup'
 require 'optparse'
 require 'pp'
 
+module Kernel
+
+  def rbx?
+    defined?(RUBY_ENGINE) && RUBY_ENGINE=='rbx'
+  end
+
+  def debugger
+    message =<<-EOS
+
+#{"*"*10} 'debugger' is not defined. Run with -u option to enable. #{"*"*10}
+('debugger' called from #{caller.first})
+    EOS
+    if rbx?
+      begin
+        Debugger.start
+      rescue NameError
+        puts message
+      end
+    else
+      if defined?(super)
+        super
+      else
+        puts message
+      end
+    end
+  end
+
+end
+
 module Tack
 
   class CommandLine
@@ -154,7 +183,11 @@ module Tack
     end
 
     def self.require_ruby_debug
-      require 'ruby-debug'
+      if rbx?
+        require 'debugger'
+      else
+        require 'ruby-debug'
+      end
     end
 
   end
