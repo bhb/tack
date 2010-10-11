@@ -27,8 +27,6 @@ module Tack
       super(tests.map{|t| basics(t)})
     end
     
-    # TODO - this doesn't actually have the same interface
-    # as real adapters yet (should change real adapters)
     def run_test(path,contexts,description)
       test = [path,contexts,description]
       result = @mapping[test]

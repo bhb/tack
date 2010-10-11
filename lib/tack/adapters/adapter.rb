@@ -27,11 +27,6 @@ module Tack
         basics(results)
       end
 
-      # TODO - eventually, get rid of this bridge method
-      def run_test(path, contexts, description)
-        run(path, contexts, description)
-      end
-      
       def self.file_patterns
         test_unit_file_patterns + rspec_file_patterns
       end

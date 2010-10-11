@@ -36,12 +36,7 @@ module Tack
     # the fly and have the builder be separate)
     def run_test(path, contexts, description)
       adapter = Adapters::Adapter.for(path)
-      # TODO - remove this check
-      if adapter.respond_to?(:run)
-        adapter.run(path, contexts, description)
-      else
-        adapter.run_test(path, contexts, description)
-      end
+      adapter.run_test(path, contexts, description)
     end
 
     def use(middleware, *args, &block)
