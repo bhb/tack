@@ -22,8 +22,7 @@ module Tack
       def run_test(file, contexts, description)
         returning @app.run_test(file, contexts, description) do |result|
           if @verbose
-            # TODO - replace with Test#name
-            @output.print("#{contexts.join(' ')} #{description}: ")
+            @output.print("#{Tack::Util::Test.new(file,contexts,description).name}: ")
           end
           print_char_for_results(result[:passed], '.')
           print_char_for_results(result[:pending], 'P')
