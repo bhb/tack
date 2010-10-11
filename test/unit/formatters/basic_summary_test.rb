@@ -22,10 +22,10 @@ class BasicSummaryTest < Test::Unit::TestCase
       a.fail(test3)
       a.pend(test4)
     end
-    output = StringIO.new
-    middleware = BasicSummary.new(adapter, :output => output)
-    middleware.run_suite([test1,test2,test3,test4])
-    assert_match /4 tests, 2 failures, 1 pending/, output.string
+    assert_output_matches /4 tests, 2 failures, 1 pending/ do |output|
+      middleware = BasicSummary.new(adapter, :output => output)
+      middleware.run_suite([test1,test2,test3,test4])
+    end
   end
 
 end

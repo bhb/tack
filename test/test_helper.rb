@@ -17,7 +17,6 @@ autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 module TestHelpers
   include Construct::Helpers
 
-  # TODO - find all places that have output.string and replace
   def assert_output_matches(expected)
     output = StringIO.new
     yield output

@@ -55,7 +55,6 @@ class ProgressBarTest < Test::Unit::TestCase
       adapter = Tack::StubAdapter.new
       test = Test.new('file.rb', ['Foo'], 'should do x')
       adapter.pass(test)
-      output = StringIO.new
       assert_output_equals "Foo should do x: .\n" do |output|
         middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
         middleware.run_test(*test.to_basics)
@@ -66,13 +65,10 @@ class ProgressBarTest < Test::Unit::TestCase
       adapter = Tack::StubAdapter.new
       test = Test.new('file.rb', ['Foo'], 'should do x')
       adapter.fail(test)
-      output = StringIO.new
-
       assert_output_equals "Foo should do x: F\n" do |output|
         middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
         middleware.run_test(*test.to_basics)
       end
-
     end
 
   end

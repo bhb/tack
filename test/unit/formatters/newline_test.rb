@@ -14,18 +14,18 @@ class NewlineTest < Test::Unit::TestCase
 
   should "output one newline by default" do
     adapter = Tack::StubAdapter.new(Test.make => :pass)
-    output = StringIO.new
-    middleware = Newline.new(adapter, :output => output)
-    middleware.run_suite([Test.make])
-    assert_match "\n", output.string
+    assert_output_equals "\n" do |output|
+      middleware = Newline.new(adapter, :output => output)
+      middleware.run_suite([Test.make])
+    end
   end
 
   should "output several newlines" do
     adapter = Tack::StubAdapter.new(Test.make => :pass)
-    output = StringIO.new
-    middleware = Newline.new(adapter, :output => output, :times => 3)
-    middleware.run_suite([Test.make])
-    assert_match "\n\n\n", output.string
+    assert_output_equals "\n\n\n" do |output|
+      middleware = Newline.new(adapter, :output => output, :times => 3)
+      middleware.run_suite([Test.make])
+    end
   end
 
 end

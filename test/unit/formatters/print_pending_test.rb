@@ -16,10 +16,10 @@ class PrintPendingTest < Test::Unit::TestCase
     adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pend(test)
-    output = StringIO.new
-    middleware = PrintPending.new(adapter, :output => output)
-    middleware.run_suite([test])
-    assert_match "PENDING: #{test.name}", output.string
+    assert_output_equals "PENDING: #{test.name}\n" do |output|
+      middleware = PrintPending.new(adapter, :output => output)
+      middleware.run_suite([test])
+    end
   end
 
 end

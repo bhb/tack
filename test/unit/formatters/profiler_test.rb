@@ -16,20 +16,20 @@ class ProfilerTest < Test::Unit::TestCase
     adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pass(test)
-    output = StringIO.new
-    middleware = Profiler.new(adapter, :output => output)
-    middleware.run_suite([test])
-    assert_match /Top 10 slowest tests/, output.string
+    assert_output_matches /Top 10 slowest tests/ do |output|
+      middleware = Profiler.new(adapter, :output => output)
+      middleware.run_suite([test])
+    end
   end
   
   should "print timing information on a specific test" do
     adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pass(test)
-    output = StringIO.new
-    middleware = Profiler.new(adapter, :output => output)
-    middleware.run_suite([test])
-    assert_match /\d\.\d+ #{test.name}/, output.string
+    assert_output_matches /\d\.\d+ #{test.name}/ do |output|
+      middleware = Profiler.new(adapter, :output => output)
+      middleware.run_suite([test])
+    end
   end
 
 end

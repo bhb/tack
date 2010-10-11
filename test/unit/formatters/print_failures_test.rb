@@ -13,27 +13,27 @@ class PrintFailuresTest < Test::Unit::TestCase
   should_behave_like_formatter
   
   should "print name of test" do
+    # TODO look for instances of stub_everything and use stub_adapter
     fake_middleware = stub_everything
-    output = StringIO.new
-    middleware = PrintFailures.new(fake_middleware, :output => output)
-    test = Tack::Util::Test.new('foo.rb',['Foo', 'sometimes'], 'should fail')
-    results = Tack::ResultSet.new()
-    results.fail(test, Tack::Util::TestFailure.make)
-    # TODO - find all instances of stubs(:run_suite and fix!)
-    fake_middleware.stubs(:run_suite).returns(results.to_basics)
-    middleware.run_suite([test])
-    assert_match /Foo sometimes should fail/, output.string
+    assert_output_matches /Foo sometimes should fail/ do |output|
+      middleware = PrintFailures.new(fake_middleware, :output => output)
+      test = Tack::Util::Test.new('foo.rb',['Foo', 'sometimes'], 'should fail')
+      results = Tack::ResultSet.new()
+      results.fail(test, Tack::Util::TestFailure.make)
+      # TODO - find all instances of stubs(:run_suite and fix!)
+      fake_middleware.stubs(:run_suite).returns(results.to_basics)
+      middleware.run_suite([test])
+    end
   end
 
   should "print backtrace" do
     adapter = Tack::StubAdapter.new
     backtrace = ['line1', 'line2']
     adapter.fail(Test.make, "fail!", backtrace)
-    output = StringIO.new
-    middleware = PrintFailures.new(adapter, :output => output)
-    middleware.run_suite([Test.make])
-    assert_match /line1/, output.string
-    assert_match /line2/, output.string
+    assert_output_matches /line1\nline2/ do |output|
+      middleware = PrintFailures.new(adapter, :output => output)
+      middleware.run_suite([Test.make])
+    end
   end
 
 end

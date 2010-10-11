@@ -15,10 +15,10 @@ class TotalTimeTest < Test::Unit::TestCase
   should "print total time" do
     adapter = Tack::StubAdapter.new
     adapter.pass(Test.make)
-    output = StringIO.new
-    middleware = TotalTime.new(adapter, :output => output)
-    middleware.run_suite([Test.make.to_basics])
-    assert_match /Finished in \d+.\d+ seconds/, output.string
+    assert_output_matches /Finished in \d+.\d+ seconds/ do |output|
+      middleware = TotalTime.new(adapter, :output => output)
+      middleware.run_suite([Test.make.to_basics])
+    end
   end
 
 end
