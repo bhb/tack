@@ -9,8 +9,7 @@ module Tack
         returning @app.run_suite(tests) do |results|
           results[:pending].each do |result|
             file, contexts, description = result[:test]
-            # TODO - use Test#name
-            @output.puts "PENDING: #{[contexts.clone<<description].join(" ")}"
+            @output.puts "PENDING: #{Tack::Util::Test.new(file,contexts,description).name}"
           end
         end
       end
