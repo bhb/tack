@@ -95,7 +95,7 @@ module Tack
         examples.map {|group, example| [file.to_s, group.description_parts.map {|part| part.to_s}, example.description]}
       end
       
-      def run(file, contexts, description)
+      def run_test(file, contexts, description)
         Spec::Runner.options.instance_variable_set(:@examples, [full_example_name(contexts, description)])
         Spec::Runner.options.instance_variable_set(:@example_groups, [])
         Spec::Runner.options.instance_variable_set(:@files, [file])
