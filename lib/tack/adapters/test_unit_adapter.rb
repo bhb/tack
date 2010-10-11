@@ -26,7 +26,7 @@ module Tack
         tests
       end
 
-      def run(path, contexts, description)
+      def run_test(path, contexts, description)
         # TODO - since each test is unique, I think 
         # that it's not necessary to return a full result set, 
         # just a result. That might simplify things

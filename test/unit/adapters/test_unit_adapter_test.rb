@@ -35,7 +35,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
         test_copy = deep_clone(test)
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run(*test))
+        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(*test))
         assert_equal test_copy, test
       end
     end
@@ -48,7 +48,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run(*test))
+        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(*test))
         
         assert_equal 1, results.passed.length
         assert_equal 0, results.failed.length
@@ -65,7 +65,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run(*test))
+        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(*test))
         
         assert_equal 0, results.passed.length
         assert_equal 1, results.failed.length
@@ -84,7 +84,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run(*test))
+        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(*test))
         
         assert_equal 0, results.passed.length
         assert_equal 1, results.failed.length
@@ -103,7 +103,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_two"]
         error = assert_raises Tack::NoMatchingTestError do
-          TestUnitAdapter.new.run(*test)
+          TestUnitAdapter.new.run_test(*test)
         end
         assert_equal %Q{Could not find test "FakeTest test_two" in #{path}}, error.message
       end
@@ -127,7 +127,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
             tests = adapter.tests_for(path)
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
             end
             assert_equal 1, results.length
             assert_equal 1, results.failed.length
@@ -146,7 +146,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
             tests = adapter.tests_for(path)
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
             end
             assert_equal 1, results.length
             assert_equal 1, results.passed.length
@@ -172,7 +172,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
             # TODO - this is really awkward to run tests directly
             results = Tack::ResultSet.new
             tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run(*test)))
+              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
             end
             assert_equal 2, results.length
           end
@@ -203,7 +203,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           test_file = c.file('foo_test.rb',body)
           tests = adapter.tests_for(test_file)
           assert_equal [[test_file.to_s,['FooModule::BarTest'],'test_foo']], tests
-          results = adapter.run(*tests.first)
+          results = adapter.run_test(*tests.first)
           assert_equal 1, results[:passed].length
         end
       ensure 
