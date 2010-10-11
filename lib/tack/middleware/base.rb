@@ -6,6 +6,9 @@ module Tack
       
       def initialize(app, options = {})
         @app = app
+        if @app.is_a?(Adapters::Adapter)
+          @app.root = self
+        end
         @output = options.fetch(:output){ STDOUT }
       end
 

@@ -13,7 +13,7 @@ class ProfilerTest < Test::Unit::TestCase
   should_behave_like_formatter
   
   should "print header" do
-    adapter = StubAdapter.new
+    adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pass(test)
     output = StringIO.new
@@ -23,12 +23,11 @@ class ProfilerTest < Test::Unit::TestCase
   end
   
   should "print timing information on a specific test" do
-    adapter = StubAdapter.new
+    adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pass(test)
     output = StringIO.new
     middleware = Profiler.new(adapter, :output => output)
-    adapter.top = middleware
     middleware.run_suite([test])
     assert_match /\d\.\d+ #{test.name}/, output.string
   end

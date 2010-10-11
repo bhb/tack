@@ -26,12 +26,7 @@ module Tack
     end
 
     def run_suite(tests)
-      results = ResultSet.new
-      tests.each do |path, contexts, description|
-        result = @start_app.run_test(path, contexts, description)
-        results.merge(result)
-      end
-      basics(results)
+      (@adapter ||= Adapters::Adapter.new(@start_app)).run_suite(tests)
     end
 
     # TODO - this class both builds the middleware chain 

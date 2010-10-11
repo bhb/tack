@@ -10,7 +10,7 @@ module Tack
 
   module Adapters
 
-    class TestUnitAdapter
+    class TestUnitAdapter < Adapter
 
       def tests_for(file)
         #require file

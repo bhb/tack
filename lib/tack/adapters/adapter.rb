@@ -8,6 +8,30 @@ module Tack
 
     class Adapter
 
+      attr_accessor :root
+
+      def initialize(root = self)
+        # 'root' is the topmost application in the chain
+        # of middlewares and adapters. All chains start 
+        # with zero or more adapters followed by exactly
+        # one adapter
+        @root = root
+      end
+
+      def run_suite(tests)
+        results = ResultSet.new
+        tests.each do |path, contexts, description|
+          result = @root.run_test(path, contexts, description)
+          results.merge(result)
+        end
+        basics(results)
+      end
+
+      # TODO - eventually, get rid of this bridge method
+      def run_test(path, contexts, description)
+        run(path, contexts, description)
+      end
+      
       def self.file_patterns
         test_unit_file_patterns + rspec_file_patterns
       end

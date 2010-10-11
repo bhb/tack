@@ -13,11 +13,11 @@ class TotalTimeTest < Test::Unit::TestCase
   should_behave_like_formatter
 
   should "print total time" do
-    adapter = StubAdapter.new
+    adapter = Tack::StubAdapter.new
     adapter.pass(Test.make)
     output = StringIO.new
     middleware = TotalTime.new(adapter, :output => output)
-    middleware.run_suite([Test.make])
+    middleware.run_suite([Test.make.to_basics])
     assert_match /Finished in \d+.\d+ seconds/, output.string
   end
 

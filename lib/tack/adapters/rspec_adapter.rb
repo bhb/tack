@@ -79,7 +79,7 @@ module Tack
 
   module Adapters
 
-    class RSpecAdapter
+    class RSpecAdapter < Adapter
 
       def tests_for(file)
         Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])

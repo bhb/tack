@@ -47,7 +47,7 @@ module Tack
 
   module Adapters
 
-    class ShouldaAdapter
+    class ShouldaAdapter < Adapter
       
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!

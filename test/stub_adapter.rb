@@ -1,15 +1,14 @@
 module Tack
 
-  class StubAdapter
+  class StubAdapter < Adapters::Adapter
     
-    attr_accessor :top
-
     def initialize(mapping={})
       @mapping = {}
       mapping.each do |key, value|
         @mapping[basics(key)] = value
       end
       yield self if block_given?
+      super(self)
     end
 
     def pass(test)
@@ -23,18 +22,9 @@ module Tack
     def pend(test)
       @mapping[basics(test)] = :pend
     end
-    
+
     def run_suite(tests)
-      # TODO - this won't work in the general case
-      # but it's good enough to get to the next step.
-      # The right thing is to refactor the run_suite method
-      # out of runner and into an Adapter base class
-      results = ResultSet.new
-      tests.clone.each do |test|
-        result = (top||self).run_test(*basics(test))
-        results.merge(result)
-      end
-      basics(results)
+      super(tests.map{|t| basics(t)})
     end
     
     # TODO - this doesn't actually have the same interface
