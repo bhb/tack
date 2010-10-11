@@ -86,7 +86,7 @@ module Tack
         Shoulda.reset_contexts!
       end
 
-      def run(path, contexts, description)
+      def run_test(path, contexts, description)
         results = Tack::ResultSet.new
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
