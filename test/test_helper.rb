@@ -16,6 +16,19 @@ autoload :MiddlewareTestHelper, 'unit/middleware_test_helper'
 
 module TestHelpers
   include Construct::Helpers
+
+  # TODO - find all places that have output.string and replace
+  def assert_output_matches(expected)
+    output = StringIO.new
+    yield output
+    assert_match expected, output.string
+  end
+
+  def assert_output_equals(expected)
+    output = StringIO.new
+    yield output
+    assert_equal expected, output.string
+  end
   
   def deep_clone(obj)
     Marshal.load( Marshal.dump(obj))

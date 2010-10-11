@@ -15,28 +15,66 @@ class ProgressBarTest < Test::Unit::TestCase
   should "print P for a pending test" do
     adapter = Tack::StubAdapter.new
     adapter.pend(Test.make)
-    output = StringIO.new
-    middleware = ProgressBar.new(adapter, :output => output)
-    middleware.run_test(*Test.make.to_basics)
-    assert_equal 'P', output.string
+    assert_output_equals 'P' do |output|
+      middleware = ProgressBar.new(adapter, :output => output)
+      middleware.run_test(*Test.make.to_basics)
+    end
   end
 
   should "print . for a passing test" do
     adapter = Tack::StubAdapter.new
     adapter.pass(Test.make)
-    output = StringIO.new
-    middleware = ProgressBar.new(adapter, :output => output)
-    middleware.run_test(*Test.make.to_basics)
-    assert_equal '.', output.string
+    assert_output_equals '.' do |output|
+      middleware = ProgressBar.new(adapter, :output => output)
+      middleware.run_test(*Test.make.to_basics)
+    end
   end
 
   should "print F for a failing test" do
     adapter = Tack::StubAdapter.new
     adapter.fail(Test.make)
-    output = StringIO.new
-    middleware = ProgressBar.new(adapter, :output => output)
-    middleware.run_test(*Test.make.to_basics)
-    assert_equal 'F', output.string
+    assert_output_equals 'F' do |output|
+      middleware = ProgressBar.new(adapter, :output => output)
+      middleware.run_test(*Test.make.to_basics)
+    end
+  end
+
+  context "in verbose mode" do
+
+    should "print P for a pending test" do
+      adapter = Tack::StubAdapter.new
+      test = Test.new('file.rb', ['Foo'], 'should do x')
+      adapter.pend(test)
+      assert_output_equals "Foo should do x: P\n" do |output|
+        middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
+        middleware.run_test(*test.to_basics)
+      end
+    end
+
+    should "print . for a passing test" do
+      adapter = Tack::StubAdapter.new
+      test = Test.new('file.rb', ['Foo'], 'should do x')
+      adapter.pass(test)
+      output = StringIO.new
+      assert_output_equals "Foo should do x: .\n" do |output|
+        middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
+        middleware.run_test(*test.to_basics)
+      end
+    end
+
+    should "print F for a failing test" do
+      adapter = Tack::StubAdapter.new
+      test = Test.new('file.rb', ['Foo'], 'should do x')
+      adapter.fail(test)
+      output = StringIO.new
+
+      assert_output_equals "Foo should do x: F\n" do |output|
+        middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
+        middleware.run_test(*test.to_basics)
+      end
+
+    end
+
   end
 
 end
