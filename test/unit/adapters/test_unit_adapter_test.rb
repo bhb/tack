@@ -125,10 +125,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           with_test_class :body => body do |_, path|
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
-            results = Tack::ResultSet.new
-            tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
-            end
+            results = Tack::ResultSet.new(adapter.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.failed.length
           end
@@ -144,10 +141,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           with_test_class :body => body do |_, path|
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
-            results = Tack::ResultSet.new
-            tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
-            end
+            results = Tack::ResultSet.new(adapter.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.passed.length
           end
@@ -169,12 +163,8 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           with_test_class :body => body do |_, path|
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
-            # TODO - this is really awkward to run tests directly
-            results = Tack::ResultSet.new
-            tests.each do |test|
-              results.merge(Tack::ResultSet.new(adapter.run_test(*test)))
-            end
-            assert_equal 2, results.length
+            results = adapter.run_suite(tests)
+            assert_equal 2, Tack::ResultSet.new(results).length
           end
         end
 
