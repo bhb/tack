@@ -5,11 +5,11 @@ class ForkTest < Test::Unit::TestCase
   include Tack::Middleware
 
   should "return test result" do
-    fake_middleware = stub_everything
-    middleware = Fork.new(fake_middleware, :output => StringIO.new)
+    adapter = Tack::StubAdapter.new
+    middleware = Fork.new(adapter, :output => StringIO.new)
     test = Tack::Util::Test.make.to_basics
+    adapter.pass(test)
     expected_result = results_for([test])
-    fake_middleware.stubs(:run_test).returns(expected_result)
     assert_equal expected_result, middleware.run_test(*test)
   end
 
