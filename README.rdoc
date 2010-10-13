@@ -40,12 +40,40 @@ If you're building a new test framework, you'll get tons of existing tools and f
 
 Tack's unified API for displaying all tests in a suite and running them selectively makes building IDE support for many testing frameworks simple.
 
+=== API
+
+At a high level, Tack has tests, adapters, and middleware.
+
+==== Tests
+
+Each test is represented as an array of three values: <tt>[path, contexts, description]</tt>
+* <tt>path</tt>: a path name (string) of the file on disk that contains the test
+* <tt>contexts</tt>: an array of strings that describe each nested context
+* <tt>description</tt> - the test name (string)
+
+==== Adapters
+
+Adapters are the classes that actually interact with the test libraries. Each one must implement:
+* <tt>#run_test(file, contexts, description)</tt>: runs the provided test and returns a result
+* <tt>#tests_for(file)</tt>: returns all tests for a file
+
+==== Middleware
+
+Middleware must include sane implementations of the following
+* <tt>#run_suite(tests)</tt>
+* <tt>#run_test(file, contexts, description)</tt>
+
+Just like Rack, each Tack middleware is passed the next middleware in the chain.
+
+=== Examples
+
+A blog post about implementing some simple features as middleware here: http://bbrinck.com/post/850090134/test-dependency-detection-in-tack
+
 == Upcoming features
 
 Tack is a work in progress but many features are coming up. Help is appreciated.
 
 * Support for Cucumber, Riot, Bacon, and more
-* Per-project configuration file (.tack) for configuring middleware (like a rackup file)
 * Rake tasks
 * Documentation on the actual API
 
@@ -56,8 +84,7 @@ Tack is a work in progress but many features are coming up. Help is appreciated.
 * Add tests for it. This is important so I don't break it in a
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Acknowledgements
