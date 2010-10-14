@@ -58,8 +58,11 @@ module Tack
       end
 
       def self.shoulda_file?(path)
-        return false unless defined?(Shoulda)
-        ShouldaAdapter.shoulda_file?(path)
+        sandbox = ForkedSandbox.new
+        sandbox.run do
+          require path
+          defined?(Shoulda) && ShouldaAdapter.shoulda_file?(path)
+        end
       end
 
     end

@@ -13,6 +13,7 @@ module Tack
   autoload :TestSet, 'tack/test_set'
   autoload :Sandbox, 'tack/sandbox'
   autoload :SandboxLoader, 'tack/sandbox'
+  autoload :ForkedSandbox, 'tack/forked_sandbox'
 
   # convenience objects
   autoload :Result, 'tack/result'
