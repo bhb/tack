@@ -30,6 +30,7 @@ module Tack
     autoload :Fork, 'tack/middleware/fork'
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'
+    autoload :AdapterViewer, 'tack/middleware/adapter_viewer'
     
   end
 

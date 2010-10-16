@@ -81,6 +81,9 @@ module Tack
         opts.on('-b', '--backtrace', 'Output full backtrace') do
           options[:backtrace] = true
         end
+        opts.on('--adapters', "Display the adapters that will be used for each file") do
+          options[:view_adapters] = true
+        end
         opts.on_tail("-h","--help", "Show this message") do
           stdout.puts opts
           return status = 0
@@ -143,6 +146,7 @@ module Tack
         return status = 0
       else
         runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+          runner.use Tack::Middleware::AdapterViewer if options[:view_adapters]
           runner.use Tack::Middleware::Reverse if options[:reverse]
           runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
           runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
