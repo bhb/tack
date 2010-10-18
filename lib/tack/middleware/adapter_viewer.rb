@@ -27,7 +27,7 @@ module Tack
             @output.puts "#{file} uses #{klass}"
           end
         end
-        
+        Adapter.reset_cache
         ResultSet.new.to_basics
       end
 

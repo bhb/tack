@@ -39,6 +39,14 @@ module Tack
         [/_spec\.rb$/]
       end
 
+      # for testing
+      def self.reset_cache
+        @adapters = {}
+      end
+
+      # TODO : This should probably be an instance method
+      # because the adapter cache currrently needs to be reset
+      # for each test
       def self.for(path)
         @adapters ||= {}
         return @adapters[path] if @adapters.key?(path)
