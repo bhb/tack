@@ -48,6 +48,7 @@ module Tack
       # because the adapter cache currrently needs to be reset
       # for each test
       def self.for(path)
+        path = path.to_s
         @adapters ||= {}
         return @adapters[path] if @adapters.key?(path)
         # Using a simple path-based heuristic for now

@@ -11,7 +11,7 @@ module Tack
       def run_suite(tests)
         files = []
         tests.each do |file, _, _|
-          files << file
+          files << file.to_s
         end
         files.uniq!
         files.sort_by {|file| file.length}
