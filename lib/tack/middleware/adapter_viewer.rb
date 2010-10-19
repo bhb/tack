@@ -34,21 +34,27 @@ module Tack
       private 
 
     def consolidate(mapping)
+      old_num_keys = mapping.keys.length
       parent_to_files = {}
       mapping.keys.each do |file|
         parent_to_files[Pathname(file).parent] ||= []
         parent_to_files[Pathname(file).parent] << file
       end
       parent_to_files.each do |path, files|
-        first_adapter = Adapter.for(files.first).class
-        if files.all? { |file| first_adapter == Adapter.for(file).class }
+        first_adapter = mapping[files.first] #Adapter.for(files.first).class
+        if files.all? { |file| first_adapter == mapping[file] }
           files.each do |file|
             mapping.delete(file)
           end
           mapping[path] = first_adapter
         end
       end
-      mapping
+      new_num_keys = mapping.keys.length 
+      if old_num_keys == new_num_keys || new_num_keys <= 1
+        mapping
+      else
+        consolidate(mapping)
+      end
     end
 
     def print(mapping)
