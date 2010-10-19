@@ -132,19 +132,21 @@ class AdapterViewerTest < Test::Unit::TestCase
 
   context "when files in same director use different adapters" do
 
-    should_eventually "report adapters for each file" do
+    should "report adapters for each file" do
       within_construct(true) do |c|
         c.directory 'test' do |d|
           d.file 'foo_test.rb', SHOULDA_FILE
           d.file 'bar_test.rb', TEST_UNIT_FILE
-          d.file 'baz_test.rb', RSPEC_FILE
+          d.file 'baz_spec.rb', RSPEC_FILE
         end
         output = StringIO.new
         middleware = AdapterViewer.new(nil, :output => output)
         middleware.run_suite([['test/foo_test.rb', nil, nil],
-                              ['test/bar_test.rb', nil, nil]])
-        assert_match %r{test/foo_test uses .*ShouldaAdapter}, output.string
-        assert_match %r{test/bar_test uses .*TestUnitAdapter}, output.string
+                              ['test/bar_test.rb', nil, nil],
+                              ['test/baz_spec.rb', nil, nil]])
+        assert_match %r{test/foo_test\.rb uses .*ShouldaAdapter}, output.string
+        assert_match %r{test/bar_test\.rb uses .*TestUnitAdapter}, output.string
+        assert_match %r{test/baz_spec\.rb uses .*RSpecAdapter}, output.string
       end
     end
     
