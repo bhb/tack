@@ -62,11 +62,9 @@ module Spec
         def build_failure(example, error)
           case error.exception
           when Spec::Expectations::ExpectationNotMetError
-            { :message => error.exception.message,
-              :backtrace => error.exception.backtrace}
+            Tack::Util::TestFailure.new(error.exception.message,error.exception.backtrace).to_basics
           else
-            { :message => "#{error.exception.class} was raised: #{error.exception.message}",
-              :backtrace => error.exception.backtrace}
+            Tack::Util::TestFailure.new("#{error.exception.class} was raised: #{error.exception.message}",error.exception.backtrace).to_basics
           end
         end
 

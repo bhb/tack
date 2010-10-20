@@ -207,11 +207,10 @@ module Tack
         return nil if failure.nil?
         case failure
         when ::Test::Unit::Error
-          { :message => "#{failure.exception.class} was raised: #{failure.exception.message}",
-            :backtrace => failure.exception.backtrace }
+            Tack::Util::TestFailure.new("#{failure.exception.class} was raised: #{failure.exception.message}",
+                                        failure.exception.backtrace).to_basics
         else
-          { :message => failure.message,
-            :backtrace => failure.location }
+          Tack::Util::TestFailure.new(failure.message, failure.location).to_basics
         end
       end
 

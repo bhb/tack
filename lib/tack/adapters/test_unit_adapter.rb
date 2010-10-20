@@ -67,17 +67,18 @@ module Tack
           :failure => build_failure(failure) }
       end
 
+      # TODO - this is identical to the code in ShouldaAdapter
       def build_failure(failure)
         return nil if failure.nil?
         case failure
         when ::Test::Unit::Error
-          { :message => "#{failure.exception.class} was raised: #{failure.exception.message}",
-            :backtrace => failure.exception.backtrace }
+            Tack::Util::TestFailure.new("#{failure.exception.class} was raised: #{failure.exception.message}",
+                                        failure.exception.backtrace).to_basics
         else
-          { :message => failure.message,
-            :backtrace => failure.location }
+          Tack::Util::TestFailure.new(failure.message, failure.location).to_basics
         end
       end
+
 
       def test_classes_for(test_file)
         @test_classes ||= TestClassDetector.test_classes_for(test_file) do |test_file|
