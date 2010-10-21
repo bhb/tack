@@ -31,6 +31,7 @@ module Tack
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'
     autoload :AdapterViewer, 'tack/middleware/adapter_viewer'
+    autoload :HandleInterrupt, 'tack/middleware/handle_interrupt'
     
   end
 
