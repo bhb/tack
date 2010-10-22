@@ -1,0 +1,3 @@
+CPUPROFILE=/tmp/my_app_profile RUBYOPT="-r`gem which perftools | tail -1`" bin/tack
+ pprof.rb --pdf /tmp/my_app_profile > /tmp/my_app_profile.pdf
+open /tmp/my_app_profile.pdf
