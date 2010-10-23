@@ -1,3 +1,4 @@
+require 'bleak_house' if ENV['BLEAK_HOUSE']
 require 'rubygems' unless ENV['NO_RUBYGEMS']
 require 'bundler/setup'
 require 'optparse'

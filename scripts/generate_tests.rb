@@ -15,7 +15,7 @@ when 'rspec'
   require 'spec'
   describe "something" do
     
-    #{(0...1000).map{|i| rspec_test(i)}.join("\n\n")}
+    #{(0...200).map{|i| rspec_test(i)}.join("\n\n")}
     
   end
   EOF
