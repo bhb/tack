@@ -22,13 +22,14 @@ def shoulda_test(num)
   EOF
 end
 
-test_unit_times = 1000
+test_unit_times = 10000
 shoulda_times = 200
 rspec_times = 200
 
 case type.to_s
 when 'test_unit'
   contents =<<-EOF
+  require 'rubygems' # rubygems slow everything down, so we need to include them for a fair comparison
   require 'test/unit'  
   class SomeTest < Test::Unit::TestCase
   
