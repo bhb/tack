@@ -34,10 +34,13 @@ module Tack
     end
 
     def merge(results)
-      new_results = ResultSet.new(results)
-      self.passed += new_results.passed
-      self.failed += new_results.failed
-      self.pending += new_results.pending
+      #new_results = ResultSet.new(results)
+      #self.passed += new_results.passed
+      #self.failed += new_results.failed
+      #self.pending += new_results.pending
+      self.passed += results[:passed]
+      self.failed += results[:failed]
+      self.pending += results[:pending]
     end
 
     private
