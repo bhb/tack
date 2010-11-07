@@ -15,7 +15,15 @@ def test_unit_test(num)
   EOF
 end
 
+def shoulda_test(num)
+  <<-EOF
+  should "do something (#{num})" do
+  end
+  EOF
+end
+
 test_unit_times = 1000
+shoulda_times = 200
 rspec_times = 200
 
 case type.to_s
@@ -25,6 +33,15 @@ when 'test_unit'
   class SomeTest < Test::Unit::TestCase
   
     #{(0...test_unit_times).map{|i| test_unit_test(i)}.join("\n\n")}
+   
+  end
+  EOF
+when 'shoulda'
+  contents =<<-EOF
+  require 'shoulda'  
+  class SomeTest < Test::Unit::TestCase
+  
+    #{(0...shoulda_times).map{|i| shoulda_test(i)}.join("\n\n")}
    
   end
   EOF
