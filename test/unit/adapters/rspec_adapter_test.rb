@@ -5,7 +5,8 @@ class RSpecAdapterTest < Test::Unit::TestCase
   include Tack::Adapters
 
   should "should prevent auto-run at exit" do
-    assert_equal 0, Spec::Runner.run
+    RSpecAdapter
+    assert_equal true, ::RSpec::Core::Runner.autorun_disabled?
   end
 
   context "getting tests" do

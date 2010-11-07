@@ -1,35 +1,37 @@
-require 'spec'
-require 'spec/runner/formatter/base_formatter'
+# Only works with RSpec >= 2.0.0
+require 'rspec'
+require 'rspec/core/formatters/base_formatter'
 
-if defined?(Spec)
-  module Spec
-    module Runner
-      class << self
-        # stop the auto-run at_exit
-        def run
-          return 0
-        end 
-      end
-    end
-  end
+if defined?(RSpec)
+  RSpec::Core::Runner.disable_autorun!
+  # module Spec
+#     module Runner
+#       class << self
+#         # stop the auto-run at_exit
+#         def run
+#           return 0
+#         end 
+#       end
+#     end
+#   end
 end
 
-module Spec
-  module Runner
-    module Formatter
+module RSpec
+  module Core
+    module Formatters
       # Stolen from Hydra for now
       class TackFormatter < BaseFormatter
         
         attr_accessor :results
         attr_accessor :file
         
-        def initialize(options)
+        def initialize
           io = StringIO.new # suppress output
-          super(options, io)
+          super(io)
           @results = Tack::ResultSet.new
         end
 
-        def example_pending(example, message, deprecated_pending_location=nil)
+        def example_pending(example)
           @results.pending << {
             :test => build_result(example)
           }
@@ -41,7 +43,8 @@ module Spec
           }
         end
 
-        def example_failed(example, counter, error=nil)
+        def example_failed(example)
+          error = example.execution_result[:exception_encountered]
           @results.failed <<
             {
             :test => build_result(example),
@@ -56,12 +59,12 @@ module Spec
         private
 
         def build_result(example)
-          [@file, @current_example_group.nested_descriptions, example.description]
+          [example.file_path, @current_example_group.ancestors.reverse.map{|x|x.description}, example.description]
         end
         
         def build_failure(example, error)
           case error.exception
-          when Spec::Expectations::ExpectationNotMetError
+          when RSpec::Expectations::ExpectationNotMetError
             Tack::Util::TestFailure.new(error.exception.message,error.exception.backtrace).to_basics
           else
             Tack::Util::TestFailure.new("#{error.exception.class} was raised: #{error.exception.message}",error.exception.backtrace).to_basics
@@ -80,30 +83,60 @@ module Tack
     class RSpecAdapter < Adapter
 
       def tests_for(file)
-        Spec::Runner.options.instance_variable_set(:@formatters, [Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)])
-        Spec::Runner.options.instance_variable_set(:@example_groups, [])
-        Spec::Runner.options.instance_variable_set(:@files, [file])
-        Spec::Runner.options.instance_variable_set(:@files_loaded, false)
-        runner = Spec::Runner::ExampleGroupRunner.new(Spec::Runner.options)
-        runner.load_files([file])
-        example_groups = runner.send(:example_groups)
+        
+        #RSpec::Core::Runner.options.instance_variable_set(:@formatters, [RSpec::Core::Runner::Formatter::TackFormatter.new(RSpec::Core::Runner.options.formatter_options)])
+        #RSpec::Core::Runner.options.instance_variable_set(:@example_groups, [])
+        #RSpec::Core::Runner.options.instance_variable_set(:@files, [file])
+        #RSpec::Core::Runner.options.instance_variable_set(:@files_loaded, false)
+        #runner = RSpec::Core::Runner::ExampleGroupRunner.new(RSpec::Core::Runner.options)
+        #runner.load_files([file])
+        #example_groups = runner.send(:example_groups)
+        
+        #configuration = RSpec::Core::Configuration.new
+        #configuration = RSpec::configuration
+
+        world = RSpec.world
+        world.example_groups.clear
+        configuration = RSpec.configuration
+        configuration.files_to_run = [file]
+        configuration.load_spec_files
+        configuration.configure_mock_framework
+
+        #world = RSpec::Core::World.new(configuration)
+        
+        example_groups = world.example_groups.map{|x| x.descendants}.flatten
+        
         examples = example_groups.inject([]) do |arr, group|
           arr += group.examples.map { |example| [group, example]}
         end
-        examples.map {|group, example| [file.to_s, group.description_parts.map {|part| part.to_s}, example.description]}
+        examples.map {|group, example| 
+          [file.to_s, group.ancestors.reverse.map{|x|x.description}, example.description]
+        }
       end
       
       def run_test(file, contexts, description)
-        Spec::Runner.options.instance_variable_set(:@examples, [full_example_name(contexts, description)])
-        Spec::Runner.options.instance_variable_set(:@example_groups, [])
-        Spec::Runner.options.instance_variable_set(:@files, [file])
-        Spec::Runner.options.instance_variable_set(:@files_loaded, false)
-        formatter = Spec::Runner::Formatter::TackFormatter.new(Spec::Runner.options.formatter_options)
-        formatter.file = file
-        Spec::Runner.options.instance_variable_set(:@formatters, [formatter])
-        Spec::Runner.options.run_examples
-        results = formatter.results
+        # RSpec::Core::Runner.options.instance_variable_set(:@examples, [full_example_name(contexts, description)])
+#         RSpec::Core::Runner.options.instance_variable_set(:@example_groups, [])
+#         RSpec::Core::Runner.options.instance_variable_set(:@files, [file])
+#         RSpec::Core::Runner.options.instance_variable_set(:@files_loaded, false)
+#         formatter = RSpec::Core::Runner::Formatter::TackFormatter.new(RSpec::Core::Runner.options.formatter_options)
+#         formatter.file = file
+#         RSpec::Core::Runner.options.instance_variable_set(:@formatters, [formatter])
+#         RSpec::Core::Runner.options.run_examples
         
+        world = RSpec.world
+        world.example_groups.clear
+        configuration = RSpec.configuration
+        configuration.clear_inclusion_filter
+        configuration.files_to_run = [file]
+        configuration.load_spec_files
+        configuration.configure_mock_framework
+        configuration.filter_run :full_description => full_example_name(contexts,description)
+
+        formatter = RSpec::Core::Formatters::TackFormatter.new
+        reporter = RSpec::Core::Reporter.new(formatter)
+        world.example_groups.map {|g| g.run(reporter)}
+        results = formatter.results
         if results.length == 0
           raise NoMatchingTestError, Tack::Util::Test.new(file,contexts,description)
         end
