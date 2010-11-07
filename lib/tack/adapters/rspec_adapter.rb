@@ -4,29 +4,20 @@ require 'rspec/core/formatters/base_formatter'
 
 if defined?(RSpec)
   RSpec::Core::Runner.disable_autorun!
-  # module Spec
-#     module Runner
-#       class << self
-#         # stop the auto-run at_exit
-#         def run
-#           return 0
-#         end 
-#       end
-#     end
-#   end
 end
 
 module RSpec
   module Core
     module Formatters
-      # Stolen from Hydra for now
+
       class TackFormatter < BaseFormatter
         
         attr_accessor :results
         attr_accessor :file
         
         def initialize
-          io = StringIO.new # suppress output
+          # suppress output
+          io = StringIO.new 
           super(io)
           @results = Tack::ResultSet.new
         end
@@ -83,18 +74,6 @@ module Tack
     class RSpecAdapter < Adapter
 
       def tests_for(file)
-        
-        #RSpec::Core::Runner.options.instance_variable_set(:@formatters, [RSpec::Core::Runner::Formatter::TackFormatter.new(RSpec::Core::Runner.options.formatter_options)])
-        #RSpec::Core::Runner.options.instance_variable_set(:@example_groups, [])
-        #RSpec::Core::Runner.options.instance_variable_set(:@files, [file])
-        #RSpec::Core::Runner.options.instance_variable_set(:@files_loaded, false)
-        #runner = RSpec::Core::Runner::ExampleGroupRunner.new(RSpec::Core::Runner.options)
-        #runner.load_files([file])
-        #example_groups = runner.send(:example_groups)
-        
-        #configuration = RSpec::Core::Configuration.new
-        #configuration = RSpec::configuration
-
         world = RSpec.world
         world.example_groups.clear
         configuration = RSpec.configuration
@@ -102,8 +81,6 @@ module Tack
         configuration.load_spec_files
         configuration.configure_mock_framework
 
-        #world = RSpec::Core::World.new(configuration)
-        
         example_groups = world.example_groups.map{|x| x.descendants}.flatten
         
         examples = example_groups.inject([]) do |arr, group|
@@ -115,15 +92,6 @@ module Tack
       end
       
       def run_test(file, contexts, description)
-        # RSpec::Core::Runner.options.instance_variable_set(:@examples, [full_example_name(contexts, description)])
-#         RSpec::Core::Runner.options.instance_variable_set(:@example_groups, [])
-#         RSpec::Core::Runner.options.instance_variable_set(:@files, [file])
-#         RSpec::Core::Runner.options.instance_variable_set(:@files_loaded, false)
-#         formatter = RSpec::Core::Runner::Formatter::TackFormatter.new(RSpec::Core::Runner.options.formatter_options)
-#         formatter.file = file
-#         RSpec::Core::Runner.options.instance_variable_set(:@formatters, [formatter])
-#         RSpec::Core::Runner.options.run_examples
-        
         world = RSpec.world
         world.example_groups.clear
         configuration = RSpec.configuration
