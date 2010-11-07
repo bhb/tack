@@ -1,5 +1,16 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
+memprof_file = ENV['MEMPROF']
+MEMPROF = !memprof_file.nil?
+memprof_file ||= 'tack.mp'
+require 'memprof' if MEMPROF
+
 require 'tack'
 exit ::Tack::CommandLine.run(ARGV)
+status = 0
+
+Memprof.start if MEMPROF
+status = ::Tack::CommandLine.run(ARGV)
+Memprof.stats(memprof_file) if MEMPROF
+exit status
