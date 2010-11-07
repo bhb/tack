@@ -17,7 +17,11 @@ module Tack
         classes = test_classes_for(file)
         tests = []
         classes.each do |klass|
-          tests_for_class = test_methods(klass).map {|method_name| [file.to_s, [klass.to_s], method_name.to_s]}
+          # There may be many tests, so try to avoid
+          # creating too many objects within the call to #map
+          file_name = file.to_s
+          context = [klass.to_s]
+          tests_for_class = test_methods(klass).map {|method_name| [file_name, context, method_name]}
           if tests_for_class.empty?
             tests_for_class << [file.to_s, [klass.to_s], 'default_test']
           end
