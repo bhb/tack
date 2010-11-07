@@ -91,11 +91,10 @@ module Tack
       end
       
       def test_methods(test_class)
+        pattern = /^test./
         test_class.instance_methods.select do |method_name|
-          method_name =~ /^test./ &&
-            (test_class.instance_method(method_name).arity == 0 ||
-             test_class.instance_method(method_name).arity == -1
-             )
+          method = test_class.instance_method(method_name)
+          method_name =~ pattern && [0,-1].member?(method.arity)
         end
       end
 
