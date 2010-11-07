@@ -3,7 +3,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 memprof_file = ENV['MEMPROF']
 MEMPROF = !memprof_file.nil?
-memprof_file = 'tack.mp' if ['1','true'].member?(memprof_file.downcase)
+memprof_file = 'tack.mp' if MEMPROF && ['1','true'].member?(memprof_file.downcase) 
 require 'memprof' if MEMPROF
 require 'tack'
 status = 0
