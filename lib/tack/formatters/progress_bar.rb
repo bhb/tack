@@ -7,6 +7,10 @@ module Tack
     class ProgressBar
       include Middleware::Base
 
+      PASSED = '.'
+      PENDING = 'P'
+      FAILED = 'F'
+
       def initialize(app, options = {})
         super
         @verbose = options.fetch(:verbose) { false }
@@ -27,9 +31,9 @@ module Tack
           if @verbose
             @output.print("#{Tack::Util::Test.new(file,contexts,description).name}: ")
           end
-          print_char_for_results(result[:passed], '.')
-          print_char_for_results(result[:pending], 'P')
-          print_char_for_results(result[:failed], 'F')
+          print_char_for_results(result[:passed], PASSED)
+          print_char_for_results(result[:pending], PENDING)
+          print_char_for_results(result[:failed], FAILED)
           if @verbose
             @output.print("\n")
           end

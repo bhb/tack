@@ -5,14 +5,23 @@ module Tack
     attr_accessor :passed, :failed, :pending
 
     def initialize(results={})
-      results = basics(results)
-      @passed = result_objects(results[:passed])
-      @failed = result_objects(results[:failed])
-      @pending = result_objects(results[:pending])
+      @results = basics(results)
+    end
+
+    def passed
+      @passed ||= result_objects(@results[:passed])
+    end
+
+    def pending
+      @pending ||= result_objects(@results[:pending])
+    end
+
+    def failed
+      @failed ||= result_objects(@results[:failed])
     end
 
     def length
-      @passed.length + @failed.length + @pending.length
+      passed.length + failed.length + pending.length
     end
 
     def to_basics
@@ -22,15 +31,15 @@ module Tack
     end
 
     def pass(test)
-      @passed << Result.for_test(test)
+      passed << Result.for_test(test)
     end
 
     def fail(test, failure)
-      @failed << Result.for_test(test, failure)
+      failed << Result.for_test(test, failure)
     end
 
     def pend(test)
-      @pending << Result.for_test(test)
+      pending << Result.for_test(test)
     end
 
     def merge(results)
@@ -38,9 +47,9 @@ module Tack
       #self.passed += new_results.passed
       #self.failed += new_results.failed
       #self.pending += new_results.pending
-      self.passed += results[:passed]
-      self.failed += results[:failed]
-      self.pending += results[:pending]
+      self.passed += results[:passed] if results[:passed]
+      self.failed += results[:failed] if results[:failed]
+      self.pending += results[:pending] if results[:pending]
     end
 
     private

@@ -68,7 +68,12 @@ module Tack
       private
 
       def test_result
-        
+        @result ||= ::Test::Unit::TestResult.new
+      end
+
+      def reset(result)
+        result.instance_variable_get(:@failures).clear
+        result.instance_variable_get(:@errors).clear
       end
 
       def run_tests_for_class(klass, path, contexts, description, results)
@@ -82,7 +87,8 @@ module Tack
           raise NoMatchingTestError, Tack::Util::Test.new(path,contexts,description) 
         end
 #        puts "4.3 all objects #{ObjectSpace.allocated_objects}"
-        result = ::Test::Unit::TestResult.new
+        #result = ::Test::Unit::TestResult.new
+        result = test_result
 #        puts "4.4 all objects #{ObjectSpace.allocated_objects}"
 
 #        result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
@@ -105,6 +111,7 @@ module Tack
             results.failed << build_result(path, contexts, description, failure)
           end
         end
+        reset(result)
  #       puts "4.7 all objects #{ObjectSpace.allocated_objects}"
  #       puts "--- difference #{ObjectSpace.allocated_objects-old}"
       end

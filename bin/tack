@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
-GC.enable_stats
+#GC.enable_stats
 
 
 memprof_file = ENV['MEMPROF']
