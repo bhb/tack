@@ -86,7 +86,8 @@ module Tack
         Shoulda.reset_contexts!
       end
 
-      def run_test(path, contexts, description)
+      def run_test(test)
+        path, contexts, description = test
         results = Tack::ResultSet.new
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
@@ -96,11 +97,11 @@ module Tack
         test_classes_for(path).each do |klass|
           next if contexts.first != klass.to_s
           begin
-            test = klass.new(test_name([path,contexts,description]))
+            testcase = klass.new(test_name(contexts, description))
           rescue NameError
             chains = build_should_eventually_chains(Shoulda.all_contexts)
             if chains.member?([contexts, description])
-              results.pending << build_result(path, contexts, description)
+              results.pending << build_result(test)
               return basics(results)
             else
               Shoulda.reset_contexts!
@@ -109,16 +110,17 @@ module Tack
           end
           result = ::Test::Unit::TestResult.new
 
+          # TODO - Look at how TestUnit adapter eliminated the add_listener call
           result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
-            results.failed << build_result(path, contexts, description, failure)
+            results.failed << build_result(test, failure)
           end
-        
-          test.run(result) do |started,name|
+          
+          testcase.run(result) do |started,name|
             # We do nothing here
             # but this method requires a block
           end
           if result.passed?
-            results.passed << build_result(path, contexts, description) 
+            results.passed << build_result(test) 
           end
         end
 
@@ -181,8 +183,7 @@ module Tack
         end
       end
 
-      def test_name(test)
-        _, contexts, description = test
+      def test_name(contexts, description)
         return description if description == 'default_test' && contexts.length == 1
         if contexts.length == 1
           class_under_test = contexts.first.gsub(/Test/,'')
@@ -193,8 +194,8 @@ module Tack
         ["test:", context_description, "#{description}. "].join(" ")
       end
       
-      def build_result(path, contexts, description, failure=nil)
-        { :test => [path.to_s, clean_contexts(contexts), description], 
+      def build_result(test, failure=nil)
+        { :test => test, 
           :failure => build_failure(failure) }
       end
 

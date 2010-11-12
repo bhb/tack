@@ -27,8 +27,7 @@ module Tack
       super(tests.map{|t| basics(t)})
     end
     
-    def run_test(path,contexts,description)
-      test = [path,contexts,description]
+    def run_test(test)
       result = @mapping[test]
       raise "No stubbed result for #{test.inspect}" if result.nil?
       status, message, backtrace = result

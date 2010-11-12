@@ -91,7 +91,8 @@ module Tack
         }
       end
       
-      def run_test(file, contexts, description)
+      def run_test(test)
+        file, contexts, description = test
         world = RSpec.world
         world.example_groups.clear
         configuration = RSpec.configuration

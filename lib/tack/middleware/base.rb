@@ -28,8 +28,8 @@ module Tack
         @app.run_suite(tests)
       end
 
-      def run_test(file, contexts, description)
-        @app.run_test(file, contexts, description)
+      def run_test(test)
+        @app.run_test(test)
       end
 
       # not necessary for the middleware API, but handy for 

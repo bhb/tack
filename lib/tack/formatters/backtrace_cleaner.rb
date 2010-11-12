@@ -17,8 +17,8 @@ module Tack
         super
       end
 
-      def run_test(path, contexts, description)
-        returning @app.run_test(path, contexts, description) do |result|
+      def run_test(test)
+        returning @app.run_test(test) do |result|
           if @backtrace_cleaner && !result[:failed].empty?
             # TODO - this is evidence that the object returned by run_test is too complex
             backtrace = result[:failed].first[:failure][:backtrace].clone

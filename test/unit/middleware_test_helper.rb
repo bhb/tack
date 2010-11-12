@@ -33,15 +33,15 @@ module MiddlewareTestHelper
 
         should "define #run_test method" do
           assert middleware_class.new(nil).respond_to?(:run_test)
-          assert_equal 3, middleware_class.new(nil).method(:run_test).arity
+          assert_equal 1, middleware_class.new(nil).method(:run_test).arity
         end
 
         should "call #run_test on inner middleware" do
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
           test = Tack::Util::Test.make.to_basics
-          fake_middleware.expects(:run_test).with(*test).returns(results_for([test]))
-          middleware.run_test(*test)
+          fake_middleware.expects(:run_test).with(test).returns(results_for([test]))
+          middleware.run_test(test)
         end
 
       end

@@ -42,27 +42,18 @@ module Tack
         tests
       end
 
-      def run_test(path, contexts, description)
+      def run_test(test)
         # TODO - since each test is unique, I think 
         # that it's not necessary to return a full result set, 
         # just a result. That might simplify things
-#        puts "1. all objects #{ObjectSpace.allocated_objects}"
-#        puts "1.5 all objects #{ObjectSpace.allocated_objects}"
-#        puts "1.55 all objects #{ObjectSpace.allocated_objects}"
         results = Tack::ResultSet.new
- #       puts "2. all objects #{ObjectSpace.allocated_objects}"
-        test_classes_for(path).each do |klass|
- #         puts "3. all objects #{ObjectSpace.allocated_objects}"
+        file, contexts, _ = test
+        test_classes_for(file).each do |klass|
           if klass.to_s==contexts.first
- #           puts "4. all objects #{ObjectSpace.allocated_objects}"
-           run_tests_for_class(klass, path, contexts, description, results)
- #           puts "5. all objects #{ObjectSpace.allocated_objects}"
+            run_tests_for_class(klass, test, results)
           end
         end
-  #      puts "6. all objects #{ObjectSpace.allocated_objects}"
-        x = basics(results)
-  #      puts "7. all objects #{ObjectSpace.allocated_objects}"
-        x
+        basics(results)
       end
 
       private
@@ -76,48 +67,33 @@ module Tack
         result.instance_variable_get(:@errors).clear
       end
 
-      def run_tests_for_class(klass, path, contexts, description, results)
- #       old = ObjectSpace.allocated_objects
-          ###
+      def run_tests_for_class(klass, test, results)
+        _, _, description = test
         begin
-#          puts "4.1 all objects #{ObjectSpace.allocated_objects}"
-          test = klass.new(description)
-#          puts "4.2 all objects #{ObjectSpace.allocated_objects}"
+          testcase = klass.new(description)
         rescue NameError
-          raise NoMatchingTestError, Tack::Util::Test.new(path,contexts,description) 
+          raise NoMatchingTestError, Tack::Util::Test.new(test)
         end
-#        puts "4.3 all objects #{ObjectSpace.allocated_objects}"
-        #result = ::Test::Unit::TestResult.new
         result = test_result
-#        puts "4.4 all objects #{ObjectSpace.allocated_objects}"
-
-#        result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
-#          results.failed << build_result(path, contexts, description, failure)
-#        end
-#        puts "4.5 all objects #{ObjectSpace.allocated_objects}"
-        
-        test.run(result) do |started,name|
+        testcase.run(result) do |started,name|
           # We do nothing here
           # but this method requires a block
         end
-#        puts "4.6 all objects #{ObjectSpace.allocated_objects}"
 
         if result.passed?
-          results.passed << build_result(path, contexts, description)
+          results.passed << build_result(test)
         else
           failures = result.instance_variable_get(:@failures)
           errors = result.instance_variable_get(:@errors)
           (failures+errors).each do |failure|
-            results.failed << build_result(path, contexts, description, failure)
+            results.failed << build_result(test, failure)
           end
         end
         reset(result)
- #       puts "4.7 all objects #{ObjectSpace.allocated_objects}"
- #       puts "--- difference #{ObjectSpace.allocated_objects-old}"
       end
       
-      def build_result(file, contexts, description, failure=nil)
-        { :test => [file.to_s, contexts, description],
+      def build_result(test, failure=nil)
+        { :test => test,
           :failure => build_failure(failure) }
       end
 
@@ -126,8 +102,8 @@ module Tack
         return nil if failure.nil?
         case failure
         when ::Test::Unit::Error
-            Tack::Util::TestFailure.new("#{failure.exception.class} was raised: #{failure.exception.message}",
-                                        failure.exception.backtrace).to_basics
+          Tack::Util::TestFailure.new("#{failure.exception.class} was raised: #{failure.exception.message}",
+                                      failure.exception.backtrace).to_basics
         else
           Tack::Util::TestFailure.new(failure.message, failure.location).to_basics
         end

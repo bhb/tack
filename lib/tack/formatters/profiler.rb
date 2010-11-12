@@ -24,10 +24,10 @@ module Tack
         end
       end
 
-      def run_test(file, contexts, description)
+      def run_test(test)
         time = Time.now
-        returning @app.run_test(file, contexts, description) do 
-          @times << [Tack::Util::Test.new(file,contexts,description).name, Time.now - time]
+        returning @app.run_test(test) do 
+          @times << [Tack::Util::Test.new(test).name, Time.now - time]
         end
       end
 

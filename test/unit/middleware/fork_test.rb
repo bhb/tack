@@ -10,7 +10,7 @@ class ForkTest < Test::Unit::TestCase
     test = Tack::Util::Test.make.to_basics
     adapter.pass(test)
     expected_result = results_for([test])
-    assert_equal expected_result, middleware.run_test(*test)
+    assert_equal expected_result, middleware.run_test(test)
   end
 
   should "isolate side effects from each test" do

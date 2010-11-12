@@ -18,8 +18,8 @@ module Tack
         @app.run_suite(tests)
       end
       
-      def run_test(file, contexts, description)
-        returning @app.run_test(file, contexts, description) do |result|
+      def run_test(test)
+        returning @app.run_test(test) do |result|
           @results.merge(result)
         end
       end

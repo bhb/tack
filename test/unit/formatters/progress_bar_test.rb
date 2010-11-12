@@ -17,7 +17,7 @@ class ProgressBarTest < Test::Unit::TestCase
     adapter.pend(Test.make)
     assert_output_equals 'P' do |output|
       middleware = ProgressBar.new(adapter, :output => output)
-      middleware.run_test(*Test.make.to_basics)
+      middleware.run_test(Test.make.to_basics)
     end
   end
 
@@ -26,7 +26,7 @@ class ProgressBarTest < Test::Unit::TestCase
     adapter.pass(Test.make)
     assert_output_equals '.' do |output|
       middleware = ProgressBar.new(adapter, :output => output)
-      middleware.run_test(*Test.make.to_basics)
+      middleware.run_test(Test.make.to_basics)
     end
   end
 
@@ -35,7 +35,7 @@ class ProgressBarTest < Test::Unit::TestCase
     adapter.fail(Test.make)
     assert_output_equals 'F' do |output|
       middleware = ProgressBar.new(adapter, :output => output)
-      middleware.run_test(*Test.make.to_basics)
+      middleware.run_test(Test.make.to_basics)
     end
   end
 
@@ -47,7 +47,7 @@ class ProgressBarTest < Test::Unit::TestCase
       adapter.pend(test)
       assert_output_equals "Foo should do x: P\n" do |output|
         middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
-        middleware.run_test(*test.to_basics)
+        middleware.run_test(test.to_basics)
       end
     end
 
@@ -57,7 +57,7 @@ class ProgressBarTest < Test::Unit::TestCase
       adapter.pass(test)
       assert_output_equals "Foo should do x: .\n" do |output|
         middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
-        middleware.run_test(*test.to_basics)
+        middleware.run_test(test.to_basics)
       end
     end
 
@@ -67,7 +67,7 @@ class ProgressBarTest < Test::Unit::TestCase
       adapter.fail(test)
       assert_output_equals "Foo should do x: F\n" do |output|
         middleware = ProgressBar.new(adapter, :verbose => true, :output => output)
-        middleware.run_test(*test.to_basics)
+        middleware.run_test(test.to_basics)
       end
     end
 

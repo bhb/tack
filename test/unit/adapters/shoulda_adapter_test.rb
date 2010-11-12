@@ -123,7 +123,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           adapter = ShouldaAdapter.new
           test = [file_name, ["StringTest"], "should do something"]
           test_copy = deep_clone(test)
-          results = Tack::ResultSet.new(adapter.run_test(*test))
+          results = Tack::ResultSet.new(adapter.run_test(test))
           assert_equal test_copy, test
         end
       end
@@ -137,7 +137,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           adapter = ShouldaAdapter.new
           test = [file_name, ["StringTest"], "should do something"]
-          results = Tack::ResultSet.new(adapter.run_test(*test))
+          results = Tack::ResultSet.new(adapter.run_test(test))
           assert_equal 1, results.passed.length
           assert_equal 0, results.failed.length
           result = results.passed.first
@@ -153,7 +153,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should fail"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 0, results.passed.length
           assert_equal 1, results.failed.length
@@ -171,7 +171,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           assert_equal 1, results.pending.length
           assert_equal 0, results.passed.length
           assert_equal 0, results.failed.length
@@ -188,7 +188,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should raise error"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 0, results.passed.length
           assert_equal 1, results.failed.length
@@ -207,7 +207,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
-            ShouldaAdapter.new.run_test(*test)
+            ShouldaAdapter.new.run_test(test)
           end
           assert_equal %Q{Could not find test "StringTest should do something else" in #{path}}, error.message
         end
@@ -227,7 +227,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 1, results.passed.length
           assert_equal 0, results.failed.length
@@ -246,7 +246,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 0, results.passed.length
           assert_equal 1, results.failed.length
@@ -265,7 +265,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 1, results.pending.length
           assert_equal 0, results.passed.length
@@ -287,7 +287,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           EOS
           with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
             test = [file_name, ["StringTest", "String"], "should do something"]
-            results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+            results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
             assert_equal 1, results.passed.length
           end
@@ -306,7 +306,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
            EOS
            with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
              test = [file_name, ["StringTest", "String"], "should do something"]
-             results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+             results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
            
              assert_equal 1, results.pending.length
            end
@@ -327,7 +327,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "other times"], "should do something"]
           error = assert_raises Tack::NoMatchingTestError do
-            ShouldaAdapter.new.run_test(*test)
+            ShouldaAdapter.new.run_test(test)
           end
         end
       end
@@ -343,7 +343,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes", "in some cases"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 1, results.pending.length
         end
@@ -359,7 +359,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should raise an error"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(*test))
+          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
           
           assert_equal 0, results.passed.length
           assert_equal 1, results.failed.length
@@ -380,7 +380,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something else"]
           error = assert_raises Tack::NoMatchingTestError do
-            ShouldaAdapter.new.run_test(*test)
+            ShouldaAdapter.new.run_test(test)
           end
           assert_equal %Q{Could not find test "StringTest sometimes should do something else" in #{path}}, error.message
         end
@@ -407,7 +407,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         adapter = ShouldaAdapter.new
         test = adapter.tests_for(path).first
         assert_equal [file_name, ["StringTest", "sometimes"], "should do something"], test
-        results = Tack::ResultSet.new(adapter.run_test(*test))
+        results = Tack::ResultSet.new(adapter.run_test(test))
         assert_equal 1, results.passed.length
       end
     end
@@ -428,8 +428,8 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         test2 = [file_name, ["StringTest"], "should do something"]
         adapter = ShouldaAdapter.new
         stdout, stderr = capture_io do
-          adapter.run_test(*test1)
-          adapter.run_test(*test2)
+          adapter.run_test(test1)
+          adapter.run_test(test2)
         end
         assert_no_match /warning: already initialized constant/, stdout
         assert_no_match /warning: already initialized constant/, stderr
@@ -517,7 +517,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           test_file = c.file('foo_test.rb',body)
           tests = adapter.tests_for(test_file)
           assert_equal [[test_file.to_s,['FooModule::BarTest'],'should do something']], tests
-          results = adapter.run_test(*tests.first)
+          results = adapter.run_test(tests.first)
           assert_equal 1, results[:passed].length
         end
       ensure 

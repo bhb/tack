@@ -34,9 +34,10 @@ module Tack
     # I think I should move some functionality around 
     # (make a real middleware that identifies the adapter on
     # the fly and have the builder be separate)
-    def run_test(path, contexts, description)
+    def run_test(test)
+      path, _, _ = test
       adapter = Adapters::Adapter.for(path)
-      adapter.run_test(path, contexts, description)
+      adapter.run_test(test)
     end
 
     def use(middleware, *args, &block)

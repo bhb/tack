@@ -26,10 +26,10 @@ module Tack
         end
       end
 
-      def run_test(file, contexts, description)
-        returning @app.run_test(file, contexts, description) do |result|
+      def run_test(test)
+        returning @app.run_test(test) do |result|
           if @verbose
-            @output.print("#{Tack::Util::Test.new(file,contexts,description).name}: ")
+            @output.print("#{Tack::Util::Test.new(test).name}: ")
           end
           print_char_for_results(result[:passed], PASSED)
           print_char_for_results(result[:pending], PENDING)

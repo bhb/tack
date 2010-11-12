@@ -8,7 +8,11 @@ module Tack
 
       def initialize(*args)
         if args.length == 1
-          if args.first.is_a?(Hash)
+          if args.first.is_a?(Test)
+            @file = args.first.file
+            @contexts = args.first.contexts
+            @description = args.first.description
+          elsif args.first.is_a?(Hash)
             opts = args.first
             @file = opts.fetch(:file) {''}
             @contexts = opts.fetch(:contexts) {[]}
@@ -22,7 +26,7 @@ module Tack
       end
 
       def to_basics
-        [file, contexts, description].map {|x| basics(x)}
+        [file, contexts, description]
       end
 
       def name
