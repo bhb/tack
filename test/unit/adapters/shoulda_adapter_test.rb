@@ -123,7 +123,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           adapter = ShouldaAdapter.new
           test = [file_name, ["StringTest"], "should do something"]
           test_copy = deep_clone(test)
-          results = Tack::ResultSet.new(adapter.run_test(test))
+          adapter.run_test(test)
           assert_equal test_copy, test
         end
       end
@@ -137,11 +137,9 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           adapter = ShouldaAdapter.new
           test = [file_name, ["StringTest"], "should do something"]
-          results = Tack::ResultSet.new(adapter.run_test(test))
-          assert_equal 1, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.passed.first
-          assert_equal Tack::Result.new(:test => test), result
+          result = adapter.run_test(test)
+          assert_equal :passed, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -153,14 +151,12 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should fail"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "<2> expected but was\n<0>.", result.failure[:message]
-          assert_kind_of Array, result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "<2> expected but was\n<0>.", result[:failure][:message]
+          assert_kind_of Array, result[:failure][:backtrace]
         end
       end
 
@@ -171,12 +167,9 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
-          assert_equal 1, results.pending.length
-          assert_equal 0, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.pending.first
-          assert_equal Tack::Result.new(:test => test), result
+          result = ShouldaAdapter.new.run_test(test)
+          assert_equal :pending, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -188,14 +181,12 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest"], "should raise error"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
-          assert_kind_of Array, result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "RuntimeError was raised: fail!!!", result[:failure][:message]
+          assert_kind_of Array, result[:failure][:backtrace]
         end
       end
 
@@ -227,12 +218,10 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
-          
-          assert_equal 1, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.passed.first
-          assert_equal Tack::Result.new(:test => test), result
+          result = ShouldaAdapter.new.run_test(test)
+
+          assert_equal :passed, result[:status]
+          assert_equal test, result[:test]          
         end
       end
 
@@ -246,13 +235,11 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_not_nil result.failure
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_not_nil result[:failure]
         end
       end
 
@@ -265,13 +252,10 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 1, results.pending.length
-          assert_equal 0, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.pending.first
-          assert_equal Tack::Result.new(:test => test), result
+          assert_equal :pending, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -287,9 +271,10 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           EOS
           with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
             test = [file_name, ["StringTest", "String"], "should do something"]
-            results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+            result = ShouldaAdapter.new.run_test(test)
           
-            assert_equal 1, results.passed.length
+            assert_equal :passed, result[:status]
+            assert_equal test, result[:test]
           end
         end
 
@@ -306,9 +291,9 @@ class ShouldaAdapterTest < Test::Unit::TestCase
            EOS
            with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
              test = [file_name, ["StringTest", "String"], "should do something"]
-             results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+             result = ShouldaAdapter.new.run_test(test)
            
-             assert_equal 1, results.pending.length
+             assert_equal :pending, result[:status]
            end
          end
       end
@@ -343,9 +328,9 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes", "in some cases"], "should do something"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 1, results.pending.length
+          assert_equal :pending, result[:status]
         end
       end
 
@@ -359,14 +344,12 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         EOS
         with_shoulda_test :class_name => :StringTest, :body => body do |file_name, path|
           test = [file_name, ["StringTest", "sometimes"], "should raise an error"]
-          results = Tack::ResultSet.new(ShouldaAdapter.new.run_test(test))
+          result = ShouldaAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
-          assert_not_nil result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "RuntimeError was raised: fail!!!", result[:failure][:message]
+          assert_not_nil result[:failure][:backtrace]
         end
       end
 
@@ -407,8 +390,10 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         adapter = ShouldaAdapter.new
         test = adapter.tests_for(path).first
         assert_equal [file_name, ["StringTest", "sometimes"], "should do something"], test
-        results = Tack::ResultSet.new(adapter.run_test(test))
-        assert_equal 1, results.passed.length
+        result = adapter.run_test(test)
+
+        assert_equal :passed, result[:status]
+        assert_equal test, result[:test]
       end
     end
 
@@ -517,8 +502,8 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           test_file = c.file('foo_test.rb',body)
           tests = adapter.tests_for(test_file)
           assert_equal [[test_file.to_s,['FooModule::BarTest'],'should do something']], tests
-          results = adapter.run_test(tests.first)
-          assert_equal 1, results[:passed].length
+          result = adapter.run_test(tests.first)
+          assert_equal :passed, result[:status]
         end
       ensure 
         remove_test_class_definition("FooModule::BarTest".to_sym)

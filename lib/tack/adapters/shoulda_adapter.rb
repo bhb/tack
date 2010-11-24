@@ -88,7 +88,8 @@ module Tack
 
       def run_test(test)
         path, contexts, description = test
-        results = Tack::ResultSet.new
+        #results = Tack::ResultSet.new
+        result = nil
         Shoulda.reset_contexts!
         Tack::SandboxLoader.load(path)
         contexts = contexts.clone
@@ -101,8 +102,7 @@ module Tack
           rescue NameError
             chains = build_should_eventually_chains(Shoulda.all_contexts)
             if chains.member?([contexts, description])
-              results.pending << build_result(test)
-              return basics(results)
+              return basics(build_result(:pending, test))
             else
               Shoulda.reset_contexts!
               raise NoMatchingTestError, Tack::Util::Test.new(path,clean_contexts(contexts),description) 
@@ -112,7 +112,7 @@ module Tack
 
           # TODO - Look at how TestUnit adapter eliminated the add_listener call
           result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
-            results.failed << build_result(test, failure)
+            return build_result(:failed, test, failure)
           end
           
           testcase.run(result) do |started,name|
@@ -120,11 +120,11 @@ module Tack
             # but this method requires a block
           end
           if result.passed?
-            results.passed << build_result(test) 
+            return build_result(:passed, test) 
           end
         end
 
-        basics(results)
+        return result
       ensure
         Shoulda.reset_contexts!
       end
@@ -194,8 +194,9 @@ module Tack
         ["test:", context_description, "#{description}. "].join(" ")
       end
       
-      def build_result(test, failure=nil)
-        { :test => test, 
+      def build_result(status, test, failure=nil)
+        { :status => status,
+          :test => test, 
           :failure => build_failure(failure) }
       end
 

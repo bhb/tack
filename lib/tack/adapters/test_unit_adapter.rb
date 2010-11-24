@@ -94,6 +94,7 @@ module Tack
         reset(result)
       end
       
+      # TODO - reduce duplication. This methid is identical to the one in ShouldaAdapter
       def build_result(status, test, failure=nil)
         { :status => status,
           :test => test,
