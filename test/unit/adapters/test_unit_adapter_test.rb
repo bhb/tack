@@ -35,7 +35,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
         test_copy = deep_clone(test)
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(test))
+        TestUnitAdapter.new.run_test(test)
         assert_equal test_copy, test
       end
     end
@@ -48,12 +48,10 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(test))
+        result = Tack::Result.new(TestUnitAdapter.new.run_test(test))
         
-        assert_equal 1, results.passed.length
-        assert_equal 0, results.failed.length
-        result = results.passed.first
-        assert_equal Tack::Result.new(:test => test), result
+        assert_equal :passed, result.status
+        assert_equal test, result.test
       end
     end
 
@@ -65,11 +63,9 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(test))
+        result = Tack::Result.new(TestUnitAdapter.new.run_test(test))
         
-        assert_equal 0, results.passed.length
-        assert_equal 1, results.failed.length
-        result = results.failed.first
+        assert_equal :failed, result.status
         assert_equal test, result.test
         assert_equal "<1> expected but was\n<2>.", result.failure[:message]
         assert_kind_of Array, result.failure[:backtrace]
@@ -84,11 +80,9 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        results = Tack::ResultSet.new(TestUnitAdapter.new.run_test(test))
+        result = ::Tack::Result.new(TestUnitAdapter.new.run_test(test))
         
-        assert_equal 0, results.passed.length
-        assert_equal 1, results.failed.length
-        result = results.failed.first
+        assert_equal :failed, result.status
         assert_equal test, result.test
         assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
         assert_kind_of Array, result.failure[:backtrace]
@@ -193,8 +187,8 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           test_file = c.file('foo_test.rb',body)
           tests = adapter.tests_for(test_file)
           assert_equal [[test_file.to_s,['FooModule::BarTest'],'test_foo']], tests
-          results = adapter.run_test(tests.first)
-          assert_equal 1, results[:passed].length
+          result = adapter.run_test(tests.first)
+          assert_equal :passed, result[:status]
         end
       ensure 
         remove_test_class_definition("FooModule::BarTest".to_sym)

@@ -42,15 +42,28 @@ module Tack
       pending << Result.for_test(test)
     end
 
-    def merge(results)
-      #new_results = ResultSet.new(results)
-      #self.passed += new_results.passed
-      #self.failed += new_results.failed
-      #self.pending += new_results.pending
-      self.passed += results[:passed] if results[:passed]
-      self.failed += results[:failed] if results[:failed]
-      self.pending += results[:pending] if results[:pending]
+    def <<(result)
+      case result[:status]
+      when :passed
+        self.passed << result
+      when :failed
+        self.failed << result
+      when :pending
+        self.pending << results
+      else
+        raise "Unknown result status: #{result[:status]}"
+      end
     end
+
+#     def merge(results)
+#       #new_results = ResultSet.new(results)
+#       #self.passed += new_results.passed
+#       #self.failed += new_results.failed
+#       #self.pending += new_results.pending
+#       self.passed += results[:passed] if results[:passed]
+#       self.failed += results[:failed] if results[:failed]
+#       self.pending += results[:pending] if results[:pending]
+#     end
 
     private
     

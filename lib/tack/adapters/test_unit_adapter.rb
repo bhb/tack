@@ -46,14 +46,15 @@ module Tack
         # TODO - since each test is unique, I think 
         # that it's not necessary to return a full result set, 
         # just a result. That might simplify things
-        results = Tack::ResultSet.new
+        #results = Tack::ResultSet.new
+        result = nil
         file, contexts, _ = test
         test_classes_for(file).each do |klass|
           if klass.to_s==contexts.first
-            run_tests_for_class(klass, test, results)
+            result = run_tests_for_class(klass, test)
           end
         end
-        basics(results)
+        basics(result)
       end
 
       private
@@ -66,8 +67,9 @@ module Tack
         result.instance_variable_get(:@failures).clear
         result.instance_variable_get(:@errors).clear
       end
-
-      def run_tests_for_class(klass, test, results)
+      
+      # TODO - rename this
+      def run_tests_for_class(klass, test)
         _, _, description = test
         begin
           testcase = klass.new(description)
@@ -81,19 +83,20 @@ module Tack
         end
 
         if result.passed?
-          results.passed << build_result(test)
+          return build_result(:passed, test)
         else
           failures = result.instance_variable_get(:@failures)
           errors = result.instance_variable_get(:@errors)
           (failures+errors).each do |failure|
-            results.failed << build_result(test, failure)
+            return build_result(:failed, test, failure)
           end
         end
         reset(result)
       end
       
-      def build_result(test, failure=nil)
-        { :test => test,
+      def build_result(status, test, failure=nil)
+        { :status => status,
+          :test => test,
           :failure => build_failure(failure) }
       end
 

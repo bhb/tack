@@ -22,7 +22,8 @@ module Tack
         results = ResultSet.new
         tests.each do |test|
           result = @root.run_test(test)
-          results.merge(result)
+          #results.merge(result)
+          results << result
         end
         basics(results)
       end
