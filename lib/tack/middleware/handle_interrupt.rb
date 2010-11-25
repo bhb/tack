@@ -20,7 +20,7 @@ module Tack
       
       def run_test(test)
         returning @app.run_test(test) do |result|
-          @results.merge(result)
+          @results << result
         end
       end
       

@@ -31,9 +31,7 @@ module Tack
           if @verbose
             @output.print("#{Tack::Util::Test.new(test).name}: ")
           end
-          print_char_for_results(result[:passed], PASSED)
-          print_char_for_results(result[:pending], PENDING)
-          print_char_for_results(result[:failed], FAILED)
+          print_char(result)
           if @verbose
             @output.print("\n")
           end
@@ -54,11 +52,18 @@ module Tack
       #  output.respond_to?(:sync=)
       #end
 
-
-      def print_char_for_results(results, char)
-        results.each do
-          @output.print(char)
-        end
+      def print_char(result)
+        char = case result[:status]
+               when :passed
+                 PASSED
+               when :failed
+                 FAILED
+               when :pending
+                 PENDING
+               else 
+                 raise "Unknown result status #{result[:status]}"
+               end
+        @output.print(char)
       end
       
     end

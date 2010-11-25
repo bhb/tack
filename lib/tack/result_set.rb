@@ -49,7 +49,7 @@ module Tack
       when :failed
         self.failed << result
       when :pending
-        self.pending << results
+        self.pending << result
       else
         raise "Unknown result status: #{result[:status]}"
       end

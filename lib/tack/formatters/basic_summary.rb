@@ -7,7 +7,9 @@ module Tack
 
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
-          @output.puts "%d tests, %d failures, %d pending" % [results.values.flatten.length, results[:failed].length, results[:pending].length]
+          pending = results[:pending]
+          failed = results[:failed]
+          @output.puts "%d tests, %d failures, %d pending" % [results.length, failed.length, pending.length]
         end
       end
       
