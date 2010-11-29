@@ -58,7 +58,7 @@ class RSpecAdapterTest < Test::Unit::TestCase
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String"], "something"]
           test_copy = deep_clone(test)
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          RSpecAdapter.new.run_test(test)
           assert_equal test_copy, test
         end
       end
@@ -72,12 +72,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 1, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.passed.first
-          assert_equal Tack::Result.new(:test => test), result
+          assert_equal :passed, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -89,14 +87,12 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "expected: 2,\n     got: 1 (using ==)", result.failure[:message]
-          assert_kind_of Array, result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "expected: 2,\n     got: 1 (using ==)", result[:failure][:message]
+          assert_kind_of Array, result[:failure][:backtrace]
         end
       end
 
@@ -108,13 +104,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 1, results.pending.length
-          assert_equal 0, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.pending.first
-          assert_equal Tack::Result.new(:test => test), result
+          assert_equal :pending, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -126,14 +119,12 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
-          assert_kind_of Array, result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "RuntimeError was raised: fail!!!", result[:failure][:message]
+          assert_kind_of Array, result[:failure][:backtrace]
         end
       end
 
@@ -166,12 +157,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String", "sometimes"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 1, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.passed.first
-          assert_equal Tack::Result.new(:test => test), result
+          assert_equal :passed, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -185,13 +174,11 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String", "sometimes"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_not_nil result.failure
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_not_nil result[:failure]
         end
       end
 
@@ -205,13 +192,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String", "sometimes"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
-          
-          assert_equal 1, results.pending.length
-          assert_equal 0, results.passed.length
-          assert_equal 0, results.failed.length
-          result = results.pending.first
-          assert_equal Tack::Result.new(:test => test), result
+          result = RSpecAdapter.new.run_test(test)
+         
+          assert_equal :pending, result[:status]
+          assert_equal test, result[:test]
         end
       end
 
@@ -225,14 +209,12 @@ class RSpecAdapterTest < Test::Unit::TestCase
         EOS
         in_rspec :describe => String, :body => body do |path|
           test = [path.to_s, ["String", "sometimes"], "something"]
-          results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+          result = RSpecAdapter.new.run_test(test)
           
-          assert_equal 0, results.passed.length
-          assert_equal 1, results.failed.length
-          result = results.failed.first
-          assert_equal test, result.test
-          assert_equal "RuntimeError was raised: fail!!!", result.failure[:message]
-          assert_not_nil result.failure[:backtrace]
+          assert_equal :failed, result[:status]
+          assert_equal test, result[:test]
+          assert_equal "RuntimeError was raised: fail!!!", result[:failure][:message]
+          assert_not_nil result[:failure][:backtrace]
         end
       end
 
@@ -247,9 +229,9 @@ class RSpecAdapterTest < Test::Unit::TestCase
           EOS
           in_rspec :describe => String, :body => body do |path|
             test = [path.to_s, ['String', " sometimes"], "should work"]
-            results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+            result = RSpecAdapter.new.run_test(test)
           
-            assert_equal 1, results.length
+            assert_equal :passed, result[:status]
           end
         end
 
@@ -266,9 +248,9 @@ class RSpecAdapterTest < Test::Unit::TestCase
           EOS
           in_rspec :describe => String, :body => body do |path|
             test = [path.to_s, ['String', "#join"], "should work"]
-            results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+            result = RSpecAdapter.new.run_test(test)
           
-            assert_equal 1, results.length
+            assert_equal :passed, result[:status]
           end
         end
 
@@ -281,9 +263,8 @@ class RSpecAdapterTest < Test::Unit::TestCase
           EOS
           in_rspec :describe => String, :body => body do |path|
             test = [path.to_s, ['String', ".new"], "should work"]
-            results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
-          
-            assert_equal 1, results.length
+            result = RSpecAdapter.new.run_test(test)
+            assert_equal :passed, result[:status]
           end
         end
 
@@ -304,10 +285,10 @@ class RSpecAdapterTest < Test::Unit::TestCase
           EOS
           in_rspec :describe => String, :body => body do |path|
             test = [path.to_s, ['String', "sometimes"], "should pass"]
-            results = Tack::ResultSet.new(RSpecAdapter.new.run_test(test))
+            result = RSpecAdapter.new.run_test(test)
           
-            assert_equal 1, results.length
-            assert_equal ['String', 'sometimes'], results.passed.first.test[1]
+            _, context, _ = result[:test]
+            assert_equal ['String', 'sometimes'], context
           end
         end
 

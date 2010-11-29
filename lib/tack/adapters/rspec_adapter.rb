@@ -12,35 +12,26 @@ module RSpec
 
       class TackFormatter < BaseFormatter
         
-        attr_accessor :results
+        attr_accessor :result
         attr_accessor :file
         
         def initialize
           # suppress output
           io = StringIO.new 
           super(io)
-          @results = Tack::ResultSet.new
         end
 
         def example_pending(example)
-          @results.pending << {
-            :test => build_result(example)
-          }
+          @result = build_result(:pending, example)
         end
 
         def example_passed(example)
-          @results.passed << {
-            :test => build_result(example)
-          }
+          @result = build_result(:passed, example)
         end
 
         def example_failed(example)
           error = example.execution_result[:exception_encountered]
-          @results.failed <<
-            {
-            :test => build_result(example),
-            :failure => build_failure(example, error)
-          }
+          @result = build_result(:failed, example, error)
         end
 
         def example_group_started(example_group_proxy)
@@ -49,11 +40,14 @@ module RSpec
 
         private
 
-        def build_result(example)
-          [example.file_path, @current_example_group.ancestors.reverse.map{|x|x.description}, example.description]
+        def build_result(status, example, error = nil)
+          { :status => status,
+            :test => [example.file_path, @current_example_group.ancestors.reverse.map{|x|x.description}, example.description],
+            :failure => build_failure(error) }
         end
         
-        def build_failure(example, error)
+        def build_failure(error)
+          return nil if error.nil?
           case error.exception
           when RSpec::Expectations::ExpectationNotMetError
             Tack::Util::TestFailure.new(error.exception.message,error.exception.backtrace).to_basics
@@ -105,11 +99,11 @@ module Tack
         formatter = RSpec::Core::Formatters::TackFormatter.new
         reporter = RSpec::Core::Reporter.new(formatter)
         world.example_groups.map {|g| g.run(reporter)}
-        results = formatter.results
-        if results.length == 0
+        result = formatter.result
+        if result.nil?
           raise NoMatchingTestError, Tack::Util::Test.new(file,contexts,description)
         end
-        basics(results)
+        basics(result)
       end
 
       private
