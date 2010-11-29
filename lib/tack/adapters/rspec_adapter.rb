@@ -101,8 +101,9 @@ module Tack
         world.example_groups.map {|g| g.run(reporter)}
         result = formatter.result
         if result.nil?
-          raise NoMatchingTestError, Tack::Util::Test.new(file,contexts,description)
+          raise NoMatchingTestError, Tack::Util::Test.new(test)
         end
+        result[:test] = test
         basics(result)
       end
 

@@ -5,6 +5,7 @@ module Tack
     def self.run_tests(root, path, pattern=TestPattern.new)
       test_set = TestSet.new
       tests = test_set.tests_for(path, pattern)
+      
       runner = Runner.new(root)
       runner.run(tests)
     end
@@ -22,10 +23,27 @@ module Tack
 
     def run(tests)
       to_app if @start_app.nil?
-      @start_app.run_suite(tests)
+      results = @start_app.run_suite(tests)
+      if ENV['VIZ']
+        require 'lib/tack/test_visitor'
+        viz = TestVisitor.new
+        viz.accept results
+        File.open('vizfile.dot','w') do |f|
+          f << viz.to_dot
+        end
+      end
+      results
     end
 
     def run_suite(tests)
+      if ENV['VIZ']
+        require 'lib/tack/test_visitor'
+        viz = TestVisitor.new
+        viz.accept tests
+        File.open('tests.dot','w') do |f|
+          f << viz.to_dot
+        end
+      end
       (@adapter ||= Adapters::Adapter.new(@start_app)).run_suite(tests)
     end
 
