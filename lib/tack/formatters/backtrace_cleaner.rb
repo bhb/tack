@@ -19,11 +19,10 @@ module Tack
 
       def run_test(test)
         returning @app.run_test(test) do |result|
-          if @backtrace_cleaner && !result[:failed].empty?
-            # TODO - this is evidence that the object returned by run_test is too complex
-            backtrace = result[:failed].first[:failure][:backtrace].clone
+          if @backtrace_cleaner && result[:status]==:failed
+            backtrace = result[:failure][:backtrace].clone
             backtrace = @backtrace_cleaner.clean(backtrace) 
-            result[:failed].first[:failure][:backtrace] = backtrace
+            result[:failure][:backtrace] = backtrace
           end
         end
       end

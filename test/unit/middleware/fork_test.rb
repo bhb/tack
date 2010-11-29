@@ -9,7 +9,7 @@ class ForkTest < Test::Unit::TestCase
     middleware = Fork.new(adapter, :output => StringIO.new)
     test = Tack::Util::Test.make.to_basics
     adapter.pass(test)
-    expected_result = results_for([test])
+    expected_result = Tack::Result.for_test(test).to_basics
     assert_equal expected_result, middleware.run_test(test)
   end
 
