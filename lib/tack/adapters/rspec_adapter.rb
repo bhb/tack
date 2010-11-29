@@ -67,6 +67,32 @@ module Tack
 
     class RSpecAdapter < Adapter
 
+      def initialize
+        @configuration_cache = Hash.new
+        @example_groups_cache = Hash.new
+        super
+      end
+      
+      # TODO this should be private
+      def configuration_for(file)
+        if !@configuration_cache.has_key?(file)
+          configuration = RSpec.configuration
+          configuration.files_to_run = [file]
+          configuration.load_spec_files
+          configuration.configure_mock_framework
+          @configuration_cache[file] = configuration
+        end
+        @configuration_cache[file]
+      end
+      
+      # TODO this should be private
+      def example_groups_for(file,example_groups)
+        if !@example_groups_cache.has_key?(file)
+          @example_groups_cache[file] = example_groups.clone
+        end
+        @example_groups_cache[file]
+      end
+
       def tests_for(file)
         world = RSpec.world
         world.example_groups.clear
@@ -89,11 +115,15 @@ module Tack
         file, contexts, description = test
         world = RSpec.world
         world.example_groups.clear
-        configuration = RSpec.configuration
+        #configuration = RSpec.configuration
+        #configuration.clear_inclusion_filter
+        #configuration.files_to_run = [file]
+        #configuration.load_spec_files
+        #configuration.configure_mock_framework
+        
+        configuration = configuration_for(file)
+        world.example_groups.replace(example_groups_for(file, world.example_groups))
         configuration.clear_inclusion_filter
-        configuration.files_to_run = [file]
-        configuration.load_spec_files
-        configuration.configure_mock_framework
         configuration.filter_run :full_description => full_example_name(contexts,description)
 
         formatter = RSpec::Core::Formatters::TackFormatter.new

@@ -95,7 +95,7 @@ class RSpecTest < Test::Unit::TestCase
     end
   end
 
-  should "run successful spec" do
+  should "run a successful spec" do
     body = <<-EOS
     specify "append length is sum of component string lengths" do
       ("ab"+"cd").length.should == ("ab".length + "cd".length)
@@ -111,10 +111,10 @@ class RSpecTest < Test::Unit::TestCase
 
   context "in a context" do
     
-    should "run successful spec" do
+    should "run a successful spec" do
       body = <<-EOS
         context "in all cases" do
-          specify "append length is sum of component string lengths" do
+          specify "append length is sum of component string lengths 1" do
             ("ab"+"cd").length.should == ("ab".length + "cd".length)
           end
         end
