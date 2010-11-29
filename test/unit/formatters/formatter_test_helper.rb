@@ -34,7 +34,7 @@ module FormatterTestHelper
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
           test = Tack::Util::Test.make.to_basics
-          expected_result = results_for([test])
+          expected_result = Tack::Result.for_test(test).to_basics
           fake_middleware.stubs(:run_test).returns(expected_result)
           assert_equal expected_result, middleware.run_test(test)
         end

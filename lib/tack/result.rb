@@ -18,7 +18,7 @@ module Tack
       else
         @test = opts.fetch(:test)
         @failure = opts.fetch(:failure) { nil }
-        @status = opts.fetch(:status)
+        @status = opts.fetch(:status) { :passed }
       end
     end
 
