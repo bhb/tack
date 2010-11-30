@@ -56,7 +56,12 @@ module Tack
       ensure
         Shoulda.reset_contexts!
       end
-      
+
+      def initialize
+        @contexts_cache = {}
+        super
+      end
+
       def tests_for(file)
         Shoulda.reset_contexts!
         classes = test_classes_for(file)
@@ -88,10 +93,8 @@ module Tack
 
       def run_test(test)
         path, contexts, description = test
-        #results = Tack::ResultSet.new
         result = nil
-        Shoulda.reset_contexts!
-        Tack::SandboxLoader.load(path)
+        shoulda_contexts = contexts_for(path)
         contexts = contexts.clone
         contexts[0] = Tack::Sandbox.prefix+contexts[0]
         # Note that this won't work if there are multiple classes in a file
@@ -100,7 +103,7 @@ module Tack
           begin
             testcase = klass.new(test_name(contexts, description))
           rescue NameError
-            chains = build_should_eventually_chains(Shoulda.all_contexts)
+            chains = build_should_eventually_chains(shoulda_contexts)
             if chains.member?([contexts, description])
               return basics(build_result(:pending, test))
             else
@@ -131,6 +134,21 @@ module Tack
 
       private
 
+      def discover_contexts(file)
+        Shoulda.reset_contexts!
+        Tack::SandboxLoader.load(file)
+        Shoulda.all_contexts
+      ensure
+        Shoulda.reset_contexts!
+      end
+      
+      def contexts_for(file)
+        if !@contexts_cache.has_key?(file)
+          @contexts_cache[file] = discover_contexts(file)
+        end
+        @contexts_cache[file]
+      end
+      
       def get_tests(file, context) 
         tests = []
         context.shoulds.each do |should|
