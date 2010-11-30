@@ -1,5 +1,6 @@
 type = ARGV.shift
 filename = ARGV.shift
+times = ARGV.shift
 
 def rspec_test(num)
   <<-EOF
@@ -22,9 +23,9 @@ def shoulda_test(num)
   EOF
 end
 
-test_unit_times = 10000
-shoulda_times = 200
-rspec_times = 200
+test_unit_times = (times || 10000).to_i
+shoulda_times = (times || 200).to_i
+rspec_times = (times || 200).to_i
 
 case type.to_s
 when 'test_unit'
