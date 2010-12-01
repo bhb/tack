@@ -68,10 +68,16 @@ module Tack
       end
 
       def self.shoulda_file?(path)
+        @cache ||= {}
+        if @cache.has_key?(path)
+          return @cache[path]
+        end
+
         sandbox = ForkedSandbox.new
         sandbox.run do
           require path
-          defined?(Shoulda) && ShouldaAdapter.shoulda_file?(path)
+          result = defined?(Shoulda) && ShouldaAdapter.shoulda_file?(path)
+          @cache[path] = result
         end
       end
 
