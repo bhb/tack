@@ -39,6 +39,26 @@ class ProgressBarTest < Test::Unit::TestCase
     end
   end
 
+  should "not change output sync" do
+    adapter = Tack::StubAdapter.new
+    adapter.pass(Test.make)
+
+    StubIO = Struct.new(:sync) do
+      def closed?; false; end;
+      def print(*args); end;
+    end
+
+    output = StubIO.new
+
+    [true, false].each do |value|
+      output.sync = value
+      assert_equal value, output.sync
+      middleware = ProgressBar.new(adapter, :output => output)
+      middleware.run_test(Test.make.to_basics)
+      assert_equal value, output.sync
+    end
+  end
+
   context "in verbose mode" do
 
     should "print P for a pending test" do
