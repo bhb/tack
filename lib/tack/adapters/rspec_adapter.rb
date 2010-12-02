@@ -73,26 +73,6 @@ module Tack
         super
       end
       
-      # TODO this should be private
-      def configuration_for(file)
-        if !@configuration_cache.has_key?(file)
-          configuration = RSpec.configuration
-          configuration.files_to_run = [file]
-          configuration.load_spec_files
-          configuration.configure_mock_framework
-          @configuration_cache[file] = configuration
-        end
-        @configuration_cache[file]
-      end
-      
-      # TODO this should be private
-      def example_groups_for(file,example_groups)
-        if !@example_groups_cache.has_key?(file)
-          @example_groups_cache[file] = example_groups.clone
-        end
-        @example_groups_cache[file]
-      end
-
       def tests_for(file)
         world = RSpec.world
         world.example_groups.clear
@@ -138,6 +118,24 @@ module Tack
       end
 
       private
+
+      def configuration_for(file)
+        if !@configuration_cache.has_key?(file)
+          configuration = RSpec.configuration
+          configuration.files_to_run = [file]
+          configuration.load_spec_files
+          configuration.configure_mock_framework
+          @configuration_cache[file] = configuration
+        end
+        @configuration_cache[file]
+      end
+      
+      def example_groups_for(file,example_groups)
+        if !@example_groups_cache.has_key?(file)
+          @example_groups_cache[file] = example_groups.clone
+        end
+        @example_groups_cache[file]
+      end
 
       def full_example_name(contexts, description)
         name = contexts.first

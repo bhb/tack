@@ -79,7 +79,6 @@ class BacktraceCleanerTest < Test::Unit::TestCase
       backtrace = ['line1', 'bin/tack:5:', 'line3']
       adapter = StubAdapter.new(Test.make => [:fail, "fail msg", backtrace])
       middleware = BacktraceCleaner.new(adapter, :full => true)
-      # TODO - Yeah, it's pretty awful to pull this stuff out
       assert_equal backtrace, middleware.run_test(Test.make.to_basics)[:failure][:backtrace]
     end
 
