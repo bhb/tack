@@ -8,8 +8,8 @@ module Tack
       def run_suite(tests)
         returning @app.run_suite(tests) do |results|
           results[:pending].each do |result|
-            file, contexts, description = result[:test]
-            @output.puts "PENDING: #{Tack::Util::Test.new(file,contexts,description).name}"
+            path, contexts, description = result[:test]
+            @output.puts "PENDING: #{Tack::Util::Test.new(path,contexts,description).name}"
           end
         end
       end
