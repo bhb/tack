@@ -12,33 +12,20 @@ module Tack
 
     class TestUnitAdapter < Adapter
 
-      def tests_for(file)
-#puts "--- before tests_for"
-#puts "collections: #{GC.collections}"
-#puts "live objects #{ObjectSpace.live_objects}"
-#puts "all objects #{ObjectSpace.allocated_objects}"
-        #require file
-        classes = test_classes_for(file)
-#puts "--- after test_classes_for"
-#puts "collections: #{GC.collections}"
-#puts "live objects #{ObjectSpace.live_objects}"
-#puts "all objects #{ObjectSpace.allocated_objects}"
+      def tests_for(path)
+        classes = test_classes_for(path)
         tests = []
         classes.each do |klass|
           # There may be many tests, so try to avoid
           # creating too many objects within the call to #map
-          file_name = file.to_s
+          path_name = path.to_s
           context = [klass.to_s]
-          tests_for_class = test_methods(klass).map {|method_name| [file_name, context, method_name]}
+          tests_for_class = test_methods(klass).map {|method_name| [path_name, context, method_name]}
           if tests_for_class.empty?
-            tests_for_class << [file.to_s, [klass.to_s], 'default_test']
+            tests_for_class << [path_name, [klass.to_s], 'default_test']
           end
           tests += tests_for_class
         end
-#puts "--- after tests_for"
-#puts "collections: #{GC.collections}"
-#puts "live objects #{ObjectSpace.live_objects}"
-#puts "all objects #{ObjectSpace.allocated_objects}"
         tests
       end
 
@@ -48,8 +35,8 @@ module Tack
         # just a result. That might simplify things
         #results = Tack::ResultSet.new
         result = nil
-        file, contexts, _ = test
-        test_classes_for(file).each do |klass|
+        path, contexts, _ = test
+        test_classes_for(path).each do |klass|
           if klass.to_s==contexts.first
             result = run_tests_for_class(klass, test)
           end
@@ -113,10 +100,10 @@ module Tack
         end
       end
 
-      def test_classes_for(test_file)
+      def test_classes_for(path)
         return @test_classes unless @test_classes.nil?
-        @test_classes ||= TestClassDetector.test_classes_for(test_file) do |test_file|
-          require test_file
+        @test_classes ||= TestClassDetector.test_classes_for(path) do |path|
+          require path
         end
       end
       

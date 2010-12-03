@@ -4,29 +4,29 @@ module Tack
     
     class Test
       
-      attr_accessor :file, :contexts, :description
+      attr_accessor :path, :contexts, :description
 
       def initialize(*args)
         if args.length == 1
           if args.first.is_a?(Test)
-            @file = args.first.file
+            @path = args.first.path
             @contexts = args.first.contexts
             @description = args.first.description
           elsif args.first.is_a?(Hash)
             opts = args.first
-            @file = opts.fetch(:file) {''}
+            @path = opts.fetch(:path) {''}
             @contexts = opts.fetch(:contexts) {[]}
             @description = opts.fetch(:description) {''}
           elsif args.first.is_a?(Enumerable)
-            @file, @contexts, @description = args.first
+            @path, @contexts, @description = args.first
           end
         else
-          @file, @contexts, @description = args
+          @path, @contexts, @description = args
         end
       end
 
       def to_basics
-        [file, contexts, description]
+        [path, contexts, description]
       end
 
       def name
