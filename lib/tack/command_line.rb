@@ -128,21 +128,21 @@ module Tack
       if options[:dry_run]==true
         mapping = {}
         # Hashes are not ordered in 1.8, so we pull the list of files out separately
-        test_files = []
-        tests.each do |test_file, contexts, description|
-          test_files << test_file
-          mapping[test_file] ||= []
-          mapping[test_file] << Tack::Util::Test.new(test_file,contexts,description).name
+        test_paths = []
+        tests.each do |test_path, contexts, description|
+          test_paths << test_path
+          mapping[test_path] ||= []
+          mapping[test_path] << Tack::Util::Test.new(test_path,contexts,description).name
         end
-        test_files.uniq!
-        test_files.each do |test_file|
-          stdout.puts "In #{test_file}:"
-          mapping[test_file].each do |full_description|
+        test_paths.uniq!
+        test_paths.each do |test_path|
+          stdout.puts "In #{test_path}:"
+          mapping[test_path].each do |full_description|
             stdout.puts "    #{full_description}"
           end
         end
         stdout.puts "-"*40
-        stdout.puts "#{test_files.count} files, #{tests.count} tests"
+        stdout.puts "#{test_paths.count} files, #{tests.count} tests"
         return status = 0
       else
         runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
