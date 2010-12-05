@@ -92,17 +92,12 @@ module Tack
       end
       
       def run_test(test)
-        file, contexts, description = test
+        path, contexts, description = test
         world = RSpec.world
         world.example_groups.clear
-        #configuration = RSpec.configuration
-        #configuration.clear_inclusion_filter
-        #configuration.files_to_run = [file]
-        #configuration.load_spec_files
-        #configuration.configure_mock_framework
         
-        configuration = configuration_for(file)
-        world.example_groups.replace(example_groups_for(file, world.example_groups))
+        configuration = configuration_for(path)
+        world.example_groups.replace(example_groups_for(path, world.example_groups))
         configuration.clear_inclusion_filter
         configuration.filter_run :full_description => full_example_name(contexts,description)
 
@@ -119,22 +114,22 @@ module Tack
 
       private
 
-      def configuration_for(file)
-        if !@configuration_cache.has_key?(file)
+      def configuration_for(path)
+        if !@configuration_cache.has_key?(path)
           configuration = RSpec.configuration
-          configuration.files_to_run = [file]
+          configuration.files_to_run = [path]
           configuration.load_spec_files
           configuration.configure_mock_framework
-          @configuration_cache[file] = configuration
+          @configuration_cache[path] = configuration
         end
-        @configuration_cache[file]
+        @configuration_cache[path]
       end
       
-      def example_groups_for(file,example_groups)
-        if !@example_groups_cache.has_key?(file)
-          @example_groups_cache[file] = example_groups.clone
+      def example_groups_for(path, example_groups)
+        if !@example_groups_cache.has_key?(path)
+          @example_groups_cache[path] = example_groups.clone
         end
-        @example_groups_cache[file]
+        @example_groups_cache[path]
       end
 
       def full_example_name(contexts, description)

@@ -110,8 +110,8 @@ EOS
       end
 EOS
       within_construct(false) do |c|
-        file = c.file 'fake_test.rb', code
-        raw_results = Tack::Runner.run_tests(file.parent, file, /DerivedTest/)
+        path = c.file 'fake_test.rb', code
+        raw_results = Tack::Runner.run_tests(path.parent, path, /DerivedTest/)
         result_set = Tack::ResultSet.new(raw_results)
         assert_equal 2, result_set.length
         assert_equal ['test_one', 'test_two'], result_set.passed.map {|result| result.test.last}.sort
