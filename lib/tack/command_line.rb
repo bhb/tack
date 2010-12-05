@@ -158,7 +158,7 @@ module Tack
           runner.use Tack::Formatters::TotalTime
           runner.use Tack::Formatters::Newline
           runner.use Tack::Formatters::PrintPending
-          #runner.use Tack::Middleware::HandleInterrupt
+          runner.use Tack::Middleware::HandleInterrupt
           runner.use Tack::Formatters::Newline
           runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
           runner.use Tack::Formatters::BacktraceCleaner, :full => options[:backtrace]

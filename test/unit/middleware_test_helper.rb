@@ -40,7 +40,7 @@ module MiddlewareTestHelper
           fake_middleware = stub_everything
           middleware = middleware_class.new(fake_middleware, :output => StringIO.new)
           test = Tack::Util::Test.make.to_basics
-          result = Tack::Result.for_test(test).to_basics
+          result = Tack::Util::Result.for_test(test).to_basics
           fake_middleware.expects(:run_test).with(test).returns(result)
           middleware.run_test(test)
         end

@@ -13,7 +13,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, "some")
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -28,7 +28,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /does/)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -49,7 +49,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 2, result_set.length
     end
   end
@@ -62,7 +62,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
     end
   end
@@ -75,7 +75,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.pending.length
     end
@@ -89,7 +89,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.failed.length
     end
@@ -103,7 +103,7 @@ class RSpecTest < Test::Unit::TestCase
     EOS
     in_rspec :body => body do |path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.passed.length
     end
@@ -121,7 +121,7 @@ class RSpecTest < Test::Unit::TestCase
       EOS
       in_rspec :body => body do |path|
         raw_results = Tack::Runner.run_tests(path.parent, path)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 1, result_set.length
         assert_equal 1, result_set.passed.length
       end
@@ -146,7 +146,7 @@ EOS
       within_construct(false) do |c|
         file = c.file 'fake_spec.rb', code
         raw_results = Tack::Runner.run_tests(file.parent, file)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 2, result_set.length
       end
     end
@@ -188,7 +188,7 @@ EOS
         EOS
         in_rspec :body => body do |path|
           raw_results = Tack::Runner.run_tests(path.parent, path)
-          result_set = Tack::ResultSet.new(raw_results)
+          result_set = Tack::Util::ResultSet.new(raw_results)
           assert_equal 2, result_set.length
           actual = File.readlines(tripwire)
           expected = ["In before :each\n",

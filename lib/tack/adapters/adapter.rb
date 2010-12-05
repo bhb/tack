@@ -19,7 +19,7 @@ module Tack
       end
 
       def run_suite(tests)
-        results = ResultSet.new
+        results = Util::ResultSet.new
         tests.each do |test|
           result = @root.run_test(test)
           #results.merge(result)

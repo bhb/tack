@@ -33,11 +33,11 @@ module Tack
       status, message, backtrace = result
       case status
       when :pass
-        Result.new(:status => :passed, :test => test).to_basics
+        Util::Result.new(:status => :passed, :test => test).to_basics
       when :pend
-        Result.new(:status => :pending, :test => test).to_basics
+        Util::Result.new(:status => :pending, :test => test).to_basics
       when :fail
-        Result.new(:status => :failed, 
+        Util::Result.new(:status => :failed, 
                    :test => test,
                    :failure => 
                    { :message => message,

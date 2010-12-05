@@ -435,7 +435,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           EOS
           with_shoulda_test :body => body do |_, path|
             tests = ShouldaAdapter.new.tests_for(path)
-            results = Tack::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
+            results = Tack::Util::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.failed.length
           end
@@ -450,7 +450,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           EOS
           with_shoulda_test :body => body do |_, path|
             tests = ShouldaAdapter.new.tests_for(path)
-            results = Tack::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
+            results = Tack::Util::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.passed.length
           end
@@ -471,7 +471,7 @@ class ShouldaAdapterTest < Test::Unit::TestCase
           EOS
           with_shoulda_test :body => body do |_, path|
             tests = ShouldaAdapter.new.tests_for(path)
-            results = Tack::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
+            results = Tack::Util::ResultSet.new(ShouldaAdapter.new.run_suite(tests))
             assert_equal 2, results.length
           end
         end

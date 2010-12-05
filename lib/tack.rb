@@ -15,13 +15,11 @@ module Tack
   autoload :SandboxLoader, 'tack/sandbox'
   autoload :ForkedSandbox, 'tack/forked_sandbox'
 
-  # convenience objects
-  autoload :Result, 'tack/result'
-  autoload :ResultSet, 'tack/result_set'
-
   module Util
-    autoload :Test, 'tack/test'
-    autoload :TestFailure, 'tack/test_failure'
+    autoload :Result, 'tack/util/result'
+    autoload :ResultSet, 'tack/util/result_set'
+    autoload :Test, 'tack/util/test'
+    autoload :TestFailure, 'tack/util/test_failure'
   end
   
   module Middleware

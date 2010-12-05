@@ -7,7 +7,7 @@ module Tack
 
       def initialize(app,args={})
         super
-        @results = Tack::ResultSet.new
+        @results = Tack::Util::ResultSet.new
       end
 
       def run_suite(tests)

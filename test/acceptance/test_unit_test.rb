@@ -12,7 +12,7 @@ class TestUnitTest < Test::Unit::TestCase
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, "two")
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -26,7 +26,7 @@ class TestUnitTest < Test::Unit::TestCase
     EOS
     with_test_class(:body => body, :class_name => :FakeTest) do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /two/)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -39,7 +39,7 @@ class TestUnitTest < Test::Unit::TestCase
 EOS
     with_test_class(:body => body) do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.failed.length
     end
@@ -53,7 +53,7 @@ EOS
 EOS
     with_test_class(:body => body) do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.failed.length
     end
@@ -67,7 +67,7 @@ EOS
 EOS
     with_test_class(:body => body) do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
       assert_equal 1, result_set.passed.length
     end
@@ -91,7 +91,7 @@ EOS
       within_construct(false) do |c|
         file = c.file 'fake_test.rb', code
         raw_results = Tack::Runner.run_tests(file.parent, file)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 2, result_set.length
       end
     end
@@ -112,7 +112,7 @@ EOS
       within_construct(false) do |c|
         path = c.file 'fake_test.rb', code
         raw_results = Tack::Runner.run_tests(path.parent, path, /DerivedTest/)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 2, result_set.length
         assert_equal ['test_one', 'test_two'], result_set.passed.map {|result| result.test.last}.sort
       end

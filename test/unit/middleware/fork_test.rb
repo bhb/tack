@@ -9,7 +9,7 @@ class ForkTest < Test::Unit::TestCase
     middleware = Fork.new(adapter, :output => StringIO.new)
     test = Tack::Util::Test.make.to_basics
     adapter.pass(test)
-    expected_result = Tack::Result.for_test(test).to_basics
+    expected_result = Tack::Util::Result.for_test(test).to_basics
     assert_equal expected_result, middleware.run_test(test)
   end
 
@@ -30,14 +30,14 @@ class ForkTest < Test::Unit::TestCase
       forked_app = Tack::Runner.new(path.parent) do |runner|
         runner.use Tack::Middleware::Fork, :output => StringIO.new
       end
-      results = Tack::ResultSet.new(forked_app.run(tests))
+      results = Tack::Util::ResultSet.new(forked_app.run(tests))
       assert_equal 2, results.length
       assert_equal 0, results.failed.length
 
       # check that un-forked, test state is not isolated
       # this must be done after the forking test above
       app = Tack::Runner.new(path.parent).to_app
-      results = Tack::ResultSet.new(app.run(tests))
+      results = Tack::Util::ResultSet.new(app.run(tests))
       assert_equal 2, results.length
       assert_equal 1, results.failed.length
     end

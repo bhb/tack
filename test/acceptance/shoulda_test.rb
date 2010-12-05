@@ -18,7 +18,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, "some")
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -33,7 +33,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /nothing/)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.length
     end
   end
@@ -54,7 +54,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path, /cases/)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 2, result_set.length
     end
   end
@@ -67,7 +67,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
     end
   end
@@ -80,7 +80,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.pending.length
     end
   end
@@ -93,7 +93,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.failed.length
     end
   end
@@ -106,7 +106,7 @@ class ShouldaTest < Test::Unit::TestCase
     EOS
     with_shoulda_test :body => body do |file_name, path|
       raw_results = Tack::Runner.run_tests(path.parent, path)
-      result_set = Tack::ResultSet.new(raw_results)
+      result_set = Tack::Util::ResultSet.new(raw_results)
       assert_equal 1, result_set.passed.length
     end
   end
@@ -123,7 +123,7 @@ class ShouldaTest < Test::Unit::TestCase
       EOS
       with_shoulda_test :body => body do |file_name, path|
         raw_results = Tack::Runner.run_tests(path.parent, path)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 1, result_set.passed.length
       end
     end
@@ -147,7 +147,7 @@ EOS
       within_construct(false) do |c|
         file = c.file 'fake_test.rb', code
         raw_results = Tack::Runner.run_tests(file.parent, file)
-        result_set = Tack::ResultSet.new(raw_results)
+        result_set = Tack::Util::ResultSet.new(raw_results)
         assert_equal 2, result_set.length
       end
     end

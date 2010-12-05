@@ -30,10 +30,6 @@ module Tack
       end
 
       def run_test(test)
-        # TODO - since each test is unique, I think 
-        # that it's not necessary to return a full result set, 
-        # just a result. That might simplify things
-        #results = Tack::ResultSet.new
         result = nil
         path, contexts, _ = test
         test_classes_for(path).each do |klass|

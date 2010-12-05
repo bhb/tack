@@ -48,7 +48,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        result = Tack::Result.new(TestUnitAdapter.new.run_test(test))
+        result = Tack::Util::Result.new(TestUnitAdapter.new.run_test(test))
         
         assert_equal :passed, result.status
         assert_equal test, result.test
@@ -63,7 +63,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        result = Tack::Result.new(TestUnitAdapter.new.run_test(test))
+        result = Tack::Util::Result.new(TestUnitAdapter.new.run_test(test))
         
         assert_equal :failed, result.status
         assert_equal test, result.test
@@ -80,7 +80,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       EOS
       with_test_class :class_name => 'FakeTest', :body => body do |_, path|
         test = [path.to_s, ['FakeTest'], "test_one"]
-        result = ::Tack::Result.new(TestUnitAdapter.new.run_test(test))
+        result = ::Tack::Util::Result.new(TestUnitAdapter.new.run_test(test))
         
         assert_equal :failed, result.status
         assert_equal test, result.test
@@ -119,7 +119,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           with_test_class :body => body do |_, path|
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
-            results = Tack::ResultSet.new(adapter.run_suite(tests))
+            results = Tack::Util::ResultSet.new(adapter.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.failed.length
           end
@@ -135,7 +135,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
           with_test_class :body => body do |_, path|
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
-            results = Tack::ResultSet.new(adapter.run_suite(tests))
+            results = Tack::Util::ResultSet.new(adapter.run_suite(tests))
             assert_equal 1, results.length
             assert_equal 1, results.passed.length
           end
@@ -158,7 +158,7 @@ class TestUnitAdapterTest < Test::Unit::TestCase
             adapter = TestUnitAdapter.new
             tests = adapter.tests_for(path)
             results = adapter.run_suite(tests)
-            assert_equal 2, Tack::ResultSet.new(results).length
+            assert_equal 2, Tack::Util::ResultSet.new(results).length
           end
         end
 

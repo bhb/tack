@@ -28,7 +28,7 @@ module Tack
           end
         end
         Adapter.reset_cache
-        ResultSet.new.to_basics
+        Util::ResultSet.new.to_basics
       end
 
       private 
@@ -41,7 +41,7 @@ module Tack
         parent_to_paths[Pathname(path).parent] << path
       end
       parent_to_paths.each do |parent, paths|
-        first_adapter = mapping[paths.first] #Adapter.for(paths.first).class
+        first_adapter = mapping[paths.first]
         if paths.all? { |path| first_adapter == mapping[path] }
           paths.each do |path|
             mapping.delete(path)

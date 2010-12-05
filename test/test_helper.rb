@@ -34,7 +34,7 @@ module TestHelpers
   end
 
   def results_for(tests)
-    Tack::ResultSet.new(:passed => tests.map {|test| Tack::Result.for_test(test).to_basics}).to_basics
+    Tack::Util::ResultSet.new(:passed => tests.map {|test| Tack::Util::Result.for_test(test).to_basics}).to_basics
   end
   
   def in_rspec(args)
