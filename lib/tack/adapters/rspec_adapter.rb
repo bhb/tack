@@ -83,8 +83,9 @@ module Tack
 
         example_groups = world.example_groups.map{|x| x.descendants}.flatten
         
-        examples = example_groups.inject([]) do |arr, group|
-          arr += group.examples.map { |example| [group, example]}
+        examples = []
+        example_groups.each do |example_group|
+          examples += example_group.examples.map { |example| [example_group, example]}
         end
         examples.map {|group, example| 
           [file.to_s, group.ancestors.reverse.map{|x|x.description}, example.description]
