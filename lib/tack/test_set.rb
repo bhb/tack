@@ -12,15 +12,17 @@ module Tack
       patterns = Array(patterns)
       patterns = [TestPattern.new] if patterns.empty?
       paths = Array(paths).map { |path| path.to_s}
-      paths = paths.inject([]) do |paths, path|
+      
+      paths = paths.map do |path|
         if File.directory?(path)
-          paths += Dir[File.join(path,"**/*")].select {|f| valid_test_file?(f)}
+          Dir[File.join(path,"**/*")].select {|f| valid_test_file?(f)}
         else
-          paths << path
+          path
         end
-      end
+      end.flatten
 
-      paths.inject([]) { |tests, path|
+      tests = []
+      paths.each do |path|
         adapter = @adapter || Adapters::Adapter.for(path)
         tests += adapter.tests_for(path).select  do |_, contexts, description| 
           contexts = Array(contexts)
@@ -28,7 +30,9 @@ module Tack
             Util::Test.new(path,contexts,description).name.match(pattern)
           end
         end
-      }
+      end
+
+      tests
     end
 
     private 
