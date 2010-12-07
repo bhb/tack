@@ -8,11 +8,7 @@ module Tack
 
       def initialize(*args)
         if args.length == 1
-          if args.first.is_a?(Test)
-            @path = args.first.path
-            @contexts = args.first.contexts
-            @description = args.first.description
-          elsif args.first.is_a?(Hash)
+          if args.first.is_a?(Hash)
             opts = args.first
             @path = opts.fetch(:path) {''}
             @contexts = opts.fetch(:contexts) {[]}

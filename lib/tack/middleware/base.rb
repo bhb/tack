@@ -14,16 +14,6 @@ module Tack
         @output = options.fetch(:output){ STDOUT }
       end
 
-      def app_chain(chain=[])
-        chain << self.class
-        if app.respond_to?(:app_chain)
-          app.app_chain(chain)
-        else
-          chain << app.class
-        end
-        chain
-      end
-
       def run_suite(tests)
         @app.run_suite(tests)
       end
@@ -32,7 +22,7 @@ module Tack
         @app.run_test(test)
       end
 
-      # not necessary for the middleware API, but handy for 
+      # Not necessary for the middleware API, but handy for 
       # implementing middleware methods
       def returning(value)
         yield(value)

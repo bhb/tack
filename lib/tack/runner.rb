@@ -23,27 +23,10 @@ module Tack
 
     def run(tests)
       to_app if @start_app.nil?
-      results = @start_app.run_suite(tests)
-      if ENV['VIZ']
-        require 'lib/tack/test_visitor'
-        viz = TestVisitor.new
-        viz.accept results
-        File.open('vizfile.dot','w') do |f|
-          f << viz.to_dot
-        end
-      end
-      results
+      @start_app.run_suite(tests)
     end
 
     def run_suite(tests)
-      if ENV['VIZ']
-        require 'lib/tack/test_visitor'
-        viz = TestVisitor.new
-        viz.accept tests
-        File.open('tests.dot','w') do |f|
-          f << viz.to_dot
-        end
-      end
       (@adapter ||= Adapters::Adapter.new(@start_app)).run_suite(tests)
     end
 

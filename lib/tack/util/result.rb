@@ -11,23 +11,9 @@ module Tack
       end
 
       def initialize(opts)
-        if opts.is_a?(Result)
-          other = opts
-          @test = other.test
-          @failure = other.failure
-          @status = other.status
-        else
-          @test = opts.fetch(:test)
-          @failure = opts.fetch(:failure) { nil }
-          @status = opts.fetch(:status) { :passed }
-        end
-      end
-
-      def ==(other)
-        other.is_a?(Result) && 
-          status == other.status
-        test == other.test && 
-          failure == other.failure
+        @test = opts.fetch(:test)
+        @failure = opts.fetch(:failure) { nil }
+        @status = opts.fetch(:status) { :passed }
       end
 
       def to_basics
