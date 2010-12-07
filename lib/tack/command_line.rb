@@ -3,6 +3,7 @@ require 'rubygems' unless ENV['NO_RUBYGEMS']
 require 'optparse'
 require 'pp'
 
+# TODO - put this in it's own file
 module Kernel
 
   def rbx?
@@ -40,49 +41,50 @@ module Tack
       stdout = opts.fetch(:stdout) { STDOUT }
       stderr = opts.fetch(:stderr) { STDERR }
 
-      Tack::ConfigFile.read(stdout)
-      options = Tack.options
-      options ||= {}
+      command_line_options ||= {}
       
-      options[:pattern] ||= []
+      command_line_options[:pattern] ||= []
       option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: tack [options] [file]"
         opts.on("-I","--include PATH", "Specify $LOAD_PATH (may be used more than once).") do |path|
-          options[:include] = path.split(":")
+          command_line_options[:include] = path.split(":")
         end
         opts.on("-n", "--name PATTERN", "Run only tests that match pattern. Can be used multiple times to run tests that match ANY of the patterns.") do |pattern|
           if pattern=~/^\/.*\/$/
-            options[:pattern] << Regexp.new(pattern[1..-2])
+            command_line_options[:pattern] << Regexp.new(pattern[1..-2])
           else
-            options[:pattern] << pattern
+            command_line_options[:pattern] << pattern
           end
         end
         opts.on("-u", "--debugger", "Enable ruby-debugging.") do
           require_ruby_debug
         end
         opts.on("-o", "--profile [NUMBER]", "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).") do |number|
-          options[:profile_number] = number || 10
+          command_line_options[:profile_number] = number || 10
         end
         opts.on("-s", "--shuffle", "Run tests in randomized order.") do |runs|
-          options[:shuffle_runs] = true
+          command_line_options[:shuffle_runs] = true
         end
         opts.on("-R", "--reverse", "Run tests in reverse order.") do 
-          options[:reverse] = true
+          command_line_options[:reverse] = true
         end
         opts.on("-F", "--fork", "Run each test in a separate process") do
-          options[:fork] = true
+          command_line_options[:fork] = true
         end
         opts.on('-v', '--verbose', "Display the full test name before running") do
-          options[:verbose] = true
+          command_line_options[:verbose] = true
         end
         opts.on('-d', '--dry-run', "Display (but do not run) matching tests") do
-          options[:dry_run] = true
+          command_line_options[:dry_run] = true
         end
         opts.on('-b', '--backtrace', 'Output full backtrace') do
-          options[:backtrace] = true
+          command_line_options[:backtrace] = true
         end
         opts.on('--adapters', "Display the adapters that will be used for each file") do
-          options[:view_adapters] = true
+          command_line_options[:view_adapters] = true
+        end
+        opts.on('--no-config', "Do not load options from the .tackrc config file") do
+          command_line_options[:no_config] = true
         end
         opts.on_tail("-h","--help", "Show this message") do
           stdout.puts opts
@@ -91,6 +93,17 @@ module Tack
       end
 
       option_parser.parse! args
+      
+      options = nil
+      if command_line_options[:no_config]
+        stdout.puts "Skipping reading .tackrc"
+        options = command_line_options
+      else
+        Tack::ConfigFile.read(stdout)
+        options_from_config = Tack.options
+        options = options_from_config.merge(command_line_options)
+      end
+
       options[:paths] ||= []
       options[:paths] = args unless args.empty? || args.nil?
 
