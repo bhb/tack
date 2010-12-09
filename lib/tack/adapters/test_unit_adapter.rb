@@ -34,7 +34,7 @@ module Tack
         path, contexts, _ = test
         test_classes_for(path).each do |klass|
           if klass.to_s==contexts.first
-            result = run_tests_for_class(klass, test)
+            result = run_test_for_class(klass, test)
           end
         end
         basics(result)
@@ -51,8 +51,7 @@ module Tack
         result.instance_variable_get(:@errors).clear
       end
       
-      # TODO - rename this
-      def run_tests_for_class(klass, test)
+      def run_test_for_class(klass, test)
         _, _, description = test
         begin
           testcase = klass.new(description)
@@ -77,14 +76,12 @@ module Tack
         reset(result)
       end
       
-      # TODO - reduce duplication. This methid is identical to the one in ShouldaAdapter
       def build_result(status, test, failure=nil)
         { :status => status,
           :test => test,
           :failure => build_failure(failure) }
       end
 
-      # TODO - this is identical to the code in ShouldaAdapter
       def build_failure(failure)
         return nil if failure.nil?
         case failure

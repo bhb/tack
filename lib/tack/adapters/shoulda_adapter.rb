@@ -47,7 +47,7 @@ module Tack
 
   module Adapters
 
-    class ShouldaAdapter < Adapter
+    class ShouldaAdapter < TestUnitAdapter
       
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!
@@ -111,17 +111,20 @@ module Tack
           end
           result = ::Test::Unit::TestResult.new
 
-          # TODO - Look at how TestUnit adapter eliminated the add_listener call
-          result.add_listener(::Test::Unit::TestResult::FAULT) do |failure|
-            return build_result(:failed, test, failure)
-          end
-          
+          # TODO - there is still a decent amount of duplication between
+          # TestUnitAdapter and ShouldaAdapter, especially in checking the results
           testcase.run(result) do |started,name|
             # We do nothing here
             # but this method requires a block
           end
           if result.passed?
             return build_result(:passed, test) 
+          else
+            failures = result.instance_variable_get(:@failures)
+            errors = result.instance_variable_get(:@errors)
+            (failures+errors).each do |failure|
+              return build_result(:failed, test, failure)
+            end
           end
         end
         return result
@@ -207,26 +210,9 @@ module Tack
         ["test:", context_description, "#{description}. "].join(" ")
       end
       
-      def build_result(status, test, failure=nil)
-        { :status => status,
-          :test => test, 
-          :failure => build_failure(failure) }
-      end
-
       def clean_contexts(contexts)
         contexts[0] = contexts[0].gsub(Tack::Sandbox.prefix,'')
         contexts
-      end
-
-      def build_failure(failure)
-        return nil if failure.nil?
-        case failure
-        when ::Test::Unit::Error
-            Tack::Util::TestFailure.new("#{failure.exception.class} was raised: #{failure.exception.message}",
-                                        failure.exception.backtrace).to_basics
-        else
-          Tack::Util::TestFailure.new(failure.message, failure.location).to_basics
-        end
       end
 
       def test_classes_for(path)
