@@ -22,6 +22,19 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       end
     end
 
+    should "return tests in alphabetical order" do
+      body = <<-EOS
+      def test_z;end
+      def test_aa;end
+      def test_a;end
+      EOS
+      with_test_class :class_name => 'FakeTest', :body => body do |_, path|
+        tests = TestUnitAdapter.new.tests_for(path)
+        descriptions = tests.map { |_,_,desc| desc.gsub('test_','') }
+        assert_equal %w{a aa z}, descriptions
+      end
+    end
+
   end
   
   context "running tests" do

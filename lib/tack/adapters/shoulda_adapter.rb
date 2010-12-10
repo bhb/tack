@@ -155,7 +155,7 @@ module Tack
         context.subcontexts.each do |subcontext|
           tests += get_tests(path, subcontext)
         end
-        tests
+        tests.sort
       end
 
       def ancestors(context)

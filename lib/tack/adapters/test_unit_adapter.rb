@@ -26,7 +26,7 @@ module Tack
           end
           tests += tests_for_class
         end
-        tests
+        tests.sort
       end
 
       def run_test(test)
