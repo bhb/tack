@@ -42,10 +42,6 @@ module Tack
 
       private
 
-      def test_result
-        @result ||= ::Test::Unit::TestResult.new
-      end
-
       def reset(result)
         result.instance_variable_get(:@failures).clear
         result.instance_variable_get(:@errors).clear
@@ -58,7 +54,7 @@ module Tack
         rescue NameError
           raise NoMatchingTestError, Tack::Util::Test.new(test)
         end
-        result = test_result
+        result = Test::Unit::TestResult.new
         testcase.run(result) do |started,name|
           # We do nothing here
           # but this method requires a block
@@ -69,6 +65,7 @@ module Tack
         else
           failures = result.instance_variable_get(:@failures)
           errors = result.instance_variable_get(:@errors)
+          # TODO - no need to iterate if there is only 1!
           (failures+errors).each do |failure|
             return build_result(:failed, test, failure)
           end

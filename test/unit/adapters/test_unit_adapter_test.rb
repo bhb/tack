@@ -85,6 +85,29 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       end
     end
 
+    should "run two failing tests and report respective errors" do
+      body = <<-EOS
+      def test_one
+        assert_equal 1, 2
+      end
+      def test_two
+        assert_equal 3, 4
+      end
+      EOS
+      with_test_class :class_name => 'FakeTest', :body => body do |_, path|
+        adapter = TestUnitAdapter.new
+
+        test = [path.to_s, ['FakeTest'], "test_one"]
+        result = Tack::Util::Result.new(adapter.run_test(test))
+        
+        assert_equal "<1> expected but was\n<2>.", result.failure[:message]
+
+        test = [path.to_s, ['FakeTest'], "test_two"]
+        result = Tack::Util::Result.new(adapter.run_test(test))
+        assert_equal "<3> expected but was\n<4>.", result.failure[:message]
+      end
+    end
+
     should "run a test that raises an error" do
       body = <<-EOS
       def test_one
