@@ -35,6 +35,8 @@ class TestUnitAdapterTest < Test::Unit::TestCase
       end
     end
 
+    
+
   end
   
   context "running tests" do

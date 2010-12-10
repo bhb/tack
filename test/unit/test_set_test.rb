@@ -10,6 +10,7 @@ class TestSetTest < Test::Unit::TestCase
       [
        ["foo_test.rb", ["Foo", "sometimes"], "should test something"], 
        ["foo_test.rb", ["Foo", "in certain cases"], "should do something"],
+       ["bar_test.rb", ["Bar", "context"], "description"]
       ]
     end
 

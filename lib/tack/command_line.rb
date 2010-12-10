@@ -113,10 +113,16 @@ module Tack
       end
 
       tests = []
-      options[:extra_test_files] ||= {}
+      options[:extra_test_files] ||= []
+
 
       missing_files = false
-      (options[:paths] + options[:extra_test_files].keys).each do |path|
+      
+      [:paths, :extra_test_files].each do |key|
+        options[key] = expand_globs(options[key])
+      end
+
+      (options[:paths] + options[:extra_test_files]).each do |path|
         if !File.exists?(path)
           stderr.puts "#{path}: No such file or directory"
           missing_files = true 
@@ -206,6 +212,17 @@ module Tack
       else
         require 'ruby-debug'
       end
+    end
+
+    def self.expand_globs(paths)
+      paths.map do |path| 
+        paths = Dir.glob(path) 
+        if paths.empty?
+          path
+        else
+          paths
+        end
+      end.flatten
     end
 
   end
