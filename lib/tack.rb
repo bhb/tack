@@ -14,6 +14,7 @@ module Tack
   autoload :Sandbox, 'tack/sandbox'
   autoload :SandboxLoader, 'tack/sandbox'
   autoload :ForkedSandbox, 'tack/forked_sandbox'
+  autoload :StableSort, 'tack/stable_sort'
 
   module Util
     autoload :Result, 'tack/util/result'
