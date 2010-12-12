@@ -44,6 +44,24 @@ module Tack
         sort_by_contexts(tests)
       end
 
+      protected 
+
+      def execute(testcase, test)
+        result = ::Test::Unit::TestResult.new
+        testcase.run(result) do |started,name|
+          # We do nothing here
+          # but this method requires a block
+        end
+        if result.passed?
+          return build_result(:passed, test) 
+        else
+          failures = result.instance_variable_get(:@failures)
+          errors = result.instance_variable_get(:@errors)
+          failure = (failures+errors).first
+          return build_result(:failed, test, failure)
+        end
+      end
+
       private
 
       def sort_by_contexts(tests)
@@ -68,23 +86,8 @@ module Tack
         rescue NameError
           raise NoMatchingTestError, Tack::Util::Test.new(test)
         end
-        result = Test::Unit::TestResult.new
-        testcase.run(result) do |started,name|
-          # We do nothing here
-          # but this method requires a block
-        end
-
-        if result.passed?
-          return build_result(:passed, test)
-        else
-          failures = result.instance_variable_get(:@failures)
-          errors = result.instance_variable_get(:@errors)
-          # TODO - no need to iterate if there is only 1!
-          (failures+errors).each do |failure|
-            return build_result(:failed, test, failure)
-          end
-        end
-        reset(result)
+        result = execute(testcase, test)
+        result
       end
       
       def build_result(status, test, failure=nil)

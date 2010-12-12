@@ -1,11 +1,3 @@
-if RUBY_VERSION=~/1.9/
-  gem 'test-unit', '~> 1.0'
-end
-require 'test/unit'
-require 'test/unit/testresult'
-
-::Test::Unit.run = true
-
 require 'shoulda'
 
 module Shoulda
@@ -29,13 +21,17 @@ module Shoulda
     end
 
     def add_context(context)
+
       def context.print_should_eventuallys
         # suppress output
       end
+
       def context.warn(_)
         # suppress output
       end
+
       all_contexts << context unless context.am_subcontext?
+
       original_add_context(context)
     end
 
@@ -109,23 +105,7 @@ module Tack
               raise NoMatchingTestError, Tack::Util::Test.new(path,clean_contexts(contexts),description) 
             end
           end
-          result = ::Test::Unit::TestResult.new
-
-          # TODO - there is still a decent amount of duplication between
-          # TestUnitAdapter and ShouldaAdapter, especially in checking the results
-          testcase.run(result) do |started,name|
-            # We do nothing here
-            # but this method requires a block
-          end
-          if result.passed?
-            return build_result(:passed, test) 
-          else
-            failures = result.instance_variable_get(:@failures)
-            errors = result.instance_variable_get(:@errors)
-            (failures+errors).each do |failure|
-              return build_result(:failed, test, failure)
-            end
-          end
+          result = execute(testcase, test)
         end
         return result
       end
