@@ -83,10 +83,6 @@ module Tack
         opts.on('--adapters', "Display the adapters that will be used for each file") do
           command_line_options[:view_adapters] = true
         end
-        # TODO: Remove this option and sort by contexts in the Test::Unit/Shoulda adapter
-        opts.on('-C','--sort-by-contexts', "Run tests in alphabetical context order. By default, tests are not sorted. This option makes Tack behave more like Test::Unit.") do
-          command_line_options[:sort_by_contexts] = true
-        end
         opts.on('--no-config', "Do not load options from the .tackrc config file") do
           command_line_options[:no_config] = true
         end
@@ -147,16 +143,6 @@ module Tack
       
       set = Tack::TestSet.new
       tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
-
-      if options[:sort_by_contexts]
-        tests = tests.extend(StableSort).stable_sort do |stable_test1, stable_test2|
-          test1 = stable_test1[0]
-          test2 = stable_test2[0]
-          # Tests are [path, contexts, description]
-          # so test[1] grabs the context for each test
-          test1[1] <=> test2[1]
-        end
-      end
 
       if options[:dry_run]==true
         mapping = {}
