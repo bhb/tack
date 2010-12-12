@@ -22,6 +22,22 @@ class ShouldaAdapterTest < Test::Unit::TestCase
       end
     end
 
+    # TODO - this should also be tested in Shoulda adapter
+    should "return tests in alphabetical order" do
+      body = <<-EOS
+      should "do z" do; end;
+      should "do aa" do; end;
+      should "do a" do; end;
+      EOS
+      with_shoulda_test :class_name => :StringTest, :body => body do |_, path|
+        tests = TestUnitAdapter.new.tests_for(path)
+        descriptions = tests.map do |_,_,desc| 
+          desc.gsub('test: String should ','').gsub('. ','')
+        end
+        assert_equal ["do a", "do aa", "do z"], descriptions
+      end
+    end
+
     should "handle nested contexts" do
       body = <<-EOS
       context "sometimes" do
