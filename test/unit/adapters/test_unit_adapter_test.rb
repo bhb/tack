@@ -36,6 +36,29 @@ class TestUnitAdapterTest < Test::Unit::TestCase
     end
 
     
+  end
+
+  context "ordering tests" do
+    
+    should "order by testcase name" do
+      tests = [["foo_test.rb", ["FooTest"], "test_foo"],
+               ["bar_test.rb", ["BarTest"], "test_bar"],
+               ["baz_test.rb", ["BazTest"], "test_baz"]]
+      expected_order = [["bar_test.rb", ["BarTest"], "test_bar"],
+                        ["baz_test.rb", ["BazTest"], "test_baz"],
+                        ["foo_test.rb", ["FooTest"], "test_foo"]]
+      assert_equal expected_order, TestUnitAdapter.new.order(tests)
+    end
+
+    should "keep test names sorted alphabetically" do
+      tests = [["foo_test.rb", ["FooTest"], "test_foo"],
+               ["bar_test.rb", ["BarTest"], "test_1"],
+               ["bar_test.rb", ["BarTest"], "test_2"]]
+      expected_order = [["bar_test.rb", ["BarTest"], "test_1"],
+                        ["bar_test.rb", ["BarTest"], "test_2"],
+                        ["foo_test.rb", ["FooTest"], "test_foo"]]
+      assert_equal expected_order, TestUnitAdapter.new.order(tests)
+    end
 
   end
   

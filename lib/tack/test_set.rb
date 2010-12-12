@@ -22,6 +22,7 @@ module Tack
       end.flatten
 
       tests = []
+      adapter = nil
       paths.each do |path|
         adapter = @adapter || Adapters::Adapter.for(path)
         tests += adapter.tests_for(path).select  do |_, contexts, description| 
@@ -30,6 +31,10 @@ module Tack
             Util::Test.new(path,contexts,description).name.match(pattern)
           end
         end
+      end
+      # TODO This won't work if the suite actually uses multiple adapters
+      if adapter.respond_to?(:order)
+        tests = adapter.order(tests)
       end
 
       tests

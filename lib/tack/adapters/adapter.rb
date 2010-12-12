@@ -28,6 +28,12 @@ module Tack
         basics(results)
       end
 
+      # Adapters can optionally sort the complete list of tests from all files.
+      # The default behavior is to do nothing.
+      def order(tests)
+        tests
+      end
+
       def self.file_patterns
         test_unit_file_patterns + rspec_file_patterns
       end

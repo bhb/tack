@@ -22,7 +22,6 @@ class ShouldaAdapterTest < Test::Unit::TestCase
       end
     end
 
-    # TODO - this should also be tested in Shoulda adapter
     should "return tests in alphabetical order" do
       body = <<-EOS
       should "do z" do; end;
@@ -121,6 +120,32 @@ class ShouldaAdapterTest < Test::Unit::TestCase
         end
       end
 
+    end
+
+  end
+
+  context "ordering tests" do
+    
+    should "order by contexts" do
+      tests = [["foo_test.rb", ["FooTest", "context"], "verify foo"],
+               ["bar_test.rb", ["BarTest", "context"], "verify bar"],
+               ["baz_test.rb", ["BazTest", "context2"], "verify baz"],
+               ["baz_test.rb", ["BazTest", "context1"], "verify baz"]]
+      expected_order = [["bar_test.rb", ["BarTest", "context"], "verify bar"],
+                        ["baz_test.rb", ["BazTest", "context1"], "verify baz"],
+                        ["baz_test.rb", ["BazTest", "context2"], "verify baz"],
+                        ["foo_test.rb", ["FooTest", "context"], "verify foo"]]
+      assert_equal expected_order, TestUnitAdapter.new.order(tests)
+    end
+
+    should "keep test names sorted alphabetically" do
+      tests = [["foo_test.rb", ["FooTest", "context"], "verify foo"],
+               ["bar_test.rb", ["BarTest", "context"], "verify bar 1"],
+               ["bar_test.rb", ["BarTest", "context"], "verify bar 2"]]
+      expected_order = [["bar_test.rb", ["BarTest", "context"], "verify bar 1"],
+                        ["bar_test.rb", ["BarTest", "context"], "verify bar 2"],
+                        ["foo_test.rb", ["FooTest", "context"], "verify foo"]]
+      assert_equal expected_order, TestUnitAdapter.new.order(tests)
     end
 
   end
