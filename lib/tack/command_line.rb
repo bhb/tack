@@ -144,57 +144,38 @@ module Tack
       set = Tack::TestSet.new
       tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
-      if options[:dry_run]==true
-        mapping = {}
-        # Hashes are not ordered in 1.8, so we pull the list of files out separately
-        test_paths = []
-        tests.each do |test_path, contexts, description|
-          test_paths << test_path
-          mapping[test_path] ||= []
-          mapping[test_path] << Tack::Util::Test.new(test_path,contexts,description).name
-        end
-        test_paths.uniq!
-        test_paths.each do |test_path|
-          stdout.puts "In #{test_path}:"
-          mapping[test_path].each do |full_description|
-            stdout.puts "    #{full_description}"
-          end
-        end
-        stdout.puts "-"*40
-        stdout.puts "#{test_paths.count} files, #{tests.count} tests"
+      
+      runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+        runner.use Tack::Middleware::DryRun if options[:dry_run]
+        runner.use Tack::Middleware::AdapterViewer if options[:view_adapters]
+        runner.use Tack::Middleware::Reverse if options[:reverse]
+        runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
+        runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
+        runner.use Tack::Middleware::Fork if options[:fork]
+        runner.use Tack::Formatters::BasicSummary
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::PrintFailures
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::TotalTime
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::PrintPending
+        runner.use Tack::Middleware::HandleInterrupt
+        runner.use Tack::Formatters::Newline
+        runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
+        runner.use Tack::Formatters::BacktraceCleaner, :full => options[:backtrace]
+      end
+      
+      runs = 1
+      results = {}
+      runs.times do |i|
+        puts "\n---- Running test run ##{i+1} ----" unless runs == 1
+        results.merge!(runner.run(tests))
+      end
+      
+      if (!results.has_key?(:failed) || results[:failed].empty?)
         return status = 0
       else
-        runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
-          runner.use Tack::Middleware::AdapterViewer if options[:view_adapters]
-          runner.use Tack::Middleware::Reverse if options[:reverse]
-          runner.use Tack::Middleware::Shuffle if options[:shuffle_runs]
-          runner.use Tack::Formatters::Profiler, :tests => options[:profile_number].to_i if options[:profile_number]
-          runner.use Tack::Middleware::Fork if options[:fork]
-          runner.use Tack::Formatters::BasicSummary
-          runner.use Tack::Formatters::Newline
-          runner.use Tack::Formatters::PrintFailures
-          runner.use Tack::Formatters::Newline
-          runner.use Tack::Formatters::TotalTime
-          runner.use Tack::Formatters::Newline
-          runner.use Tack::Formatters::PrintPending
-          runner.use Tack::Middleware::HandleInterrupt
-          runner.use Tack::Formatters::Newline
-          runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
-          runner.use Tack::Formatters::BacktraceCleaner, :full => options[:backtrace]
-        end
-        
-        runs = 1
-        results = {}
-        runs.times do |i|
-          puts "\n---- Running test run ##{i+1} ----" unless runs == 1
-          results.merge!(runner.run(tests))
-        end
-        
-        if results[:failed].empty?
-          return status = 0
-        else
-          return status = 1
-        end
+        return status = 1
       end
 
     rescue Tack::Adapters::AdapterDetectionError, Tack::NoMatchingTestError => e

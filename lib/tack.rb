@@ -25,12 +25,14 @@ module Tack
   
   module Middleware
 
+    autoload :AdapterViewer, 'tack/middleware/adapter_viewer'
     autoload :Base, 'tack/middleware/base'
+    autoload :DryRun, 'tack/middleware/dry_run'
     autoload :Fork, 'tack/middleware/fork'
+    autoload :HandleInterrupt, 'tack/middleware/handle_interrupt'
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'
-    autoload :AdapterViewer, 'tack/middleware/adapter_viewer'
-    autoload :HandleInterrupt, 'tack/middleware/handle_interrupt'
+
     
   end
 

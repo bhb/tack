@@ -8,6 +8,7 @@ module Tack
         stdout.puts "Found .tackrc"
         eval File.read(path)
       else
+        Tack::config {}
         stdout.puts "No .tackrc found. Only using command line arguments"
       end
     end
