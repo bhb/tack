@@ -50,8 +50,11 @@ module Tack
         opts.on('-b', '--backtrace', 'Output full backtrace') do
           command_line_options[:backtrace] = true
         end
-        opts.on('--adapters', "Display the adapters that will be used for each file") do
+        opts.on('--adapters', "Display the adapters that will be used for each file and quit.") do
           command_line_options[:view_adapters] = true
+        end
+        opts.on('--middleware', "Display the middleware stack and quit.") do
+          command_line_options[:view_middleware] = true
         end
         opts.on('--no-config', "Do not load options from the .tackrc config file") do
           command_line_options[:no_config] = true
@@ -85,7 +88,6 @@ module Tack
       tests = []
       options[:extra_test_files] ||= []
 
-
       missing_files = false
       
       [:paths, :extra_test_files].each do |key|
@@ -114,8 +116,8 @@ module Tack
       set = Tack::TestSet.new
       tests += set.tests_for(options[:paths], options[:pattern].map{|p|Tack::TestPattern.new(p)})
 
-      
       runner = Tack::Runner.new(:root => Dir.pwd) do |runner|
+        runner.use Tack::Middleware::MiddlewareViewer if options[:view_middleware]
         runner.use Tack::Middleware::DryRun if options[:dry_run]
         runner.use Tack::Middleware::AdapterViewer if options[:view_adapters]
         runner.use Tack::Middleware::Reverse if options[:reverse]

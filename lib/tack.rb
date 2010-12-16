@@ -31,6 +31,7 @@ module Tack
     autoload :DryRun, 'tack/middleware/dry_run'
     autoload :Fork, 'tack/middleware/fork'
     autoload :HandleInterrupt, 'tack/middleware/handle_interrupt'
+    autoload :MiddlewareViewer, 'tack/middleware/middleware_viewer'
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'
 
