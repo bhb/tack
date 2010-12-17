@@ -14,6 +14,18 @@ Out of the box, Tack provides a command line tool to run any type of test suite 
 
 Tack also supports customization via middleware, so you can customize its behavior and output to your liking.
 
+==== Examples
+
+Tack provide sensible defaults out of the box:
+
+    $ tack test/foo_test.rb                                 # run a single test file
+    $ tack test                                             # run all test files in the 'test' directory (recursive)
+    $ tack -Ilib test                                       # the same as above, but load the 'lib' directory first
+    $ tack -Ilib test -n 'some test'                        # run all tests whose name contains the substring 'some test'
+    $ tack foo_test.rb -n 'some test' -n 'other test'       # run all tests in foo_test.rb that contain 'some test' OR 'other test'
+
+==== More options
+
 Here are the options currently supported:
 
   Usage: tack [options] [file]
