@@ -31,21 +31,21 @@ Tack provides sensible behavior out of the box:
 
 ==== More options
 
-Usage: tack [options] [file]
-    -I, --include PATH               Specify $LOAD_PATH (may be used more than once).
-    -n, --name PATTERN               Run only tests that match pattern. Can be used multiple times to run tests that match ANY of the patterns.
-    -u, --debugger                   Enable ruby-debugging.
-    -o, --profile [NUMBER]           Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).
-    -s, --shuffle                    Run tests in randomized order.
-    -R, --reverse                    Run tests in reverse order.
-    -F, --fork                       Run each test in a separate process
-    -v, --verbose                    Display the full test name before running
-    -d, --dry-run                    Display (but do not run) matching tests
-    -b, --backtrace                  Output full backtrace
-        --adapters                   Display the adapters that will be used for each file and quit.
-        --middleware                 Display the middleware stack and quit.
-        --no-config                  Do not load options from the .tackrc config file
-    -h, --help                       Show this message
+    Usage: tack [options] [file]
+        -I, --include PATH               Specify $LOAD_PATH (may be used more than once).
+        -n, --name PATTERN               Run only tests that match pattern. Can be used multiple times to run tests that match ANY of the patterns.
+        -u, --debugger                   Enable ruby-debugging.
+        -o, --profile [NUMBER]           Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).
+        -s, --shuffle                    Run tests in randomized order.
+        -R, --reverse                    Run tests in reverse order.
+        -F, --fork                       Run each test in a separate process
+        -v, --verbose                    Display the full test name before running
+        -d, --dry-run                    Display (but do not run) matching tests
+        -b, --backtrace                  Output full backtrace
+            --adapters                   Display the adapters that will be used for each file and quit.
+            --middleware                 Display the middleware stack and quit.
+            --no-config                  Do not load options from the .tackrc config file
+        -h, --help                       Show this message
 
 === Test tool hackers
 
