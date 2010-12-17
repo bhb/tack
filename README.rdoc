@@ -16,27 +16,36 @@ Tack also supports customization via middleware, so you can customize its behavi
 
 ==== Examples
 
-Tack provide sensible defaults out of the box:
+Tack provides sensible behavior out of the box:
 
     $ tack test/foo_test.rb                                 # run a single test file
+    $ tack test/foo_test.rb test/bar_test.rb                # run all tests in two test files
     $ tack test                                             # run all test files in the 'test' directory (recursive)
     $ tack -Ilib test                                       # the same as above, but load the 'lib' directory first
     $ tack -Ilib test -n 'some test'                        # run all tests whose name contains the substring 'some test'
     $ tack foo_test.rb -n 'some test' -n 'other test'       # run all tests in foo_test.rb that contain 'some test' OR 'other test'
+    $ tack foo_test.rb -d                                   # display all tests, but do not run them
+    $ tack foo_test.rb -v                                   # display each test name as before it is run
+    $ tack foo_test.rb -u                                   # enable the debugger (just call 'debugger' to set a breakpoint)
+    $ tack foo_test.rb -o                                   # display the 10 slowest tests
 
 ==== More options
 
-Here are the options currently supported:
-
-  Usage: tack [options] [file]
-      -I, --include PATH               Specify $LOAD_PATH (may be used more than once).
-      -n, --name PATTERN               Run only tests that match pattern.
-      -u, --debugger                   Enable ruby-debugging.
-      -o, --profile [NUMBER]           Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).
-      -s, --shuffle [RUNS]             Run tests in randomized order RUNS times (defaults to 1).
-      -R, --reverse                    Run tests in reverse order.
-      -F, --fork                       Run each test in a separate process
-      -h, --help                       Show this message
+Usage: tack [options] [file]
+    -I, --include PATH               Specify $LOAD_PATH (may be used more than once).
+    -n, --name PATTERN               Run only tests that match pattern. Can be used multiple times to run tests that match ANY of the patterns.
+    -u, --debugger                   Enable ruby-debugging.
+    -o, --profile [NUMBER]           Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).
+    -s, --shuffle                    Run tests in randomized order.
+    -R, --reverse                    Run tests in reverse order.
+    -F, --fork                       Run each test in a separate process
+    -v, --verbose                    Display the full test name before running
+    -d, --dry-run                    Display (but do not run) matching tests
+    -b, --backtrace                  Output full backtrace
+        --adapters                   Display the adapters that will be used for each file and quit.
+        --middleware                 Display the middleware stack and quit.
+        --no-config                  Do not load options from the .tackrc config file
+    -h, --help                       Show this message
 
 === Test tool hackers
 
