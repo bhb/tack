@@ -55,6 +55,7 @@ module Tack
 
       def initialize
         @contexts_cache = {}
+        @chains_cache = {}
         super
       end
 
@@ -68,7 +69,7 @@ module Tack
           contexts.each do |context|
             tests_for_class += get_tests(path,context)
           end
-          build_should_eventually_chains(shoulda_contexts).each do |chain|
+          should_eventually_chains(path).each do |chain|
             context, description = chain
             tests_for_class << [path.to_s, context, description]
           end
@@ -97,8 +98,12 @@ module Tack
           begin
             testcase = klass.new(test_name(contexts, description))
           rescue NameError
-            chains = build_should_eventually_chains(shoulda_contexts)
-            if chains.member?([contexts, description])
+            #chains = build_should_eventually_chains(shoulda_contexts)
+            chains = should_eventually_chains(path)
+            chains2 = build_should_eventually_chains(shoulda_contexts)
+            #if chains.member?([contexts, description])
+            if chains.member?([contexts, description]) ||
+                chains.member?([contexts.map{|x| x.sub(Tack::Sandbox.prefix,'')}, description])
               return basics(build_result(:pending, test))
             else
               Shoulda.reset_contexts!
@@ -126,6 +131,9 @@ module Tack
         end
         @contexts_cache[path]
       end
+
+      def foo 
+      end
       
       def get_tests(path, context) 
         tests = []
@@ -147,6 +155,13 @@ module Tack
         # Blindly replacing Test with '' seems insane, but it's real Shoulda behavior
         ancestors.reject! {|context_name| context_name == parent.to_s.gsub('Test','')}
         [parent.to_s] + ancestors
+      end
+      
+      def should_eventually_chains(path)
+        if !@chains_cache.has_key?(path)
+          @chains_cache[path] = build_should_eventually_chains(contexts_for(path))
+        end
+        @chains_cache[path]
       end
 
       def build_should_eventually_chains(contexts)
