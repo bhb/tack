@@ -56,16 +56,18 @@ module Tack
       def initialize
         @contexts_cache = {}
         @chains_cache = {}
+        @top_level_contexts_cache = {}
         super
       end
 
       def tests_for(path)
-        shoulda_contexts = contexts_for(path)
+        #shoulda_contexts = contexts_for(path)
         classes = test_classes_for(path)
         tests = []
         classes.each do |klass|
           tests_for_class = []
-          contexts = shoulda_contexts.select { |context| context.parent.to_s == klass.to_s }
+          #contexts = shoulda_contexts.select { |context| context.parent.to_s == klass.to_s }
+          contexts = top_level_contexts_for(path, klass)
           contexts.each do |context|
             tests_for_class += get_tests(path,context)
           end
@@ -123,6 +125,20 @@ module Tack
         Shoulda.all_contexts
       ensure
         Shoulda.reset_contexts!
+        #puts "discovering contexts"
+        #ForkedSandbox.new.run do
+        #  Shoulda.reset_contexts!
+        #  load path
+        #  Shoulda.all_contexts
+        #end
+      end
+
+      # TODO - these caches are all very similar. Metaprogramming to the rescue?
+      def top_level_contexts_for(path, klass)
+        if !@top_level_contexts_cache.has_key?([path,klass])
+          @top_level_contexts_cache[[path,klass]] = contexts_for(path).select { |context| context.parent.to_s == klass.to_s }
+        end
+        @top_level_contexts_cache[[path,klass]]
       end
       
       def contexts_for(path)
@@ -132,9 +148,13 @@ module Tack
         @contexts_cache[path]
       end
 
-      def foo 
+      def should_eventually_chains(path)
+        if !@chains_cache.has_key?(path)
+          @chains_cache[path] = build_should_eventually_chains(contexts_for(path))
+        end
+        @chains_cache[path]
       end
-      
+
       def get_tests(path, context) 
         tests = []
         context.shoulds.each do |should|
@@ -157,13 +177,6 @@ module Tack
         [parent.to_s] + ancestors
       end
       
-      def should_eventually_chains(path)
-        if !@chains_cache.has_key?(path)
-          @chains_cache[path] = build_should_eventually_chains(contexts_for(path))
-        end
-        @chains_cache[path]
-      end
-
       def build_should_eventually_chains(contexts)
         chains = []
         contexts.reject{|context| context.am_subcontext?}.each do |context|
