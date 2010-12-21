@@ -61,12 +61,10 @@ module Tack
       end
 
       def tests_for(path)
-        #shoulda_contexts = contexts_for(path)
         classes = test_classes_for(path)
         tests = []
         classes.each do |klass|
           tests_for_class = []
-          #contexts = shoulda_contexts.select { |context| context.parent.to_s == klass.to_s }
           contexts = top_level_contexts_for(path, klass)
           contexts.each do |context|
             tests_for_class += get_tests(path,context)
@@ -91,7 +89,6 @@ module Tack
       def run_test(test)
         path, contexts, description = test
         result = nil
-        shoulda_contexts = contexts_for(path)
         contexts = contexts.clone
         contexts[0] = Tack::Sandbox.prefix+contexts[0]
         # Note that this won't work if there are multiple classes in a path
@@ -100,10 +97,7 @@ module Tack
           begin
             testcase = klass.new(test_name(contexts, description))
           rescue NameError
-            #chains = build_should_eventually_chains(shoulda_contexts)
             chains = should_eventually_chains(path)
-            chains2 = build_should_eventually_chains(shoulda_contexts)
-            #if chains.member?([contexts, description])
             if chains.member?([contexts, description]) ||
                 chains.member?([contexts.map{|x| x.sub(Tack::Sandbox.prefix,'')}, description])
               return basics(build_result(:pending, test))
@@ -125,12 +119,6 @@ module Tack
         Shoulda.all_contexts
       ensure
         Shoulda.reset_contexts!
-        #puts "discovering contexts"
-        #ForkedSandbox.new.run do
-        #  Shoulda.reset_contexts!
-        #  load path
-        #  Shoulda.all_contexts
-        #end
       end
 
       # TODO - these caches are all very similar. Metaprogramming to the rescue?
