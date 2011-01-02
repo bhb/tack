@@ -22,7 +22,9 @@ module Tack
           context = [klass.to_s]
           tests_for_class = test_methods(klass).map {|method_name| [path_name, context, method_name]}
           if tests_for_class.empty?
-            tests_for_class << [path_name, [klass.to_s], 'default_test']
+            if klass.public_method_defined?('default_test')
+              tests_for_class << [path_name, [klass.to_s], 'default_test']
+            end
           end
           tests += tests_for_class
         end
@@ -115,10 +117,15 @@ module Tack
       end
       
       def test_methods(test_class)
-        test_class.public_instance_methods(true).select do |method_name|
-          method = test_class.instance_method(method_name)
-          method_name =~ /^test./ && [0,-1].member?(method.arity)
+        include_super = true
+        test_class.public_instance_methods(include_super).select do |method_name|
+          valid_test_method?(test_class, method_name)
         end
+      end
+
+      def valid_test_method?(test_class, method_name)
+        method = test_class.instance_method(method_name)
+        method_name =~ /^test./ && [0,-1].member?(method.arity)
       end
 
     end

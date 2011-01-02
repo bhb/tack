@@ -227,6 +227,38 @@ class TestUnitAdapterTest < Test::Unit::TestCase
 
     end
 
+    context "with subclass of Test::Unit::TestCase" do
+
+      context "when #default_test is undefined" do
+        
+        should "report number of tests not including #default_test" do
+          begin
+            body = <<-EOS
+            require 'test/unit'
+            class SpecialTestCase < Test::Unit::TestCase
+              undef :default_test
+            end
+
+            class MyTest < SpecialTestCase
+              def test_one; end
+            end
+            EOS
+            within_construct(false) do |c|
+              adapter = TestUnitAdapter.new
+              test_file = c.file('my_test.rb',body)
+              tests = adapter.tests_for(test_file)
+              assert_equal [[test_file.to_s,['MyTest'],'test_one']], tests
+            end
+          ensure 
+            remove_test_class_definition("SpecialTestCase".to_sym)
+            remove_test_class_definition("MyTest".to_sym)
+          end
+        end
+
+      end
+
+    end
+
   end
 
   context "in a testcase in a module" do
