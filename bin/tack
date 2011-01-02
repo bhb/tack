@@ -3,6 +3,15 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 #GC.enable_stats
 
+require 'rubygems'
+
+def using_bundler?
+  File.exists?('./Gemfile')
+end
+
+if using_bundler?
+   require 'bundler/setup'
+end
 
 memprof_file = ENV['MEMPROF']
 MEMPROF = !memprof_file.nil?
