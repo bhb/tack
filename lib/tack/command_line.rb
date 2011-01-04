@@ -50,6 +50,9 @@ module Tack
         opts.on('-b', '--backtrace', 'Output full backtrace') do
           command_line_options[:backtrace] = true
         end
+        opts.on('-p', '--parallel [NUMBER]', 'Run tests in NUMBER processes (experimental). Defaults to 2 processes.') do |number|
+          command_line_options[:processes] = number || 2
+        end
         opts.on('--adapters', "Display the adapters that will be used for each file and quit.") do
           command_line_options[:view_adapters] = true
         end
@@ -135,6 +138,7 @@ module Tack
         runner.use Tack::Formatters::Newline
         runner.use Tack::Formatters::ProgressBar, :verbose => options[:verbose]
         runner.use Tack::Formatters::BacktraceCleaner, :full => options[:backtrace]
+        runner.use Tack::Middleware::Parallel, :processes => options[:processes].to_i if options[:processes]
       end
       
       runs = 1

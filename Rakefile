@@ -10,6 +10,7 @@ begin
     gem.email = "ben@bbrinck.com"
     gem.homepage = "http://github.com/bhb/tack"
     gem.authors = ["Ben Brinckerhoff"]
+    gem.add_dependency 'forkoff', '~> 1.1.0'
     gem.add_dependency "test-unit", "~> 1.0" if RUBY_VERSION=~/1\.9/
     gem.add_development_dependency "shoulda"
     gem.add_development_dependency "mocha"

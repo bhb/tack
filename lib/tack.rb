@@ -32,6 +32,7 @@ module Tack
     autoload :Fork, 'tack/middleware/fork'
     autoload :HandleInterrupt, 'tack/middleware/handle_interrupt'
     autoload :MiddlewareViewer, 'tack/middleware/middleware_viewer'
+    autoload :Parallel, 'tack/middleware/parallel'
     autoload :Reverse, 'tack/middleware/reverse'
     autoload :Shuffle, 'tack/middleware/shuffle'
 
