@@ -44,7 +44,7 @@ module Tack
     
     def valid_test_file?(path)
       return false if File.directory?(path)
-      case Pathname.new(path).basename
+      case Pathname.new(path).basename.to_s
       when *Adapters::Adapter.file_patterns
           true
       else

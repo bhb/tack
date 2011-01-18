@@ -59,7 +59,7 @@ module Tack
         @adapters ||= {}
         return @adapters[path] if @adapters.key?(path)
         # Using a simple path-based heuristic for now
-        case Pathname.new(path).basename
+        case Pathname.new(path).basename.to_s
         when *test_unit_file_patterns
           if shoulda_file?(path)
             @adapters[path]=ShouldaAdapter.new
