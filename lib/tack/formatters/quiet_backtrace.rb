@@ -32,10 +32,17 @@ module Tack
         
         def initialize
           @filters, @silencers = [], []
-          
-          if defined?(RAILS_ROOT)
-            add_filter { |line| line.sub("#{RAILS_ROOT}/", '') }
+
+          if defined?(Rails) && Rails.root
+            rails_root = Rails.root
+
+          elsif defined?(RAILS_ROOT)
+            rails_root = RAILS_ROOT
           end
+          if rails_root
+            add_filter { |line| line.sub("#{rails_root}/", '') }
+          end
+
           
           add_filter { |line| line.sub(ERB_METHOD_SIG, '') }
           # add_filter { |line| line.sub('./', '/') }
