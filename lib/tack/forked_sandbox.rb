@@ -4,11 +4,13 @@ module Tack
     
     def run(&block)
       @reader, @writer = IO.pipe
+      value = nil
       if @child = fork
-        proceed_as_parent
+        value = proceed_as_parent
       else
         proceed_as_child(&block)
       end
+      value
     end
 
     private
@@ -31,14 +33,22 @@ module Tack
       exit! error ? 1 : 0
     end
 
-    
     def proceed_as_parent
       @writer.close
-      Process.wait(@child)
-      status, result = Marshal.load(@reader)
+      read_data_from_child
+    ensure
+      @reader.close
+    end
+
+    def read_data_from_child
+      data = ""
+      while !(chunk=@reader.read).empty?
+        data << chunk
+      end
+      status, result = Marshal.load(data)
       case status
       when :ok
-        result
+        return result
       when :error
         error_class, error_message, backtrace = result
         error = error_class.new(error_message)
@@ -47,10 +57,8 @@ module Tack
       else
         raise "Unknown status #{status}"
       end
-    ensure
-      @reader.close
     end
-    
+
   end
 
 end
