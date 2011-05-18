@@ -166,6 +166,55 @@ class TestUnitAdapterTest < Test::Unit::TestCase
     
   end
 
+  context "when Rails is loaded" do
+    
+    context "when default_test is not defined" do
+      
+      should "not report #default_test" do
+        begin
+          ::Rails = Module.new
+          body = <<-EOS
+          # no tests
+          EOS
+          with_test_class :body => body do |_, path|
+            adapter = TestUnitAdapter.new
+            tests = adapter.tests_for(path)
+            assert_equal 0, tests.length
+            results = Tack::Util::ResultSet.new(adapter.run_suite(tests))
+            assert_equal 0, results.length
+          end
+        ensure
+          remove_test_class_definition("Rails".to_sym)
+          assert !defined?(Rails)
+        end
+      end
+    end
+
+    context "when default_test is defined" do
+      
+      should "not report #default_test" do
+        begin
+          ::Rails = Module.new
+          body = <<-EOS
+          def default_test
+          end
+          EOS
+          with_test_class :body => body do |_, path|
+            adapter = TestUnitAdapter.new
+            tests = adapter.tests_for(path)
+            assert_equal 0, tests.length
+            results = Tack::Util::ResultSet.new(adapter.run_suite(tests))
+            assert_equal 0, results.length
+          end
+        ensure
+          remove_test_class_definition("Rails".to_sym)
+          assert !defined?(Rails)
+        end
+      end
+      
+    end
+
+  end
   
   context "handling #default_test" do
 

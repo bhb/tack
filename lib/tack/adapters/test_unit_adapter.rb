@@ -28,6 +28,7 @@ module Tack
           end
           tests += tests_for_class
         end
+        tests = tests.reject { |_,_,method_name| method_name == 'default_test'} if defined?(Rails)
         tests.sort
       end
 
