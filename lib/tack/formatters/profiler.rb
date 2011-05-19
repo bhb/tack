@@ -18,7 +18,7 @@ module Tack
             time
           end.reverse
           @times[0..@num_tests-1].each do |description, time| 
-            @output.print "%.7f" % time
+            @output.print "%.7f seconds -" % time
             @output.puts " #{description}"
           end
         end
