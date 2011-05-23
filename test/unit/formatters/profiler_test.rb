@@ -26,7 +26,7 @@ class ProfilerTest < Test::Unit::TestCase
     adapter = Tack::StubAdapter.new
     test = Test.make
     adapter.pass(test)
-    assert_output_matches /\d\.\d+ #{test.name}/ do |output|
+    assert_output_matches /\d\.\d+ seconds - #{test.name}/ do |output|
       middleware = Profiler.new(adapter, :output => output)
       middleware.run_suite([test])
     end
