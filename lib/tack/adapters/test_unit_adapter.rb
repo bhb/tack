@@ -44,7 +44,11 @@ module Tack
       end
 
       def order(tests)
-        sort_by_contexts(tests)
+        tests.extend(StableSort).stable_sort
+        # Not sure why I wanted to sort by contexts instead of 
+        # the full test. Weird. Keeping the code for now to make sure
+        # it doesn't break anything
+        #sort_by_contexts(tests)
       end
 
       protected 
@@ -67,15 +71,15 @@ module Tack
 
       private
 
-      def sort_by_contexts(tests)
-        tests.extend(StableSort).stable_sort do |stable_test1, stable_test2|
-          test1, stabilizer1 = stable_test1
-          test2, stabilizer2 = stable_test2
-          # Tests are [path, contexts, description]
-          # so test[1] grabs the context for each test
-          [test1[1], stabilizer1] <=> [test2[1], stabilizer2]
-        end
-      end
+#       def sort_by_contexts(tests)
+#         tests.extend(StableSort).stable_sort do |stable_test1, stable_test2|
+#           test1, stabilizer1 = stable_test1
+#           test2, stabilizer2 = stable_test2
+#           # Tests are [path, contexts, description]
+#           # so test[1] grabs the context for each test
+#           [test1[1], stabilizer1] <=> [test2[1], stabilizer2]
+#         end
+#       end
 
       def reset(result)
         result.instance_variable_get(:@failures).clear

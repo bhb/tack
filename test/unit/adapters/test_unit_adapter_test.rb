@@ -59,6 +59,28 @@ class TestUnitAdapterTest < Test::Unit::TestCase
                         ["foo_test.rb", ["FooTest"], "test_foo"]]
       assert_equal expected_order, TestUnitAdapter.new.order(tests)
     end
+    
+    should "keep test names sorted alphabetically with stability (verify bug fix)" do
+      tests = [
+               ["foobar_test.rb",
+                ["FooTest"],
+                "test_a"],
+               ["foobar_test.rb",
+                ["FooTest"],
+                "test_b"],
+               ["foobar_test.rb",
+                ["FooTest"],
+                "test_c"],
+               ["foobar_test.rb",
+                ["FooTest"],
+                "test_d"],
+               ["foobar_test.rb",
+                ["FooTest"],
+                "test_e"],
+              ]
+      expected_order = tests.dup
+      assert_equal expected_order, TestUnitAdapter.new.order(tests)
+    end
 
   end
   
