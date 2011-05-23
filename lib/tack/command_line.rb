@@ -29,7 +29,7 @@ module Tack
         opts.on("-u", "--debugger", "Enable ruby-debugging.") do
           require_ruby_debug
         end
-        opts.on("-o", "--profile [NUMBER]", "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).") do |number|
+        opts.on("-o", "--profile [NUMBER]", Integer, "Display a text-based progress bar with profiling data on the NUMBER slowest examples (defaults to 10).") do |number|
           command_line_options[:profile_number] = number || 10
         end
         opts.on("-s", "--shuffle", "Run tests in randomized order.") do |runs|
@@ -50,7 +50,7 @@ module Tack
         opts.on('-b', '--backtrace', 'Output full backtrace') do
           command_line_options[:backtrace] = true
         end
-        opts.on('-p', '--parallel [NUMBER]', 'Run tests in NUMBER processes (experimental). Defaults to 2 processes.') do |number|
+        opts.on('-p', '--parallel [NUMBER]', Integer, 'Run tests in NUMBER processes (experimental). Defaults to 2 processes.') do |number|
           command_line_options[:processes] = number || 2
         end
         opts.on('--adapters', "Display the adapters that will be used for each file and quit.") do
