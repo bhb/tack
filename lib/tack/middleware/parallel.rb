@@ -21,9 +21,27 @@ module Tack
       private
 
       def map(tests)
-        tests.forkoff! :processes => @processes do |*test|
-          @app.run_suite([test])
+        test_groups = []
+        tests.each_slice([tests.length.to_f/@processes,1].max) do |group|
+          test_groups << group
         end
+        results = test_groups.forkoff! :processes => @processes, :strategy => 'file' do |*test_group|
+          if !test_group.first.is_a?(Array)
+            test_group = [test_group]
+          end
+          result = basics(Util::ResultSet.new)
+          # TODO - this is just a hack to see if the tests pass
+          # In reality, we shouldn't silently ignore the fact
+          # that for some reason, parallel mode fails to catch :invalid_test
+          catch(:invalid_test) do
+            result = @app.run_suite(test_group)
+          end
+          result || {}
+        end
+        results.each do |result|
+          raise result if result.is_a?(Exception)
+        end
+        results
       end
 
       def reduce(many_result_sets)

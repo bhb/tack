@@ -69,7 +69,7 @@ module Tack
         when *rspec_file_patterns
           @adapters[path]=RSpecAdapter.new
         else
-          raise AdapterDetectionError, "Cannot determine a test adapter for file #{path}"
+          raise AdapterDetectionError, "Cannot determine a test adapter for file #{path.inspect}"
         end
       end
 
@@ -80,11 +80,12 @@ module Tack
         end
 
         sandbox = ForkedSandbox.new
-        sandbox.run do
+        result = sandbox.run do
           require path
           result = defined?(Shoulda) && ShouldaAdapter.shoulda_file?(path)
           @cache[path] = result
         end
+        result
       end
 
     end
