@@ -1,3 +1,5 @@
+require 'base64'
+
 module Tack
 
   class ForkedSandbox
@@ -16,9 +18,9 @@ module Tack
     private
 
     def proceed_as_child(&block)
-      begin; STDOUT.reopen "/dev/null"; rescue ::Exception; end
-      begin; STDIN.reopen "/dev/null"; rescue ::Exception; end
-      begin; STDERR.reopen "/dev/null"; rescue ::Exception; end
+      #begin; STDOUT.reopen "/dev/null"; rescue ::Exception; end
+      #begin; STDIN.reopen "/dev/null"; rescue ::Exception; end
+      #begin; STDERR.reopen "/dev/null"; rescue ::Exception; end
 
       @reader.close
       result = block.call
@@ -27,7 +29,7 @@ module Tack
       Marshal.dump([
                     :error,
                     #[error.class, error.message, error.backtrace]
-                    error
+                    Base64.encode64(error)
                    ],
                    @writer)
     ensure
@@ -55,7 +57,7 @@ module Tack
         #error_class, error_message, backtrace = result
         #error = error_class.new(error_message)
         #error.set_backtrace(backtrace)
-        error = result
+        error = Base64.decode64(result)
         raise error
       else
         raise "Unknown status #{status}"
