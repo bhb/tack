@@ -26,7 +26,9 @@ module Tack
     rescue Object => error
       Marshal.dump([
                     :error,
-                    [error.class, error.message, error.backtrace]],
+                    #[error.class, error.message, error.backtrace]
+                    error
+                   ],
                    @writer)
     ensure
       @writer.close
@@ -50,9 +52,10 @@ module Tack
       when :ok
         return result
       when :error
-        error_class, error_message, backtrace = result
-        error = error_class.new(error_message)
-        error.set_backtrace(backtrace)
+        #error_class, error_message, backtrace = result
+        #error = error_class.new(error_message)
+        #error.set_backtrace(backtrace)
+        error = result
         raise error
       else
         raise "Unknown status #{status}"
