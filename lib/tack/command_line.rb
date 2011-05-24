@@ -11,6 +11,11 @@ module Tack
       stdout = opts.fetch(:stdout) { STDOUT }
       stderr = opts.fetch(:stderr) { STDERR }
 
+      trap("INT") do
+        stdout.puts "\n\n Quitting ... \n"
+        exit 0  
+      end
+
       command_line_options ||= {}
       
       command_line_options[:pattern] ||= []
