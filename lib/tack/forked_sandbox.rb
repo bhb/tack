@@ -24,14 +24,10 @@ module Tack
 
       @reader.close
       result = block.call
-      Marshal.dump([:ok, result], @writer)
+
+      @writer.write(Base64.encode64(Marshal.dump([:ok, result])))
     rescue Object => error
-      Marshal.dump([
-                    :error,
-                    #[error.class, error.message, error.backtrace]
-                    Base64.encode64(error)
-                   ],
-                   @writer)
+      @writer.write(Base64.encode64(Marshal.dump([:error, error])))
     ensure
       @writer.close
       exit! error ? 1 : 0
@@ -49,15 +45,12 @@ module Tack
       while !(chunk=@reader.read).empty?
         data << chunk
       end
-      status, result = Marshal.load(data)
+      status, result = Marshal.load(Base64.decode64(data))
       case status
       when :ok
         return result
       when :error
-        #error_class, error_message, backtrace = result
-        #error = error_class.new(error_message)
-        #error.set_backtrace(backtrace)
-        error = Base64.decode64(result)
+        error = result
         raise error
       else
         raise "Unknown status #{status}"
