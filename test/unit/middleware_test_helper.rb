@@ -14,13 +14,15 @@ module MiddlewareTestHelper
     def should_implement_middleware_api
 
       should "define #run_suite method" do
-        assert middleware_class.new(nil).respond_to?(:run_suite)
-        assert_equal 1, middleware_class.new(nil).method(:run_suite).arity
+        middleware = middleware_class.new(nil, :output => StringIO.new)
+        assert middleware.respond_to?(:run_suite)
+        assert_equal 1, middleware.method(:run_suite).arity
       end
 
       should "define #run_test method" do
-        assert middleware_class.new(nil).respond_to?(:run_test)
-        assert_equal 1, middleware_class.new(nil).method(:run_test).arity
+        middleware = middleware_class.new(nil, :output => StringIO.new)
+        assert middleware.respond_to?(:run_test)
+        assert_equal 1, middleware.method(:run_test).arity
       end
       
     end

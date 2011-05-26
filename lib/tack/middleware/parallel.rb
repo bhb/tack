@@ -8,14 +8,25 @@ module Tack
       include Middleware::Base
       
       def initialize(app, options = {})
-        @processes = options.fetch(:processes) { 2 }
         super
+        @processes = options.fetch(:processes) { 2 }
+        @output.puts "Running tests in parallel in #{@processes} processes."
       end
 
       def run_suite(tests)
         many_results = map(tests)
         total_results = reduce(many_results)
-        total_results
+        
+        failing_tests = total_results[:failed].map{|result| result[:test]}
+        if !failing_tests.empty?
+          @output.puts "Rerunning #{failing_tests.length} tests (in case they failed due to parallelism)"
+          total_results[:failed].clear
+          new_results = @app.run_suite(failing_tests)
+          final_results = reduce([total_results,new_results])
+        else
+          final_results = total_results
+        end
+        final_results
       end
 
       private
