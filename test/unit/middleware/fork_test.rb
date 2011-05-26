@@ -4,6 +4,13 @@ class ForkTest < Test::Unit::TestCase
   include MiddlewareTestHelper
   include Tack::Middleware
 
+  def middleware_class
+    Fork
+  end
+
+  should_implement_middleware_api
+  should_not_modify_results
+
   should "return test result" do
     adapter = Tack::StubAdapter.new
     middleware = Fork.new(adapter, :output => StringIO.new)
