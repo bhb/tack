@@ -1,4 +1,5 @@
 require 'forkoff'
+require 'facter'
 
 module Tack
 
@@ -9,7 +10,8 @@ module Tack
       
       def initialize(app, options = {})
         super
-        @processes = options.fetch(:processes) { 2 }
+        @processes = options.fetch(:processes) { processors }
+        @processes = processors if @processes == 0
         @output.puts "Running tests in parallel in #{@processes} processes."
       end
 
@@ -30,6 +32,11 @@ module Tack
       end
 
       private
+      
+      def processors
+        Facter.loadfacts
+        Facter.sp_number_processors.to_i
+      end
 
       def map(tests)
         test_groups = []

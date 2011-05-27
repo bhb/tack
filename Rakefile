@@ -12,6 +12,7 @@ begin
     gem.authors = ["Ben Brinckerhoff"]
     gem.add_dependency 'forkoff', '~> 1.1.0'
     gem.add_dependency "test-unit", "~> 1.0" if RUBY_VERSION=~/1\.9/
+    gem.add_dependency 'facter', '~> 1.5.9'
     gem.add_development_dependency "shoulda"
     gem.add_development_dependency "mocha"
     gem.add_development_dependency "test-construct"
