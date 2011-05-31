@@ -65,15 +65,21 @@ module TestHelpers
     with_test_class(args.merge({:shoulda => true}), &block)
   end
 
+  def with_mini_test_shim_class(args, &block)
+    with_test_class(args.marge({:mini_test_shim => true}), &block)
+  end
+
   def with_test_class(args)
     body = args.fetch(:body)
     shoulda = args.fetch(:shoulda)  {false}
+    mini_test_shim = args.fetch(:mini_test_shim)  {false}
     class_name = args.fetch(:class_name) { :FakeTest } 
     within_construct(false) do |c|
       begin
         file = c.file 'fake_test.rb' do
           <<-EOS
           #{"require 'shoulda'" if shoulda}
+          #{"require 'minitest'" if mini_test_shim}
           require 'test/unit'
     
           class #{class_name} < Test::Unit::TestCase

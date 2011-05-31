@@ -1,5 +1,5 @@
 if RUBY_VERSION=~/1.9/
-  gem 'test-unit', '~> 1.0'
+  gem 'test-unit', '~> 2.3.0'
 end
 require 'test/unit'
 require 'test/unit/testresult'

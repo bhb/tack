@@ -43,7 +43,8 @@ module Tack
 
   module Adapters
 
-    class ShouldaAdapter < TestUnitAdapter
+    
+    ShouldaAdapter = Class.new(RUBY_VERSION=~/1.9/ ? MiniTestShimAdapter : TestUnitAdapter) do
       
       def self.shoulda_file?(path)
         Shoulda.reset_contexts!

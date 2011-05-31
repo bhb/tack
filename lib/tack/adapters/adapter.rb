@@ -63,6 +63,8 @@ module Tack
         when *test_unit_file_patterns
           if shoulda_file?(path)
             @adapters[path]=ShouldaAdapter.new
+          elsif mini_test_shim?(path)
+            @adapters[path]=MiniTestShimAdapter.new
           else
             @adapters[path]=TestUnitAdapter.new
           end
@@ -73,17 +75,32 @@ module Tack
         end
       end
 
+      def self.mini_test_shim?(path)
+        @mt_cache ||= {}
+        if @mt_cache.has_key?(path)
+          return @mt_cache[path]
+        end
+
+        sandbox = ForkedSandbox.new
+        result = sandbox.run do
+          require path
+          result = defined?(MiniTest)
+          @mt_cache[path] = result
+        end
+        result
+      end
+
       def self.shoulda_file?(path)
-        @cache ||= {}
-        if @cache.has_key?(path)
-          return @cache[path]
+        @shoulda_cache ||= {}
+        if @shoulda_cache.has_key?(path)
+          return @shoulda_cache[path]
         end
 
         sandbox = ForkedSandbox.new
         result = sandbox.run do
           require path
           result = defined?(Shoulda) && ShouldaAdapter.shoulda_file?(path)
-          @cache[path] = result
+          @shoulda_cache[path] = result
         end
         result
       end
