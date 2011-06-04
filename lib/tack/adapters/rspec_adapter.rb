@@ -30,7 +30,7 @@ module RSpec
         end
 
         def example_failed(example)
-          error = example.execution_result[:exception_encountered]
+          error = example.execution_result[:exception_encountered] || example.execution_result[:exception]
           @result = build_result(:failed, example, error)
         end
 
@@ -93,9 +93,13 @@ module Tack
       end
       
       def run_test(test)
+        puts "-"*10
+        puts test.inspect
+        puts "-"*10
         path, contexts, description = test
         world = RSpec.world
         world.example_groups.clear
+        world.filtered_examples.clear
         
         configuration = configuration_for(path)
         world.example_groups.replace(example_groups_for(path, world.example_groups))
@@ -104,7 +108,9 @@ module Tack
 
         formatter = RSpec::Core::Formatters::TackFormatter.new
         reporter = RSpec::Core::Reporter.new(formatter)
-        world.example_groups.map {|g| g.run(reporter)}
+        world.example_groups.each do |g| 
+          g.run(reporter)
+        end
         result = formatter.result
         if result.nil?
           raise NoMatchingTestError, Tack::Util::Test.new(test)

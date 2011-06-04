@@ -91,7 +91,7 @@ class RSpecAdapterTest < Test::Unit::TestCase
           
           assert_equal :failed, result[:status]
           assert_equal test, result[:test]
-          assert_equal "expected: 2,\n     got: 1 (using ==)", result[:failure][:message]
+          assert_equal "expected: 2\n     got: 1 (using ==)", result[:failure][:message]
           assert_kind_of Array, result[:failure][:backtrace]
         end
       end
@@ -140,6 +140,58 @@ class RSpecAdapterTest < Test::Unit::TestCase
             RSpecAdapter.new.run_test(test)
           end
           assert_equal %Q{Could not find test "String should do something else" in #{path}}, error.message
+        end
+      end
+
+      should "run before :all block once" do
+        body = <<-EOS
+        before :all do
+          @foo ||= 0
+          @foo +=1 
+        end
+
+        specify "foo is 1" do
+          @foo.should == 1
+        end
+
+        specify "foo is still 1" do
+          @foo.should == 1
+        end
+        EOS
+        in_rspec :describe => String, :body => body do |path|
+          test1 = [path.to_s, ["String"], "foo is 1"]
+          result = RSpecAdapter.new.run_test(test1)
+
+          assert_equal :passed, result[:status]
+          
+          test2 = [path.to_s, ["String"], "foo is still 1"]          
+          result = RSpecAdapter.new.run_test(test2)
+          assert_equal :passed, result[:status]
+        end
+      end
+
+      should "only run each test once" do
+        body = <<-EOS
+        specify "foo is 1" do
+          1.should == 1
+        end
+
+        specify "foo is 1 still" do
+          1.should == 2
+        end
+        EOS
+        in_rspec :describe => String, :body => body do |path|
+          adapter = RSpecAdapter.new
+          test1 = [path.to_s, ["String"], "foo is 1"]
+          result = adapter.run_test(test1)
+
+          assert_equal test1, result[:test]
+          assert_equal :passed, result[:status]
+          
+          test2 = [path.to_s, ["String"], "foo is 1 still"]
+          result = adapter.run_test(test2)
+          assert_equal test2, result[:test]
+          assert_equal :failed, result[:status]
         end
       end
       
