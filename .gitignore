@@ -2,10 +2,11 @@
 .DS_Store
 coverage
 rdoc
-pkg
+pkg/*
 .rvmrc
 .tackrc
 .bundle
 *.rbc
+*.gem
 perf
 Gemfile.lock

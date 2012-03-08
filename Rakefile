@@ -1,30 +1,6 @@
-require 'rubygems'
-require 'rake'
+require "bundler/gem_tasks"
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "tack"
-    gem.summary = %Q{A Rack-inspired interface for testing libraries}
-    gem.description = %Q{A Rack-inspired interface for testing libraries}
-    gem.email = "ben@bbrinck.com"
-    gem.homepage = "http://github.com/bhb/tack"
-    gem.authors = ["Ben Brinckerhoff"]
-    gem.add_dependency 'forkoff', '~> 1.1.0'
-    gem.add_dependency "test-unit", "~> 1.0" if RUBY_VERSION=~/1\.9/
-    gem.add_dependency 'facter', '~> 1.5.9'
-    gem.add_development_dependency "shoulda"
-    gem.add_development_dependency "mocha"
-    gem.add_development_dependency "test-construct"
-    gem.add_development_dependency "machinist"
-    gem.add_development_dependency "rspec"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
-end
-
-require 'rake/testtask'
+ require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
   test.pattern = 'test/**/*_test.rb'
@@ -43,8 +19,6 @@ rescue LoadError
     abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
   end
 end
-
-task :test => :check_dependencies
 
 task :default => :test
 
