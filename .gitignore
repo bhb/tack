@@ -8,3 +8,4 @@ pkg
 .bundle
 *.rbc
 perf
+Gemfile.lock
