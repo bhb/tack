@@ -93,9 +93,6 @@ module Tack
       end
       
       def run_test(test)
-        puts "-"*10
-        puts test.inspect
-        puts "-"*10
         path, contexts, description = test
         world = RSpec.world
         world.example_groups.clear
