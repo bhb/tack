@@ -14,7 +14,7 @@ GEM
     machinist (1.0.6)
     mocha (0.9.10)
       rake
-    rake (0.8.7)
+    rake (13.0.6)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
       rspec-expectations (~> 2.6.0)
